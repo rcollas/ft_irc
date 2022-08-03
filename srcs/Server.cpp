@@ -6,7 +6,7 @@
 /*   By: vincent <vincent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/31 16:32:09 by vincent           #+#    #+#             */
-/*   Updated: 2022/08/03 14:47:14 by vincent          ###   ########.fr       */
+/*   Updated: 2022/08/03 16:36:47 by vincent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int main()
 	int portNum = 1500; //the port number to communicate
 	bool isExit = false; //Only if we want to leave the program
 	int bufsize = 1024;
-	char  buffer[bufsize]; //va servir à stocker les donner envoyées
+	char buffer[bufsize]; //va servir à stocker les donner envoyées
 	(void)isExit;
 	(void)buffer;
 
@@ -97,6 +97,47 @@ int main()
 		cout << "Error on accepting ..." << endl;
 		exit(1);
 	}
-
+	while (server > 0)
+	{
+		strcpy(buffer, "Connection established...");
+		send(server, buffer, bufsize, 0);
+		std::cout << "connected with client" << std::endl;
+		std::cout << "Enter /exit to exit the program..." << std::endl;
+		std::cout << "client :" << std::endl;
+		do
+		{
+			//recv(server, buffer, bufsize, 0);
+			std::cout << "buffer" << std::endl;
+			std::cin >> buffer;
+			send(client, buffer, bufsize, 0);
+			if (strcmp(buffer, "/exit") == 0)
+				isExit = true;
+		}
+		while (isExit == false);
+		/*
+		do
+		{
+			std::cout << "server" << std::endl;
+			std::cin >> buffer;
+			send (server, buffer, bufsize, 0);
+			if (strcpy(buffer, "/exit") == 0)
+			{
+				send(server, buffer, bufsize, 0);
+				isExit = true;
+			}
+		} while (isExit == false);
+		std::cout << "client :";
+		do
+		{
+			recv(server, buffer, bufsize, 0);
+			std::cout << buffer << std::endl;
+			if (strcpy(buffer, "/exit") == 0)
+			{
+				send(server, buffer, bufsize, 0);
+				isExit = true;
+			}
+		} while (isExit == false);	
+		*/	
+	}
 	return (0);
 }
