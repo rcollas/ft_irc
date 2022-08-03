@@ -19,8 +19,6 @@
 #include<stdlib.h>
 #include<unistd.h>
 
-using namespace std;
-
 int main()
 {
 	int client, server;
@@ -45,7 +43,7 @@ int main()
 	client = socket(AF_INET, SOCK_STREAM, 0);
 	if (client < 0)
 	{
-		cout << "Can't initiate the socket." << std::endl;
+		std::cout << "Can't initiate the socket." << std::endl;
 		exit(1);
 	}
 	std::cout << "Server socket connection created..." << std::endl;
@@ -72,11 +70,11 @@ int main()
 
 	if (bind(client, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
 	{
-		cout << "Error binding socket ..." << endl;
+		std::cout << "Error binding socket ..." << std::endl;
 		exit(1);
 	}
 	size = sizeof(server_addr);
-	cout << "looking for clients ..." << endl;
+	std::cout << "looking for clients ..." << std::endl;
 
 	/*****************
 	 * Listen
@@ -84,19 +82,17 @@ int main()
 		Backlog = number of pending connections to queue
 	**************/
 
-	listen(client, 1);
+	std::cout << "address = " << server_addr.sin_addr.s_addr << std::endl;
 
 	/*****************
 	 * Accept the client
 	– int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen)
 	**************/
+	listen(client, 1);
 
 	server = accept(client, (struct sockaddr*)&server_addr, &size);
-	if (server < 0)
-	{
-		cout << "Error on accepting ..." << endl;
-		exit(1);
-	}
+	recv(server, buffer, 1024, 0);
+	std::cout << buffer << std::endl;
 
 	return (0);
 }
