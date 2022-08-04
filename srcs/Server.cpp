@@ -6,7 +6,7 @@
 /*   By: vincent <vincent@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/31 16:32:09 by vincent           #+#    #+#             */
-/*   Updated: 2022/08/03 16:36:47 by vincent          ###   ########.fr       */
+/*   Updated: 2022/08/03 18:12:22 by vincent          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ int main()
 		cout << "Error on accepting ..." << endl;
 		exit(1);
 	}
-	while (server > 0)
+	while (1)
 	{
 		strcpy(buffer, "Connection established...");
 		send(server, buffer, bufsize, 0);
@@ -114,6 +114,7 @@ int main()
 				isExit = true;
 		}
 		while (isExit == false);
+		
 		/*
 		do
 		{
