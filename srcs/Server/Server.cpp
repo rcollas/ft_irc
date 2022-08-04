@@ -30,11 +30,7 @@ int Server::init()
 	}
 	socketSize = sizeof(serverAddress);
 	std::cout << "Looking for clients..." << std::endl;
-	listen(serverEndPoint, 1);
-	std::cout << this->buffer << std::endl;
-	pfds.push_back(pollfd());
-	pfds[0].fd = serverEndPoint;
-	pfds[0].events = POLLIN;
+	listen(serverEndPoint, 1024);
 	return 0;
 }
 
@@ -50,31 +46,53 @@ void	Server::addUser(int i)
 
 void Server::run()
 {
-	int timeout = 3 * 60 * 1000;
-	for (int i = 0; i < (int)pfds.size(); i++) {
-		std::cout << "pdfs = " << pfds[i].fd << std::endl;
-	}
-	std::cout << "pdfs size = " << pfds.size() << std::endl;
-
-	do {
+	(void)buffer;
+	while (true) {
+		socklen_t size = sizeof(serverAddress);
+		int timeout = 0.1 * 60 * 1000;
+		pfds.push_back(pollfd());
+		pfds.back().events = POLLIN;
+		std::cout << "pfds revents before = " << pfds.back().revents
+				  << std::endl;
+		pfds.back().fd = accept(serverEndPoint,
+								(struct sockaddr *) &serverAddress, &size);
 		int ret = poll(pfds.data(), pfds.size(), timeout);
-		std::cout << "poll" << std::endl;
-		if (ret == -1)
-		{
-			std::cerr << "poll() failed" << std::endl;
-			exit(1);
-		} else if (ret == 0)
-		{
-			std::cout << "Waiting for connection" << std::endl;
+		if (ret > 0) {
+			recv(pfds[0].fd, buffer, bufferSize, 0);
+			std::cout << buffer << std::endl;
+			std::cout << "ret > 0" << std::endl;
 		}
-		else
-		{
-			for (int i = 0; i < (int)pfds.size(); i++) {
-				if (pfds[i].revents & POLLIN)
-					addUser(i);
-			}
-		}
-	} while (true);
+	}
+	for (int i = 0; (int)pfds.size(); i++) {
+		close(pfds[i].fd);
+	}
+
+
+//	int timeout = 3 * 60 * 1000;
+//	for (int i = 0; i < (int)pfds.size(); i++) {
+//		std::cout << "pdfs = " << pfds[i].fd << std::endl;
+//	}
+//	std::cout << "pdfs size = " << pfds.size() << std::endl;
+//
+//	do {
+//		int ret = poll(pfds.data(), pfds.size(), timeout);
+//		std::cout << "poll" << std::endl;
+//		if (ret == -1)
+//		{
+//			std::cerr << "poll() failed" << std::endl;
+//			exit(1);
+//		} else if (ret == 0)
+//		{
+//			std::cout << "Waiting for connection" << std::endl;
+//		}
+//		else
+//		{
+//			for (int i = 0; i < (int)pfds.size(); i++) {
+//				if (pfds[i].revents & POLLIN)
+//					addUser(i);
+//			}
+//		}
+//	} while (true);
 	/*
 	int i = 0;
 	int newSd;
