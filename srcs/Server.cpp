@@ -6,10 +6,11 @@
 #include<arpa/inet.h>
 #include<stdlib.h>
 #include<unistd.h>
+#include <poll.h>
 
 int main()
 {
-	int client, server;
+	int client;
 	int portNum = 1500; //the port number to communicate
 	bool isExit = false; //Only if we want to leave the program
 	int bufsize = 1024;
@@ -78,22 +79,28 @@ int main()
 	**************/
 	listen(client, 1);
 
-	server = accept(client, (struct sockaddr*)&server_addr, &size);
-	if (server < 0)
+	struct pollfd pfds[1];
+	pfds[0].fd = accept(client, (struct sockaddr*)&server_addr, &size);
+	if (pfds[0].fd < 0)
 	{
-		cout << "Error on accepting ..." << endl;
+		std::cout << "Error on accepting ..." << std::endl;
 		exit(1);
 	}
-	while (server > 0)
+	while (pfds[0].fd > 0)
 	{
 		strcpy(buffer, "Connection established...");
-		send(server, buffer, bufsize, 0);
+		send(pfds[0].fd, buffer, bufsize, 0);
+		pfds[0].events = POLLIN;
 		std::cout << "connected with client" << std::endl;
 		std::cout << "Enter /exit to exit the program..." << std::endl;
 		std::cout << "client :" << std::endl;
 		do
 		{
 			//recv(server, buffer, bufsize, 0);
+			poll(pfds, 1, -1);
+			while (pfds[0].revents & POLLIN) {
+				std::cin >> buffer;
+			}
 			std::cout << "buffer" << std::endl;
 			std::cin >> buffer;
 			send(client, buffer, bufsize, 0);
