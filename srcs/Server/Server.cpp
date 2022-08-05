@@ -48,37 +48,30 @@ void	Server::init()
 
 
 	std::cout << "Looking for clients..." << std::endl;
-	listen(serverEndPoint, 1);
+	listen(serverEndPoint, 4);
 	pfds.push_back(pollfd());
 	pfds[0].fd = serverEndPoint;
 	pfds[0].events = POLLIN;
 
 }
 
-void Server::welcome(int fd) {
-		recv(fd, buffer, bufferSize, 0);
-		std::cout << buffer << std::endl;
-	/*
-		if (send(fd, RPL_WELCOME().c_str(),
-				 strlen(RPL_WELCOME().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_WELCOME() OK" << std::endl;
-		if (send(fd, RPL_YOURHOST().c_str(),
-				 strlen(RPL_YOURHOST().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_YOURHOST() OK" << std::endl;
-		if (send(fd, RPL_CREATED().c_str(),
-				 strlen(RPL_CREATED().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_CREATED() OK" << std::endl;
-		if (send(fd, RPL_MYINFO().c_str(),
-				 strlen(RPL_MYINFO().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_MYINFO() OK" << std::endl;
-		if (send(fd, RPL_ISUPPORT().c_str(),
-				 strlen(RPL_ISUPPORT().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_ISUPPORT() OK" << std::endl;
-			*/
-	send(fd, "CAP\r\n", strlen("CAP\r\n"), 0);
-	send(fd, "NICK\r\n", strlen("NICK\r\n"), 0);
-	send(fd, "USER\r\n", strlen("USER\r\n"), 0);
-	send(fd, "USER\r\n", strlen("USER\r\n"), 0);
+void Server::welcome(int fd, std::string client_ip) {
+		//recv(fd, buffer, bufferSize, 0);
+		//std::cout << buffer << std::endl;
+	//std::string cap = "CAP\r\n";
+	std::string nick = "NICK rcollas\r\n";
+	std::string user = "USER guest 0 * :Robin COllas\r\n";
+	//send(fd, cap.c_str(), cap.length(), 0);
+	send(fd, nick.c_str(), nick.length(), 0);
+	send(fd, user.c_str(), user.length(), 0);
+	send(fd, RPL_WELCOME().c_str(),strlen(RPL_WELCOME().c_str()), 0);
+	send(fd, RPL_YOURHOST().c_str(), strlen(RPL_YOURHOST().c_str()), 0);
+	send(fd, RPL_CREATED().c_str(),strlen(RPL_CREATED().c_str()), 0);
+	send(fd, RPL_MYINFO().c_str(),strlen(RPL_MYINFO().c_str()), 0);
+	send(fd, RPL_ISUPPORT().c_str(),strlen(RPL_ISUPPORT().c_str()), 0);
+	//send(fd, "CAP\r\n", strlen("CAP\r\n"), 0);
+	(void)client_ip;
+
 }
 
 struct in_addr get_in_addr(struct sockaddr *sa) {
@@ -124,9 +117,7 @@ void Server::run()
 							(get_in_addr((struct sockaddr *) &clientAddress))));
 					client_ip += "\r\n";
 					std::cout << "client IP = " << client_ip << std::endl;
-					send(new_fd, "hello\r\n", 6, 0);
-					send(new_fd, client_ip.c_str(), client_ip.length(), 0);
-					welcome(new_fd);
+					welcome(new_fd, client_ip);
 				} else { // a client wants to communicate
 					int nbytes = recv(pfds[i].fd, buffer, bufferSize, 0);
 					int sender_fd = pfds[i].fd;

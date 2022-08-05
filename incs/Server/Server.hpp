@@ -36,7 +36,7 @@ class Server {
 
 		void		init();
 		void		run();
-		void		welcome(int fd);
+		void		welcome(int fd, std::string client_ip);
 };
 
 

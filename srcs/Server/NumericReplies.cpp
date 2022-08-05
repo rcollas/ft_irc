@@ -1,7 +1,7 @@
 #include "../../incs/Server/NumericReplies.hpp"
 
 std::string RPL_WELCOME() {
-	return "USER rcollas :Welcome to the 127.0.0.1 Network, rcollas rcollas[!rcollas@127.0.0.1]\r\n";
+	return "001 rcollas :Welcome to the 127.0.0.1 Network, rcollas rcollas[!rcollas@127.0.0.1]\r\n";
 }
 
 std::string	RPL_YOURHOST() {
