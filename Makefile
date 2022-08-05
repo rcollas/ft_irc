@@ -1,6 +1,8 @@
 NAME		=	ft_irc
 
-SRC_FILES 	=	Server.cpp \
+SRC_FILES 	=	main.cpp \
+				Server/Server.cpp \
+				Server/NumericReplies.cpp \
 
 OBJS_DIR	=	objs
 
@@ -8,11 +10,10 @@ SRC_DIR		=	./srcs/
 
 INC_DIR		=	./incs/
 
-INC_FILES	=	\
+INC_FILES	=	Server/Server.hpp \
+				Server/NumericReplies.hpp \
 
 OBJS		=	$(addprefix $(OBJS_DIR)/, $(SRC_FILES:.cpp=.o))
-
-STD_OBJS	=	$(addprefix $(TEST_DIR)/, $(SRC_FILES:.cpp=.o))
 
 INCLUDE		=	$(addprefix $(INC_DIR)/, $(INC_FILES))
 
@@ -45,7 +46,7 @@ $(NAME):		$(OBJS)
 				@echo "$(CUT)$(GREEN)✔ $(NAME) created$(RESET)"
 
 fclean:	clean
-				@$(RM) $(NAME) diff.log ft_test.log std_test.log
+				@$(RM) $(NAME)
 				@echo "$(RED)✘ fclean$(RESET)"
 
 
