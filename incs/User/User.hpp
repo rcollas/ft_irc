@@ -12,10 +12,12 @@
 
 class User {
 
+	private:
+		std::string	nick;
+
 	public:
 		User() {};
 		~User() {};
-	private:
 };
 
 

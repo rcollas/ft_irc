@@ -2,6 +2,7 @@ NAME		=	ft_irc
 
 SRC_FILES 	=	main.cpp \
 				Server/Server.cpp \
+				Server/NumericReplies.cpp \
 
 OBJS_DIR	=	objs
 
@@ -9,7 +10,8 @@ SRC_DIR		=	./srcs/
 
 INC_DIR		=	./incs/
 
-INC_FILES	=	Server/Server.hpp
+INC_FILES	=	Server/Server.hpp \
+				Server/NumericReplies.hpp \
 
 OBJS		=	$(addprefix $(OBJS_DIR)/, $(SRC_FILES:.cpp=.o))
 

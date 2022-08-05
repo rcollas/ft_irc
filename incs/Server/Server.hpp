@@ -7,10 +7,14 @@
 #include <cstdlib>
 #include <cstring>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <poll.h>
 #include <unistd.h>
+#include <cstdio>
 #include <cerrno>
 #include <vector>
+#include "NumericReplies.hpp"
 
 
 class Server {
@@ -18,19 +22,21 @@ class Server {
 	private:
 		int					serverEndPoint;
 		socklen_t 			socketSize;
-		int					portNum;
-		static const int	bufferSize = 1024;
+		std::string			portNum;
+		static const int	bufferSize = 4096;
 		char				buffer[bufferSize];
-		struct sockaddr_in	serverAddress;
+		struct addrinfo		*serverinfo;
+		struct sockaddr_in	*serverAddress;
 		std::vector<pollfd>	pfds;
+		std::string 		hostname;
 
 	public:
 		Server();
 		~Server();
 
-		int		init();
-		void	run();
-		void	addUser(int i);
+		void		init();
+		void		run();
+		void		welcome(int fd);
 };
 
 
