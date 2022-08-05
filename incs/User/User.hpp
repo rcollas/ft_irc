@@ -18,7 +18,6 @@ class User {
 	public:
 		User() {};
 		~User() {};
-
 };
 
 
