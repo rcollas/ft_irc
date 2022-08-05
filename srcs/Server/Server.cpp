@@ -71,7 +71,6 @@ void Server::welcome(int fd, std::string client_ip) {
 	send(fd, RPL_ISUPPORT().c_str(),strlen(RPL_ISUPPORT().c_str()), 0);
 	//send(fd, "CAP\r\n", strlen("CAP\r\n"), 0);
 	(void)client_ip;
-
 }
 
 struct in_addr get_in_addr(struct sockaddr *sa) {
