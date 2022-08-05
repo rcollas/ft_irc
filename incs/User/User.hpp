@@ -1,6 +1,8 @@
 #ifndef FT_IRC_USER_HPP
 #define FT_IRC_USER_HPP
 
+#include <iostream>
+
 /*
  * Check if registration is complete
  * Send a PING and ask for a PONG
@@ -13,7 +15,9 @@
 class User {
 
 	private:
-		std::string	nick;
+		std::string	nick_name;
+		std::string	user_name;
+		std::string	real_name;
 
 	public:
 		User() {};
