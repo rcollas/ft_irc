@@ -56,25 +56,8 @@ void	Server::init()
 }
 
 void Server::welcome(int fd) {
-		recv(fd, buffer, bufferSize, 0);
-		std::cout << buffer << std::endl;
-	/*
-		if (send(fd, RPL_WELCOME().c_str(),
-				 strlen(RPL_WELCOME().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_WELCOME() OK" << std::endl;
-		if (send(fd, RPL_YOURHOST().c_str(),
-				 strlen(RPL_YOURHOST().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_YOURHOST() OK" << std::endl;
-		if (send(fd, RPL_CREATED().c_str(),
-				 strlen(RPL_CREATED().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_CREATED() OK" << std::endl;
-		if (send(fd, RPL_MYINFO().c_str(),
-				 strlen(RPL_MYINFO().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_MYINFO() OK" << std::endl;
-		if (send(fd, RPL_ISUPPORT().c_str(),
-				 strlen(RPL_ISUPPORT().c_str()), MSG_CONFIRM))
-			std::cout << "RPL_ISUPPORT() OK" << std::endl;
-			*/
+	recv(fd, buffer, bufferSize, 0);
+	std::cout << buffer << std::endl;
 	send(fd, "CAP\r\n", strlen("CAP\r\n"), 0);
 	send(fd, "NICK\r\n", strlen("NICK\r\n"), 0);
 	send(fd, "USER\r\n", strlen("USER\r\n"), 0);
