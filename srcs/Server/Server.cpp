@@ -29,6 +29,7 @@ Server::~Server()
 
 void	Server::init()
 {
+	int yes = 1;
 	serverEndPoint = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverEndPoint < 0)
 	{
@@ -36,6 +37,8 @@ void	Server::init()
 		exit(1);
 	}
 	std::cout << "Server socket connection created..." << std::endl;
+
+	setsockopt(serverEndPoint, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
 
 
 	if (bind(this->serverEndPoint, (struct sockaddr *)serverAddress, sizeof(*serverAddress)) < 0)
@@ -49,6 +52,7 @@ void	Server::init()
 
 	std::cout << "Looking for clients..." << std::endl;
 	listen(serverEndPoint, 4);
+	fcntl(serverEndPoint, O_NONBLOCK);
 	pfds.push_back(pollfd());
 	pfds[0].fd = serverEndPoint;
 	pfds[0].events = POLLIN;
@@ -56,14 +60,14 @@ void	Server::init()
 }
 
 void Server::welcome(int fd, std::string client_ip) {
-		//recv(fd, buffer, bufferSize, 0);
-		//std::cout << buffer << std::endl;
+		recv(fd, buffer, bufferSize, MSG_DONTWAIT);
+		std::cout << buffer << std::endl;
 	//std::string cap = "CAP\r\n";
-	std::string nick = "NICK rcollas\r\n";
-	std::string user = "USER guest 0 * :Robin COllas\r\n";
+	//std::string nick = "NICK rcollas\r\n";
+	//std::string user = "USER guest 0 * :Robin COllas\r\n";
 	//send(fd, cap.c_str(), cap.length(), 0);
-	send(fd, nick.c_str(), nick.length(), 0);
-	send(fd, user.c_str(), user.length(), 0);
+	//send(fd, nick.c_str(), nick.length(), 0);
+	//send(fd, user.c_str(), user.length(), 0);
 	send(fd, RPL_WELCOME().c_str(),strlen(RPL_WELCOME().c_str()), 0);
 	send(fd, RPL_YOURHOST().c_str(), strlen(RPL_YOURHOST().c_str()), 0);
 	send(fd, RPL_CREATED().c_str(),strlen(RPL_CREATED().c_str()), 0);
@@ -85,6 +89,23 @@ std::string toString(char *str) {
 	return s;
 }
 
+void	checkChannelCreation(char *buffer, int fd)
+{
+	// A modifier par un parsing ou je dois avoir 2 ou 3 param + toute la gestion d'erreur
+	if (strcmp(buffer, "/JOIN vincent\n") == 0) 
+	{
+		Channel *vincent = new Channel("vincent", "0");
+		send(fd, JOINWELCOMEMESSAGE(vincent->getChannelName()).c_str(), strlen(JOINWELCOMEMESSAGE(vincent->getChannelName()).c_str()), 0);
+	}
+	else if (strcmp(buffer, "/JOIN\n") == 0) // à modifier par un parsing ou je dois avoir 2 ou 3 paramètres
+		send(fd, ERR_NEEDMOREPARAMS().c_str(),strlen(ERR_NEEDMOREPARAMS().c_str()), 0);
+}
+
+void	Server::checkChannel(char *buffer, int fd) // à enlever après parsing Robin On aura juste à checker 1 et 2 eme arg
+{
+	checkChannelCreation(buffer, fd);
+}
+
 void Server::run()
 {
 	(void)buffer;
@@ -94,7 +115,7 @@ void Server::run()
 	socklen_t sin_size;
 	std::string client_ip;
 	while (true) {
-		poll(pfds.data(), pfds.size(), 0);
+		poll(pfds.data(), pfds.size(), -1);
 		sin_size = sizeof(clientAddress);
 		for (int i = 0; i < (int)pfds.size(); i++) {
 			if (pfds[i].revents & POLLIN) {  // a socket is ready to listen
@@ -102,6 +123,7 @@ void Server::run()
 					new_fd = accept(serverEndPoint,
 									(struct sockaddr *) &clientAddress,
 									&sin_size);
+					fcntl(new_fd, O_NONBLOCK);
 					if (new_fd == -1) {
 						perror("accept");
 						continue;
@@ -112,15 +134,18 @@ void Server::run()
 					 */
 					pfds.push_back(pollfd());
 					pfds.back().fd = new_fd;
+					pfds.back().events = POLLIN;
 					client_ip = toString(inet_ntoa(
 							(get_in_addr((struct sockaddr *) &clientAddress))));
 					client_ip += "\r\n";
 					std::cout << "client IP = " << client_ip << std::endl;
 					welcome(new_fd, client_ip);
 				} else { // a client wants to communicate
-					int nbytes = recv(pfds[i].fd, buffer, bufferSize, 0);
+					std::cout << "client wants to communicate" << std::endl;
+					int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
 					int sender_fd = pfds[i].fd;
-
+					std::cout << "Receiving: " << buffer << std::endl;
+					checkChannel(buffer, new_fd); // à enlever après parsing Robin
 					if (nbytes <= 0) {
 						if (nbytes == 0) {
 							std::cout << "pollserver: socket %d hung up " << sender_fd << std::endl;
@@ -128,16 +153,18 @@ void Server::run()
 							perror("recv");
 						}
 					} else {
-						for (int j = 0; j < (int)pfds.size(); i++) {
+						for (int j = 0; j < (int)pfds.size(); j++) {
 							int dest_fd = pfds[j].fd;
 
 							if (dest_fd != serverEndPoint && dest_fd != sender_fd) {
 								if (send(dest_fd, buffer, nbytes, 0) == -1) {
 									perror("send");
 								}
+								std::cout << "Sending: " << buffer << std::endl;
 							}
 						}
 					}
+					memset(buffer, 0, bufferSize);
 				}
 
 			}

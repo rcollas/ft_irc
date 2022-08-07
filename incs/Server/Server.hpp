@@ -10,11 +10,13 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <poll.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <cstdio>
 #include <cerrno>
 #include <vector>
 #include "NumericReplies.hpp"
+#include "Channel.hpp"
 
 
 class Server {
@@ -37,7 +39,7 @@ class Server {
 		void		init();
 		void		run();
 		void		welcome(int fd, std::string client_ip);
+		void		checkChannel(char *buffer, int fd); // à enlever après parsing Robin
 };
-
 
 #endif

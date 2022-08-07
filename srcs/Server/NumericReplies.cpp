@@ -19,3 +19,16 @@ std::string RPL_MYINFO() {
 std::string	RPL_ISUPPORT() {
 	return "005 rcollas 12 :are supported by this server\r\n";
 }
+
+/***************** ERRORS NUMERICS **************/
+
+std::string	ERR_NEEDMOREPARAMS() {
+	return "461 rcollas :Not enough parameters\r\n";
+}
+
+/***************** OTHER **************/
+
+std::string	JOINWELCOMEMESSAGE(std::string channel) { // Changer le nom rcollas par le nom de user
+	std::cout << "works" << std::endl;
+	return ("rcollas is joining the channel #" + channel + "\r\n");
+}
