@@ -4,8 +4,10 @@
 
 Channel::Channel(std::string const &channelName, std::string const &key)
 {
-	this->_channelName = channelName;
-	this->_key = key;
+	this->_channelName 		= channelName;
+	this->_key				= key;
+	this->_channelJoined	= true;
+	this->_topic			= "NOT WORKING";
 	std::cout << "Constructor is called" << std::endl;
 }
 
@@ -47,4 +49,17 @@ std::string Channel::getTopic()
 	return (this->_topic);
 }
 
+bool 		Channel::getChannelJoined()
+{
+	return (this->_channelJoined);
+}
 /***************** Members functions **************/
+void		Channel::channelIsJoined()
+{
+	this->_channelJoined = true;
+}
+
+void		Channel::changeTopic(std::string topic)
+{
+	this->_topic = topic;
+}

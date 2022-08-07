@@ -26,9 +26,25 @@ std::string	ERR_NEEDMOREPARAMS() {
 	return "461 rcollas :Not enough parameters\r\n";
 }
 
+std::string	ERR_NOTONCHANNEL(std::string channelName)
+{
+	return ("rcollas " + channelName + ": no topic is set\r\n");
+}
+
 /***************** OTHER **************/
 
+/***************** CHANNEL MESSAGES **************/
+
 std::string	JOINWELCOMEMESSAGE(std::string channel) { // Changer le nom rcollas par le nom de user
-	std::cout << "works" << std::endl;
-	return ("rcollas is joining the channel #" + channel + "\r\n");
+	return ("rcollas has joined " + channel + "\r\n");
+}
+
+std::string	RPL_TOPIC(std::string channelName, std::string topic) // changer topic par ARG1 #vincent par channel name avec le nouveau parsing
+{
+	return ("TOPIC " + channelName + " " + topic + "\r\n");
+}
+
+std::string	RPL_NOTOPIC(std::string channelName)
+{
+	return ("no Topic set for " + channelName + "\r\n");
 }
