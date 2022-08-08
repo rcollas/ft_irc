@@ -1,5 +1,7 @@
 #include "../../incs/Server/Server.hpp"
 
+char Server::buffer[Server::bufferSize];
+
 Server::Server()
 :
 serverEndPoint(0),
@@ -21,11 +23,21 @@ portNum("6667")
 	}
 	serverAddress = (struct sockaddr_in *)serverinfo->ai_addr;
 	std::cout << "Server IP = " << inet_ntoa(serverAddress->sin_addr) << std::endl; //inet_ntoa convert from network byte order to IPv4 number and dots
+	this->fillAvailableCmd();
 
 }
 
 Server::~Server()
 {}
+
+void	Server::fillAvailableCmd() {
+	this->cmdList.push_back("CAP");
+	this->cmdList.push_back("PASS");
+	this->cmdList.push_back("NICK");
+	this->cmdList.push_back("USER");
+}
+
+std::vector<std::string>	&Server::getCmdList() { return this->cmdList; }
 
 void	Server::init()
 {
@@ -59,9 +71,45 @@ void	Server::init()
 
 }
 
+void	Server::cmdDispatcher(Command &cmd, User &user) {
+	switch (cmd.cmd) {
+		case (CAP): cmd.cap(cmd, user);
+		case (PASS): cmd.pass(cmd, user);
+		case (NICK): cmd.nick(cmd, user);
+		case (USER): cmd.user(cmd, user);
+	}
+}
+
+/**
+ * @brief register a new user after a connection query
+ * @param user User object used to store information (nickname, username...)
+ * parse return a struct Command containing the command stored as an int
+ * and the parameters in a vector
+ */
+
+void	Server::registration(User &user) {
+
+	std::cout << "Registration in progress..." << std::endl;
+	std::vector<std::string>	res;
+	Command						*ret;
+	sleep(1);
+	recv(user.get_fd(), buffer, bufferSize, MSG_DONTWAIT);
+	res = split(buffer, " \r\n");
+	memset(buffer, 0, bufferSize);
+	for (int i = 0; i < 4; i++) {
+		ret = parse(res, user.servInfo->getCmdList());
+		user.addCmd(*ret);
+		printCmd(*ret);
+	}
+	while (user.getCmdList().empty() == false) {
+		Server::cmdDispatcher(user.getCmdList().front(), user);
+		user.getCmdList().erase(user.getCmdList().begin());
+	}
+	std::cout << user << std::endl;
+	std::cout << "Registration complete!" << std::endl;
+}
+
 void Server::welcome(int fd, std::string client_ip) {
-		recv(fd, buffer, bufferSize, MSG_DONTWAIT);
-		std::cout << buffer << std::endl;
 	//std::string cap = "CAP\r\n";
 	std::string nick = "NICK rcollas\r\n";
 	std::string user = "USER guest 0 * :Robin COllas\r\n";
@@ -77,52 +125,23 @@ void Server::welcome(int fd, std::string client_ip) {
 	(void)client_ip;
 }
 
-struct in_addr get_in_addr(struct sockaddr *sa) {
-	return ((struct sockaddr_in *)sa)->sin_addr;
-}
 
-std::string toString(char *str) {
-	std::string s;
-	while (*str) {
-		s += *str++;
-	}
-	return s;
-}
 
 void Server::run()
 {
 	(void)buffer;
 	(void)socketSize;
-	struct sockaddr_storage clientAddress;
-	int new_fd;
-	socklen_t sin_size;
-	std::string client_ip;
 	while (true) {
+
 		poll(pfds.data(), pfds.size(), -1);
-		sin_size = sizeof(clientAddress);
-		for (int i = 0; i < (int)pfds.size(); i++) {
-			if (pfds[i].revents & POLLIN) {  // a socket is ready to listen
+
+		for (int i = 0; i < (int)pfds.size(); i++)
+		{
+			if (pfds[i].revents & POLLIN)
+			{  // a socket is ready to listen
 				if (pfds[i].fd == serverEndPoint) {  // the socket is the entrepoint: new connection is requested
-					new_fd = accept(serverEndPoint,
-									(struct sockaddr *) &clientAddress,
-									&sin_size);
-					fcntl(new_fd, O_NONBLOCK);
-					if (new_fd == -1) {
-						perror("accept");
-						continue;
-					}
-					/**
-					 * @brief add a new pollfd to pfds. The poll struct's fd is set to new_fd (new client socket)
-					 * we then greet the client with a welcome and show him his ip
-					 */
-					pfds.push_back(pollfd());
-					pfds.back().fd = new_fd;
-					pfds.back().events = POLLIN;
-					client_ip = toString(inet_ntoa(
-							(get_in_addr((struct sockaddr *) &clientAddress))));
-					client_ip += "\r\n";
-					std::cout << "client IP = " << client_ip << std::endl;
-					welcome(new_fd, client_ip);
+					User new_user(pfds, serverEndPoint, this);
+					user_list.insert(std::pair<std::string, User>("Robin", new_user));
 				} else { // a client wants to communicate
 					std::cout << "client wants to communicate" << std::endl;
 					int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
@@ -132,17 +151,20 @@ void Server::run()
 					if (nbytes <= 0) {
 						if (nbytes == 0) {
 							std::cout << "pollserver: socket %d hung up " << sender_fd << std::endl;
+							user_list.erase(user_list.find("Robin"));
+							pfds[i].fd = -1;
 						} else {
 							perror("recv");
 						}
 					} else {
-						for (int j = 0; j < (int)pfds.size(); j++) {
+						for (int j = 0; j < (int)pfds.size(); j++)
+						{
 							int dest_fd = pfds[j].fd;
 
-							if (dest_fd != serverEndPoint && dest_fd != sender_fd) {
-								if (send(dest_fd, buffer, nbytes, 0) == -1) {
+							if (dest_fd != serverEndPoint && dest_fd != sender_fd)
+							{
+								if (send(dest_fd, buffer, nbytes, 0) == -1)
 									perror("send");
-								}
 								std::cout << "Sending: " << buffer << std::endl;
 							}
 						}
@@ -152,13 +174,6 @@ void Server::run()
 
 			}
 		}
-		/**
-		 * @brief to try it, open a terminal and type the following cmd : telnet localhost 6667
-		 * you'll see:
-		 * "hello"
-		 * "127.0.0.1"
-		 */
-
 	}
 
 	for (int i = 0; (int)pfds.size(); i++) {

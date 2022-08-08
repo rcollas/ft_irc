@@ -1,8 +1,11 @@
 NAME		=	ft_irc
 
 SRC_FILES 	=	main.cpp \
+				Parser.cpp \
 				Server/Server.cpp \
 				Server/NumericReplies.cpp \
+				Server/Command.cpp \
+				User/User.cpp \
 
 OBJS_DIR	=	objs
 
@@ -12,6 +15,7 @@ INC_DIR		=	./incs/
 
 INC_FILES	=	Server/Server.hpp \
 				Server/NumericReplies.hpp \
+				User/User.hpp \
 
 OBJS		=	$(addprefix $(OBJS_DIR)/, $(SRC_FILES:.cpp=.o))
 
