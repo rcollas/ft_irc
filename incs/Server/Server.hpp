@@ -16,6 +16,7 @@
 #include <cerrno>
 #include <vector>
 #include "NumericReplies.hpp"
+#include "../Commands/Commands.hpp"
 
 
 class Server {

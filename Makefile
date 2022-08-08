@@ -4,6 +4,7 @@ SRC_FILES 	=	main.cpp \
 				Server/Server.cpp \
 				Server/NumericReplies.cpp \
 				Commands/Commands.cpp \
+				Commands/MOTD.cpp \
 
 OBJS_DIR	=	objs
 
