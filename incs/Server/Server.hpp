@@ -28,7 +28,7 @@ class Server {
 		struct sockaddr_in			*serverAddress;
 		std::vector<pollfd>			pfds;
 		std::string 				hostname;
-		std::map<std::string, User>	user_list;
+		std::map<int, User>			user_list;
 		std::vector<std::string>	cmdList;
 
 		void	fillAvailableCmd();
@@ -39,7 +39,12 @@ class Server {
 
 		void			init();
 		void			run();
+
+		void			handleClientRequest(int i);
+		void			sendToAll(int senderFd, int nbytes);
+
 		std::vector<std::string>	&getCmdList();
+
 		static void		registration(User &user);
 		static void		welcome(int fd, std::string client_ip);
 		static void		cmdDispatcher(Command &cmd, User &user);

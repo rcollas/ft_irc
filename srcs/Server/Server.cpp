@@ -2,6 +2,14 @@
 
 char Server::buffer[Server::bufferSize];
 
+void	Server::fillAvailableCmd() {
+	this->cmdList.push_back("CAP");
+	this->cmdList.push_back("PASS");
+	this->cmdList.push_back("NICK");
+	this->cmdList.push_back("USER");
+	this->cmdList.push_back("QUIT");
+}
+
 Server::Server()
 :
 serverEndPoint(0),
@@ -27,15 +35,7 @@ portNum("6667")
 
 }
 
-Server::~Server()
-{}
-
-void	Server::fillAvailableCmd() {
-	this->cmdList.push_back("CAP");
-	this->cmdList.push_back("PASS");
-	this->cmdList.push_back("NICK");
-	this->cmdList.push_back("USER");
-}
+Server::~Server() {}
 
 std::vector<std::string>	&Server::getCmdList() { return this->cmdList; }
 
@@ -125,53 +125,71 @@ void Server::welcome(int fd, std::string client_ip) {
 	(void)client_ip;
 }
 
+/**
+ * @brief send a msg received from senderFd to all the clients on the server
+ * @param senderFd the file descriptor of the sender
+ * @param nbytes the number of bytes received from the sender
+ */
 
+void	Server::sendToAll(int senderFd, int nbytes) {
+
+	for (int j = 0; j < (int)pfds.size(); j++)
+	{
+		int dest_fd = pfds[j].fd;
+
+		if (dest_fd != serverEndPoint && dest_fd != senderFd)
+		{
+			if (send(dest_fd, buffer, nbytes, 0) == -1)
+				perror("send");
+			std::cout << "Sending: " << buffer << std::endl;
+		}
+	}
+}
+
+void	Server::handleClientRequest(int i) {
+
+	std::cout << "client wants to communicate" << std::endl;
+	int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
+	int senderFd = pfds[i].fd;
+	std::cout << "Receiving: " << buffer << std::endl;
+
+	if (nbytes <= 0) {
+		if (nbytes == 0) {
+			std::cout << "pollserver: socket %d hung up " << senderFd << std::endl;
+			user_list.erase(user_list.find(pfds[i].fd));
+			pfds.erase(pfds.begin() + i);
+		} else {
+			perror("recv");
+		}
+	} else {
+		this->sendToAll(senderFd, nbytes);
+	}
+	memset(buffer, 0, bufferSize);
+}
+
+/**
+ * @brief run handles connection and client's requests
+ * @details the poll function is used to check the state of the open sockets using poll and the struct pollfd
+ * if a client wants to communicate, pfds.revent is set accordingly (POLLIN for writing, POLLOUT for reading)
+ * if the pfds.fd correspond to the serverEndpoint, a new connection is requested
+ */
 
 void Server::run()
 {
-	(void)buffer;
-	(void)socketSize;
 	while (true) {
 
 		poll(pfds.data(), pfds.size(), -1);
 
 		for (int i = 0; i < (int)pfds.size(); i++)
 		{
-			if (pfds[i].revents & POLLIN)
-			{  // a socket is ready to listen
+			if (pfds[i].revents & POLLIN) // a socket is ready to listen
+			{
 				if (pfds[i].fd == serverEndPoint) {  // the socket is the entrepoint: new connection is requested
 					User new_user(pfds, serverEndPoint, this);
-					user_list.insert(std::pair<std::string, User>("Robin", new_user));
+					user_list.insert(std::pair<int, User>(new_user.get_fd(), new_user));
 				} else { // a client wants to communicate
-					std::cout << "client wants to communicate" << std::endl;
-					int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
-					int sender_fd = pfds[i].fd;
-					std::cout << "Receiving: " << buffer << std::endl;
-
-					if (nbytes <= 0) {
-						if (nbytes == 0) {
-							std::cout << "pollserver: socket %d hung up " << sender_fd << std::endl;
-							user_list.erase(user_list.find("Robin"));
-							pfds[i].fd = -1;
-						} else {
-							perror("recv");
-						}
-					} else {
-						for (int j = 0; j < (int)pfds.size(); j++)
-						{
-							int dest_fd = pfds[j].fd;
-
-							if (dest_fd != serverEndPoint && dest_fd != sender_fd)
-							{
-								if (send(dest_fd, buffer, nbytes, 0) == -1)
-									perror("send");
-								std::cout << "Sending: " << buffer << std::endl;
-							}
-						}
-					}
-					memset(buffer, 0, bufferSize);
+					this->handleClientRequest(i);
 				}
-
 			}
 		}
 	}
