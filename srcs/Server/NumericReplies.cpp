@@ -19,3 +19,11 @@ std::string RPL_MYINFO() {
 std::string	RPL_ISUPPORT() {
 	return "005 rcollas 12 :are supported by this server\r\n";
 }
+
+std::string RPL_MOTDSTART(std::string client, std::string server) {
+	return (client + ":- "+ server +" Message of the day -\r\n");
+}
+
+std::string RPL_MOTD() {
+	return "Welcome on our server!\n Enjoy your stay :)\r\n";
+}
