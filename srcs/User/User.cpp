@@ -30,7 +30,7 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 	}
 	/**
 	 * @brief add a new pollfd to pfds. The poll struct's fd is set to fd (new client socket)
-	 * we then greet the client with a welcome and show him his ip
+	 * we then greet the client with a set of numeric replies and show him his ip
 	 */
 	pfds.push_back(pollfd());
 	pfds.back().fd = fd;
@@ -40,7 +40,7 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 	client_ip += "\r\n";
 	std::cout << "client IP = " << client_ip << std::endl;
 	Server::registration(*this);
-	Server::welcome(fd, client_ip);
+	Server::welcome(*this);
 }
 
 User::~User() {}

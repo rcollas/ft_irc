@@ -46,7 +46,7 @@ class Server {
 		std::vector<std::string>	&getCmdList();
 
 		static void		registration(User &user);
-		static void		welcome(int fd, std::string client_ip);
+		static void		welcome(User &user);
 		static void		cmdDispatcher(Command &cmd, User &user);
 };
 

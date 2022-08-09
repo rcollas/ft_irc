@@ -61,7 +61,6 @@ void	Server::init()
 	}
 	socketSize = sizeof(*serverAddress);
 
-
 	std::cout << "Looking for clients..." << std::endl;
 	listen(serverEndPoint, 4);
 	fcntl(serverEndPoint, O_NONBLOCK);
@@ -109,20 +108,19 @@ void	Server::registration(User &user) {
 	std::cout << "Registration complete!" << std::endl;
 }
 
-void Server::welcome(int fd, std::string client_ip) {
-	//std::string cap = "CAP\r\n";
-	std::string nick = "NICK rcollas\r\n";
-	std::string user = "USER guest 0 * :Robin COllas\r\n";
-	//send(fd, cap.c_str(), cap.length(), 0);
-	send(fd, nick.c_str(), nick.length(), 0);
-	send(fd, user.c_str(), user.length(), 0);
-	send(fd, RPL_WELCOME().c_str(),strlen(RPL_WELCOME().c_str()), 0);
-	send(fd, RPL_YOURHOST().c_str(), strlen(RPL_YOURHOST().c_str()), 0);
-	send(fd, RPL_CREATED().c_str(),strlen(RPL_CREATED().c_str()), 0);
-	send(fd, RPL_MYINFO().c_str(),strlen(RPL_MYINFO().c_str()), 0);
-	send(fd, RPL_ISUPPORT().c_str(),strlen(RPL_ISUPPORT().c_str()), 0);
-	//send(fd, "CAP\r\n", strlen("CAP\r\n"), 0);
-	(void)client_ip;
+/**
+ * @brief if the registration succeed, a set of numeric replies is sent to the clien
+ * @param user used to retrieve user's information
+ * @details numeric replies can be found in incs/Server/NumericReplies.hpp
+ */
+
+void Server::welcome(User &user) {
+
+	sendMsg(user.get_fd(), RPL_WELCOME("localhost", user.getNickName(), user.getUserName()));
+	send(user.get_fd(), RPL_YOURHOST().c_str(), RPL_YOURHOST().length(), 0);
+	send(user.get_fd(), RPL_CREATED().c_str(),strlen(RPL_CREATED().c_str()), 0);
+	send(user.get_fd(), RPL_MYINFO().c_str(),strlen(RPL_MYINFO().c_str()), 0);
+	send(user.get_fd(), RPL_ISUPPORT().c_str(),strlen(RPL_ISUPPORT().c_str()), 0);
 }
 
 /**
@@ -145,6 +143,12 @@ void	Server::sendToAll(int senderFd, int nbytes) {
 		}
 	}
 }
+
+/**
+ * @brief receive the client's request and either close the connection,
+ * handle the request command or send a message to all the other users
+ * @param i used to retrieve the pollfd struct of the sending client
+ */
 
 void	Server::handleClientRequest(int i) {
 
