@@ -1,6 +1,6 @@
 #include "../../incs/Commands/Commands.hpp"
 
-/******************************************************************************/
+        /******************************************************************************/
         /*                                   0**                                      */
         /******************************************************************************/
         std::string RPL_WELCOME(std::string prefix) { return ":Welcome to the Internet Relay Network " + prefix; }
@@ -237,7 +237,6 @@ std::string getReplies(unsigned short code, std::string arg1, std::string arg2, 
 		return target + RPL_TRACEEND(arg1, arg2);
 	case 263:
 		return target + RPL_TRYAGAIN(arg1);
-
 	case 300:
 		return target + RPL_NONE();
 	/*case 301:
@@ -334,7 +333,6 @@ std::string getReplies(unsigned short code, std::string arg1, std::string arg2, 
 		return target + RPL_ENDOFUSERS();
 	case 395:
 		return target + RPL_NOUSERS();
-
 	case 401:
 		return target + ERR_NOSUCHNICK(arg1);
 	case 402:
@@ -393,7 +391,6 @@ std::string getReplies(unsigned short code, std::string arg1, std::string arg2, 
 		return target + ERR_USERSDISABLED();
 	case 451:
 		return target + ERR_NOTREGISTERED();
-
 	case 461:
 		return target + ERR_NEEDMOREPARAMS(arg1);
 	case 462:
@@ -434,7 +431,6 @@ std::string getReplies(unsigned short code, std::string arg1, std::string arg2, 
 		return target + ERR_UNIQOPPRIVSNEEDED();
 	case 491:
 		return target + ERR_NOOPERHOST();
-
 	case 501:
 		return target + ERR_UMODEUNKNOWNFLAG();
 	case 502:
