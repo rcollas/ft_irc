@@ -24,7 +24,6 @@ class Commands {
 	public:
 		Commands() {};
 		~Commands() {};
-        std::string RPL_MOTDSTART(std::string server);
 
 };
 

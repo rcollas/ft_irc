@@ -48,11 +48,11 @@
         /*                                   3**                                      */
         /******************************************************************************/
         std::string RPL_NONE() { return ""; }
-        std::string RPL_AWAY(std::string nick, std::string message) { return nick + " :" + message; }
+        //std::string RPL_AWAY(std::string nick, std::string message) { return nick + " :" + message; }
         std::string RPL_USERHOST(std::string reply_list) { return ":" + reply_list; }
         std::string RPL_ISON(std::string nick_list) { return ":" + nick_list; }
-        std::string RPL_UNAWAY() { return ":You are no longer marked as being away"; }
-        std::string RPL_NOWAWAY() { return ":You have been marked as being away"; }
+        //std::string RPL_UNAWAY() { return ":You are no longer marked as being away"; }
+        //std::string RPL_NOWAWAY() { return ":You have been marked as being away"; }
         std::string RPL_WHOISUSER(std::string nick, std::string user, std::string host, std::string real) { return nick + " " + user + " " + host + " * :" + real; }
         std::string RPL_WHOISSERVER(std::string nick, std::string server, std::string info) { return nick + " " + server + " :" + info; }
         std::string RPL_WHOISOPERATOR(std::string nick) { return nick + " :is an IRC operator"; }
@@ -153,3 +153,294 @@
         /*                                   5**                                      */
         /******************************************************************************/
         std::string ERR_USERSDONTMATCH() { return ":Cant change mode for other users"; }
+
+std::string getReplies(unsigned short code, std::string arg1, std::string arg2, std::string arg3, std::string arg4, std::string arg5, std::string arg6, std::string arg7)
+{
+	std::string target;
+	target = "arolland";
+
+	switch (code)
+	{
+	case 001:
+		return target + RPL_WELCOME(arg1);
+	case 002:
+		return target + RPL_YOURHOST(arg1, arg2);
+	case 003:
+		return target + RPL_CREATED(arg1);
+	case 004:
+		return target + RPL_MYINFO(arg1, arg2, arg3, arg4);
+	case 005:
+		return target + RPL_BOUNCE(arg1, arg2);
+	case 200:
+		return target + RPL_TRACELINK(arg1, arg2, arg3);
+	case 201:
+		return target + RPL_TRACECONNECTING(arg1, arg2);
+	case 202:
+		return target + RPL_TRACEHANDSHAKE(arg1, arg2);
+	case 203:
+		return target + RPL_TRACEUNKNOWN(arg1, arg2);
+	case 204:
+		return target + RPL_TRACEOPERATOR(arg1, arg2);
+	case 205:
+		return target + RPL_TRACEUSER(arg1, arg2);
+	case 206:
+		return target + RPL_TRACESERVER(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+	case 208:
+		return target + RPL_TRACENEWTYPE(arg1, arg2);
+	case 211:
+		return target + RPL_STATSLINKINFO(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+	case 212:
+		return target + RPL_STATSCOMMANDS(arg1, arg2);
+	case 213:
+		return target + RPL_STATSCLINE(arg1, arg2, arg3, arg4);
+	case 214:
+		return target + RPL_STATSNLINE(arg1, arg2, arg3, arg4);
+	case 215:
+		return target + RPL_STATSILINE(arg1, arg2, arg3, arg4);
+	case 216:
+		return target + RPL_STATSKLINE(arg1, arg2, arg3, arg4);
+	case 218:
+		return target + RPL_STATSYLINE(arg1, arg2, arg3, arg4);
+	case 219:
+		return target + RPL_ENDOFSTATS(arg1);
+	case 221:
+		return target + RPL_UMODEIS(arg1);
+	case 241:
+		return target + RPL_STATSLLINE(arg1, arg2, arg3);
+	case 242:
+		return target + RPL_STATSUPTIME();
+	case 243:
+		return target + RPL_STATSOLINE(arg1, arg2);
+	case 244:
+		return target + RPL_STATSHLINE(arg1, arg2);
+	case 251:
+		return target + RPL_LUSERCLIENT(arg1, arg2, arg3);
+	case 252:
+		return target + RPL_LUSEROP(arg1);
+	case 253:
+		return target + RPL_LUSERUNKNOWN(arg1);
+	case 254:
+		return target + RPL_LUSERCHANNELS(arg1);
+	case 255:
+		return target + RPL_LUSERME(arg1, arg2);
+	case 256:
+		return target + RPL_ADMINME(arg1);
+	case 257:
+		return target + RPL_ADMINLOC1(arg1);
+	case 258:
+		return target + RPL_ADMINLOC2(arg1);
+	case 259:
+		return target + RPL_ADMINEMAIL(arg1);
+	case 261:
+		return target + RPL_TRACELOG(arg1, arg2);
+	case 262:
+		return target + RPL_TRACEEND(arg1, arg2);
+	case 263:
+		return target + RPL_TRYAGAIN(arg1);
+
+	case 300:
+		return target + RPL_NONE();
+	/*case 301:
+		return target + RPL_AWAY(arg1, arg2);*/
+	case 302:
+		return target + RPL_USERHOST(arg1);
+	case 303:
+		return target + RPL_ISON(arg1);
+	/*case 305:
+		return target + RPL_UNAWAY();
+	case 306:
+		return target + RPL_NOWAWAY();*/
+	case 311:
+		return target + RPL_WHOISUSER(arg1, arg2, arg3, arg4);
+	case 312:
+		return target + RPL_WHOISSERVER(arg1, arg2, arg3);
+	case 313:
+		return target + RPL_WHOISOPERATOR(arg1);
+	case 314:
+		return target + RPL_WHOWASUSER(arg1, arg2, arg3, arg4);
+	case 315:
+		return target + RPL_ENDOFWHO(arg1);
+	case 317:
+		return target + RPL_WHOISIDLE(arg1, arg2);
+	case 318:
+		return target + RPL_ENDOFWHOIS(arg1);
+	case 319:
+		return target + RPL_WHOISCHANNELS(arg1, arg2);
+	case 321:
+		return target + RPL_LISTSTART();
+	case 322:
+		return target + RPL_LIST(arg1, arg2, arg3);
+	case 323:
+		return target + RPL_LISTEND();
+	case 324:
+		return target + RPL_CHANNELMODEIS(arg1, arg2, arg3);
+	case 325:
+		return target + RPL_UNIQOPIS(arg1, arg2);
+	case 331:
+		return target + RPL_NOTOPIC(arg1);
+	case 332:
+		return target + RPL_TOPIC(arg1, arg2);
+	case 341:
+		return target + RPL_INVITING(arg1, arg2);
+	case 342:
+		return target + RPL_SUMMONING(arg1);
+	case 346:
+		return target + RPL_INVITELIST(arg1, arg2);
+	case 347:
+		return target + RPL_ENDOFINVITELIST(arg1);
+	case 348:
+		return target + RPL_EXCEPTLIST(arg1, arg2);
+	case 351:
+		return target + RPL_VERSION(arg1, arg2, arg3);
+	case 352:
+		return target + RPL_WHOREPLY(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+	case 353:
+		return target + RPL_NAMREPLY(arg1, arg2, arg3);
+	case 364:
+		return target + RPL_LINKS(arg1, arg2, arg3, arg4);
+	case 365:
+		return target + RPL_ENDOFLINKS(arg1);
+	case 366:
+		return target + RPL_ENDOFNAMES(arg1);
+	case 367:
+		return target + RPL_BANLIST(arg1, arg2);
+	case 368:
+		return target + RPL_ENDOFBANLIST(arg1);
+	case 369:
+		return target + RPL_ENDOFWHOWAS(arg1);
+	case 371:
+		return target + RPL_INFO(arg1);
+	/*case 372:
+		return target + RPL_MOTD(arg1);*/
+	case 374:
+		return target + RPL_ENDOFINFO();
+	/*case 375:
+		return target + RPL_MOTDSTART(arg1);
+	case 376:
+		return target + RPL_ENDOFMOTD();*/
+	case 381:
+		return target + RPL_YOUREOPER();
+	case 382:
+		return target + RPL_REHASHING(arg1);
+	case 383:
+		return target + RPL_YOURESERVICE(arg1);
+	case 391:
+		return target + RPL_TIME(arg1, arg2);
+	case 392:
+		return target + RPL_USERSSTART();
+	case 393:
+		return target + RPL_USERS();
+	case 394:
+		return target + RPL_ENDOFUSERS();
+	case 395:
+		return target + RPL_NOUSERS();
+
+	case 401:
+		return target + ERR_NOSUCHNICK(arg1);
+	case 402:
+		return target + ERR_NOSUCHSERVER(arg1);
+	case 403:
+		return target + ERR_NOSUCHCHANNEL(arg1);
+	case 404:
+		return target + ERR_CANNOTSENDTOCHAN(arg1);
+	case 405:
+		return target + ERR_TOOMANYCHANNELS(arg1);
+	case 406:
+		return target + ERR_WASNOSUCHNICK(arg1);
+	case 407:
+		return target + ERR_TOOMANYTARGETS(arg1);
+	case 408:
+		return target + ERR_NOSUCHSERVICE(arg1);
+	case 409:
+		return target + ERR_NOORIGIN();
+	case 411:
+		return target + ERR_NORECIPIENT(arg1);
+	case 412:
+		return target + ERR_NOTEXTTOSEND();
+	case 413:
+		return target + ERR_NOTOPLEVEL(arg1);
+	case 414:
+		return target + ERR_WILDTOPLEVEL(arg1);
+	case 415:
+		return target + ERR_BADMASK(arg1);
+	case 421:
+		return target + ERR_UNKNOWNCOMMAND(arg1);
+	case 422:
+		return target + ERR_NOMOTD();
+	case 423:
+		return target + ERR_NOADMININFO(arg1);
+	case 424:
+		return target + ERR_FILEERROR(arg1, arg2);
+	case 431:
+		return target + ERR_NONICKNAMEGIVEN();
+	case 432:
+		return target + ERR_ERRONEUSNICKNAME(arg1);
+	case 433:
+		return target + ERR_NICKNAMEINUSE(arg1);
+	case 436:
+		return target + ERR_NICKCOLLISION(arg1);
+	case 441:
+		return target + ERR_USERNOTINCHANNEL(arg1, arg2);
+	case 442:
+		return target + ERR_NOTONCHANNEL(arg1);
+	case 443:
+		return target + ERR_USERONCHANNEL(arg1, arg2);
+	case 444:
+		return target + ERR_NOLOGIN(arg1);
+	case 445:
+		return target + ERR_SUMMONDISABLED();
+	case 446:
+		return target + ERR_USERSDISABLED();
+	case 451:
+		return target + ERR_NOTREGISTERED();
+
+	case 461:
+		return target + ERR_NEEDMOREPARAMS(arg1);
+	case 462:
+		return target + ERR_ALREADYREGISTRED();
+	case 463:
+		return target + ERR_NOPERMFORHOST();
+	case 464:
+		return target + ERR_PASSWDMISMATCH();
+	case 465:
+		return target + ERR_YOUREBANNEDCREEP();
+	case 467:
+		return target + ERR_KEYSET(arg1);
+	case 471:
+		return target + ERR_CHANNELISFULL(arg1);
+	case 472:
+		return target + ERR_UNKNOWNMODE(arg1);
+	case 473:
+		return target + ERR_INVITEONLYCHAN(arg1);
+	case 474:
+		return target + ERR_BANNEDFROMCHAN(arg1);
+	case 475:
+		return target + ERR_BADCHANNELKEY(arg1);
+	case 476:
+		return target + ERR_BADCHANMASK(arg1);
+	case 477:
+		return target + ERR_NOCHANMODES(arg1);
+	case 478:
+		return target + ERR_BANLISTFULL(arg1);
+	case 481:
+		return target + ERR_NOPRIVILEGES();
+	case 482:
+		return target + ERR_CHANOPRIVSNEEDED(arg1);
+	case 483:
+		return target + ERR_CANTKILLSERVER();
+	case 484:
+		return target + ERR_RESTRICTED();
+	case 485:
+		return target + ERR_UNIQOPPRIVSNEEDED();
+	case 491:
+		return target + ERR_NOOPERHOST();
+
+	case 501:
+		return target + ERR_UMODEUNKNOWNFLAG();
+	case 502:
+		return target + ERR_USERSDONTMATCH();
+
+	default:
+		return std::string();
+	}
+}

@@ -107,6 +107,28 @@ std::string RPL_ENDOFMOTD()
 	return (": End of /MOTD command\r\n");
 }
 
+std::string RPL_UNAWAY()
+{
+	return (  "<client> :You are no longer marked as being away");
+}
+
+std::string RPL_NOWAWAY()
+{
+	return ( "<client> You have been marked as being away\r\n");
+}
+
+std::string RPL_AWAY(char *buffer)
+{
+	if (strcmp(buffer, "AWAY\r\n") == 0)
+	{
+		return (RPL_UNAWAY());
+	}
+	if (strcmp(buffer, "AWAY :Je suis afk\r\n") == 0)
+	{
+		return (RPL_NOWAWAY() + "Je suis afk\r\n");
+	}
+	return ("Command not found\r\n");
+}
 
 void Server::run()
 {
@@ -149,9 +171,13 @@ void Server::run()
 					std::cout << "Receiving: " << buffer << std::endl;
 					if (strcmp(buffer, "motd\r\n") == 0)
 					{
-						std::cout << RPL_MOTDSTART("localhost");
-						std::cout << RPL_MOTD();
-						std::cout << RPL_ENDOFMOTD();
+						send(new_fd, RPL_MOTDSTART("localhost").c_str(), strlen(RPL_MOTDSTART("localhost").c_str()), 0);
+						send(new_fd, RPL_MOTD().c_str(), strlen(RPL_MOTD().c_str()), 0);
+						send(new_fd, RPL_ENDOFMOTD().c_str(), strlen(RPL_ENDOFMOTD().c_str()), 0);
+					}
+					if (strcmp(buffer, "AWAY :Je suis afk\r\n") == 0)
+					{
+						send(new_fd, RPL_AWAY(buffer).c_str(), strlen(RPL_AWAY(buffer).c_str()), 0);
 					}
 					if (nbytes <= 0) {
 						if (nbytes == 0) {
