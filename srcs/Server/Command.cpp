@@ -29,3 +29,11 @@ void	Command::user(Command &command, User &user) {
 		user.set_username(command.params[0]);
 	}
 }
+
+void	Command::motd(Command &command, User &user) {
+
+}
+
+void	Command::away(Command &command, User &user) {
+
+}

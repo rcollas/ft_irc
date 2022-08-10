@@ -28,6 +28,8 @@ struct Command {
 	void	pass(Command &cmd, User &user);
 	void	nick(Command &cmd, User &user);
 	void	user(Command &cmd, User &user);
+	void	motd(Command &cmd, User &user);
+	void	away(Command &cmd, User &user);
 };
 
 

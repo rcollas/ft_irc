@@ -76,6 +76,8 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (PASS): cmd.pass(cmd, user);
 		case (NICK): cmd.nick(cmd, user);
 		case (USER): cmd.user(cmd, user);
+		case (MOTD): cmd.motd(cmd, user);
+		case (AWAY): cmd.away(cmd, user);
 	}
 }
 
