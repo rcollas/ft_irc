@@ -26,6 +26,7 @@ class User {
 		int							fd;
 		std::vector<Command>		cmds;
 		struct sockaddr_storage		socket;
+		std::vector<Channel *>		activeChan;
 
 	public:
 		User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo);
@@ -44,6 +45,7 @@ class User {
 		std::string	getUserName() const;
 
 		void	addCmd(Command &cmd);
+		void	addChan(Channel *chan);
 		std::vector<Command>	&getCmdList();
 };
 

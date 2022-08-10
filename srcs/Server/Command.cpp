@@ -20,6 +20,7 @@ void	Command::nick(Command &command, User &user) {
 	}
 }
 
+
 void	Command::user(Command &command, User &user) {
 	std::string msg = "USER " + user.getUserName() + "\r\n";
 	if (user.getUserName().empty() == false) {

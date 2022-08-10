@@ -19,6 +19,7 @@
 
 #include "Server/Server.hpp"
 #include "User/User.hpp"
+#include "Server/Channel.hpp"
 
 struct Command {
 	int							cmd;

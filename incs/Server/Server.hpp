@@ -20,17 +20,18 @@ struct Command;
 class Server {
 
 	private:
-		int							serverEndPoint;
-		socklen_t 					socketSize;
-		std::string					portNum;
-		static const int			bufferSize = 4096;
-		static char					buffer[bufferSize];
-		struct addrinfo				*serverinfo;
-		struct sockaddr_in			*serverAddress;
-		std::vector<pollfd>			pfds;
-		std::string 				hostname;
-		std::map<int, User>			user_list;
-		std::vector<std::string>	cmdList;
+		int									serverEndPoint;
+		socklen_t 							socketSize;
+		std::string							portNum;
+		static const int					bufferSize = 4096;
+		static char							buffer[bufferSize];
+		struct addrinfo						*serverinfo;
+		struct sockaddr_in					*serverAddress;
+		std::vector<pollfd>					pfds;
+		std::string 						hostname;
+		std::map<int, User>					user_list;
+		std::vector<std::string>			cmdList;
+		std::map<std::string, Channel *>	allChan;
 
 		void	fillAvailableCmd();
 
@@ -43,6 +44,8 @@ class Server {
 
 		void			handleClientRequest(int i);
 		void			sendToAll(int senderFd, int nbytes);
+
+		void			addChannel(Channel * chan);
 
 		std::vector<std::string>	&getCmdList();
 
