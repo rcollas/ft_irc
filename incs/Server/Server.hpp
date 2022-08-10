@@ -11,6 +11,7 @@ enum cmd {
 	PASS		= 1,
 	NICK		= 2,
 	USER		= 3,
+	JOIN		= 4,
 };
 
 class User;

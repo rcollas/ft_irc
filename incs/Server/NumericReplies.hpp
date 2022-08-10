@@ -13,8 +13,12 @@ std::string	RPL_MYINFO();
 std::string RPL_ISUPPORT();
 
 #define str(param) std::string(param)
+
 #define RPL_WELCOME(host, nick, user) ("001 " + str(nick) + " :Welcome to the " \
 										+ str(host) + " network, " + str(nick) \
 										+ "[!" + str(user) + "@" + str(host) + "]\r\n")
+
+
+
 
 #endif
