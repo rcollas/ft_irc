@@ -4,6 +4,7 @@ SRC_FILES 	=	main.cpp \
 				Server/Server.cpp \
 				Server/NumericReplies.cpp \
 				Server/Channel.cpp \
+				Server/ChannelServer.cpp \
 
 OBJS_DIR	=	objs
 
