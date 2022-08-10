@@ -2,6 +2,9 @@
 #define FT_IRC_USER_HPP
 
 #include <iostream>
+#include "../../incs/ft_irc.h"
+#include "../../incs/Server/Server.hpp"
+#include "Server/Server.hpp"
 
 /*
  * Check if registration is complete
@@ -12,17 +15,37 @@
  * ex: JOIN cmd, a join message, RPL_TOPIC, RPL_NAMEPLY...
  */
 
+class Server;
+struct Command;
+
 class User {
 
 	private:
-		std::string	nick_name;
-		std::string	user_name;
-		std::string	real_name;
+		std::string					nick_name;
+		std::string					user_name;
+		std::string					real_name;
+		int							fd;
+		std::vector<Command>		cmds;
+		struct sockaddr_storage		socket;
 
 	public:
-		User() {};
-		~User() {};
+		User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo);
+		~User();
+
+		Server					*servInfo;
+
+		void	fill_information();
+		int		get_fd();
+		void	set_username(std::string username);
+		void	set_nickname(std::string nickname);
+		std::string	getNickName() const;
+		std::string	getUserName() const;
+
+		void	addCmd(Command &cmd);
+		std::vector<Command>	&getCmdList();
 };
+
+std::ostream &operator<<(std::ostream &out, User &user);
 
 
 #endif
