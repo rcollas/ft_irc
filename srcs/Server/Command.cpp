@@ -31,13 +31,23 @@ void	Command::user(Command &command, User &user) {
 	}
 }
 
-/*void	Command::motd(Command &command, User &user) {
-
+void	Command::motd(Command &command, User &user) {
+	std::cout << "salut\n";
+	if (command.params[0].empty()) {
+		sendMsg(user.get_fd(), RPL_MOTDSTART(user.getNickName(), "localhost"));
+		sendMsg(user.get_fd(), RPL_MOTD(user.getNickName(), "Welcooooooooooome at home!"));
+		sendMsg(user.get_fd(), RPL_ENDOFMOTD(user.getNickName()));
+	}
 }
 
 void	Command::away(Command &command, User &user) {
-
-}*/
+	if (command.params[0].empty())
+		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));
+	if (command.params[0].length()){
+		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
+		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
+	}
+}
 /***************** CHANNEL COMMAND **************/
 
 void	Command::join(Command &command, User &user) {

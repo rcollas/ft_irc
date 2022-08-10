@@ -27,6 +27,9 @@ enum cmd {
 	NICK		= 2,
 	USER		= 3,
 	JOIN		= 4,
+	QUIT		= 5,
+	MOTD		= 6,
+	AWAY		= 7,
 };
 
 class User;
