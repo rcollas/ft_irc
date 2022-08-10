@@ -29,6 +29,7 @@ struct Command {
 	void	pass(Command &cmd, User &user);
 	void	nick(Command &cmd, User &user);
 	void	user(Command &cmd, User &user);
+	void	join(Command &cmd, User &user);
 };
 
 

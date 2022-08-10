@@ -2,6 +2,7 @@
 #define CHANNEL_HPP
 #include "Server.hpp"
 
+class User;
 
 class Channel {
 public:
@@ -27,7 +28,7 @@ public:
 private :
 	std::string 				_channelName;
 	std::string 				_key;
-	std::vector<std::string> 	_usersList; // to change by client send by Robin
+	std::map<int, User *> 		_usersList; // to change by client send by Robin
 	//std::string 				_topic;
 	bool 						_channelJoined;
 };
