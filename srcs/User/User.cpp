@@ -54,6 +54,7 @@ std::string	User::getNickName() const { return this->nick_name; }
 std::string	User::getUserName() const { return this->user_name; }
 
 void	User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
+void	User::addChan(Channel *chan) { this->activeChan.push_back(chan); }
 std::vector<Command>	&User::getCmdList() { return this->cmds; }
 
 std::ostream &operator<<(std::ostream &out, User &user) {

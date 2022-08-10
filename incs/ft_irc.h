@@ -18,6 +18,7 @@
 #include <map>
 #include "Server/Server.hpp"
 #include "User/User.hpp"
+#include "Server/Channel.hpp"
 
 class User;
 

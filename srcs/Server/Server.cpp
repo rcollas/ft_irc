@@ -70,14 +70,18 @@ void	Server::init()
 
 }
 
+void	Server::addChannel(Channel *chan) { 
+	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan)); 
+}
+
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	switch (cmd.cmd) {
 		case (CAP): cmd.cap(cmd, user);
 		case (PASS): cmd.pass(cmd, user);
 		case (NICK): cmd.nick(cmd, user);
 		case (USER): cmd.user(cmd, user);
-		case (MOTD): cmd.motd(cmd, user);
-		case (AWAY): cmd.away(cmd, user);
+		//case (MOTD): cmd.motd(cmd, user);
+		//case (AWAY): cmd.away(cmd, user);
 		case (JOIN): cmd.join(cmd, user);
 	}
 }
