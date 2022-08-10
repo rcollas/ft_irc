@@ -51,4 +51,4 @@ void	Server::checkChannel(char *buffer, int fd) // à enlever après parsing Rob
 	checkChannelCreation(buffer, fd);
 }
 
-checkChannel(buffer, new_fd); // à enlever après parsing Robin
+//checkChannel(buffer, new_fd); // à enlever après parsing Robin
