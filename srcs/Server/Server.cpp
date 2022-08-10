@@ -90,7 +90,7 @@ std::string toString(char *str) {
 	return s;
 }
 
-std::string RPL_MOTDSTART(std::string server)
+/*std::string RPL_MOTDSTART(std::string server)
 {
     std::string RPL_MOTDSTART;
     RPL_MOTDSTART += ":- " + server + " Message of the day - \r\n"; 
@@ -128,7 +128,7 @@ std::string RPL_AWAY(char *buffer)
 		return (RPL_NOWAWAY() + "Je suis afk\r\n");
 	}
 	return ("Command not found\r\n");
-}
+}*/
 
 void Server::run()
 {
@@ -169,7 +169,7 @@ void Server::run()
 					int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
 					int sender_fd = pfds[i].fd;
 					std::cout << "Receiving: " << buffer << std::endl;
-					if (strcmp(buffer, "motd\r\n") == 0)
+					/*if (strcmp(buffer, "motd\r\n") == 0)
 					{
 						send(new_fd, RPL_MOTDSTART("localhost").c_str(), strlen(RPL_MOTDSTART("localhost").c_str()), 0);
 						send(new_fd, RPL_MOTD().c_str(), strlen(RPL_MOTD().c_str()), 0);
@@ -178,7 +178,7 @@ void Server::run()
 					if (strcmp(buffer, "AWAY :Je suis afk\r\n") == 0)
 					{
 						send(new_fd, RPL_AWAY(buffer).c_str(), strlen(RPL_AWAY(buffer).c_str()), 0);
-					}
+					}*/
 					if (nbytes <= 0) {
 						if (nbytes == 0) {
 							std::cout << "pollserver: socket %d hung up " << sender_fd << std::endl;

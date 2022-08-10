@@ -101,7 +101,6 @@
         /******************************************************************************/
         std::string ERR_NOSUCHNICK(std::string nickname) { return nickname + " :No such nick/channel"; }
         std::string ERR_NOSUCHSERVER(std::string server) { return server + " :No such server"; }
-        std::string ERR_NOSUCHCHANNEL(std::string channel) { return channel + " :No such channel"; }
         std::string ERR_CANNOTSENDTOCHAN(std::string channel) { return channel + " :Cannot send to channel"; }
         std::string ERR_TOOMANYCHANNELS(std::string channel) { return channel + " :You have joined too many channels"; }
         std::string ERR_WASNOSUCHNICK(std::string nickname) { return nickname + " :There was no such nickname"; }
@@ -337,8 +336,8 @@ std::string getReplies(unsigned short code, std::string arg1, std::string arg2, 
 		return target + ERR_NOSUCHNICK(arg1);
 	case 402:
 		return target + ERR_NOSUCHSERVER(arg1);
-	case 403:
-		return target + ERR_NOSUCHCHANNEL(arg1);
+	/*case 403:
+		return target + ERR_NOSUCHCHANNEL(arg1);*/
 	case 404:
 		return target + ERR_CANNOTSENDTOCHAN(arg1);
 	case 405:
