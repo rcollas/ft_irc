@@ -171,12 +171,45 @@ void	Server::handleClientRequest(int i) {
 	memset(buffer, 0, bufferSize);
 }
 
-/**
- * @brief run handles connection and client's requests
- * @details the poll function is used to check the state of the open sockets using poll and the struct pollfd
- * if a client wants to communicate, pfds.revent is set accordingly (POLLIN for writing, POLLOUT for reading)
- * if the pfds.fd correspond to the serverEndpoint, a new connection is requested
- */
+/*std::string RPL_MOTDSTART(std::string server)
+{
+    std::string RPL_MOTDSTART;
+    RPL_MOTDSTART += ":- " + server + " Message of the day - \r\n"; 
+    return (RPL_MOTDSTART);
+}
+
+std::string RPL_MOTD()
+{
+	return (":- Welcome to our wonderful IRC server! \r\n");
+}
+
+std::string RPL_ENDOFMOTD()
+{
+	return (": End of /MOTD command\r\n");
+}
+
+std::string RPL_UNAWAY()
+{
+	return (  "<client> :You are no longer marked as being away");
+}
+
+std::string RPL_NOWAWAY()
+{
+	return ( "<client> You have been marked as being away\r\n");
+}
+
+std::string RPL_AWAY(char *buffer)
+{
+	if (strcmp(buffer, "AWAY\r\n") == 0)
+	{
+		return (RPL_UNAWAY());
+	}
+	if (strcmp(buffer, "AWAY :Je suis afk\r\n") == 0)
+	{
+		return (RPL_NOWAWAY() + "Je suis afk\r\n");
+	}
+	return ("Command not found\r\n");
+}*/
 
 void Server::run()
 {
@@ -192,7 +225,39 @@ void Server::run()
 					User new_user(pfds, serverEndPoint, this);
 					user_list.insert(std::pair<int, User>(new_user.get_fd(), new_user));
 				} else { // a client wants to communicate
-					this->handleClientRequest(i);
+					std::cout << "client wants to communicate" << std::endl;
+					int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
+					int sender_fd = pfds[i].fd;
+					std::cout << "Receiving: " << buffer << std::endl;
+					/*if (strcmp(buffer, "motd\r\n") == 0)
+					{
+						send(new_fd, RPL_MOTDSTART("localhost").c_str(), strlen(RPL_MOTDSTART("localhost").c_str()), 0);
+						send(new_fd, RPL_MOTD().c_str(), strlen(RPL_MOTD().c_str()), 0);
+						send(new_fd, RPL_ENDOFMOTD().c_str(), strlen(RPL_ENDOFMOTD().c_str()), 0);
+					}
+					if (strcmp(buffer, "AWAY :Je suis afk\r\n") == 0)
+					{
+						send(new_fd, RPL_AWAY(buffer).c_str(), strlen(RPL_AWAY(buffer).c_str()), 0);
+					}*/
+					if (nbytes <= 0) {
+						if (nbytes == 0) {
+							std::cout << "pollserver: socket %d hung up " << sender_fd << std::endl;
+						} else {
+							perror("recv");
+						}
+					} else {
+						for (int j = 0; j < (int)pfds.size(); j++) {
+							int dest_fd = pfds[j].fd;
+
+							if (dest_fd != serverEndPoint && dest_fd != sender_fd) {
+								if (send(dest_fd, buffer, nbytes, 0) == -1) {
+									perror("send");
+								}
+								std::cout << "Sending: " << buffer << std::endl;
+							}
+						}
+					}
+					memset(buffer, 0, bufferSize);
 				}
 			}
 		}
