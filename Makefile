@@ -7,6 +7,7 @@ SRC_FILES 	=	main.cpp \
 				Server/Channel.cpp \
 				Server/ChannelServer.cpp \
 				Server/Command.cpp \
+				Server/Channel.cpp \
 				User/User.cpp \
 
 OBJS_DIR	=	objs
@@ -16,6 +17,7 @@ SRC_DIR		=	./srcs/
 INC_DIR		=	./incs/
 
 INC_FILES	=	Server/Server.hpp \
+				Server/Channel.hpp \
 				Server/NumericReplies.hpp \
 				Server/Channel.hpp \
 				User/User.hpp \
