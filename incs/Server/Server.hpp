@@ -1,7 +1,22 @@
 #ifndef FT_IRC_SERVER_HPP
 #define FT_IRC_SERVER_HPP
 
-
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <iostream>
+#include <cstdlib>
+#include <cstring>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <poll.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <cstdio>
+#include <cerrno>
+#include <vector>
+#include "NumericReplies.hpp"
+#include "Channel.hpp"
 #include "../../incs/ft_irc.h"
 #include "NumericReplies.hpp"
 #include "../../incs/User/User.hpp"
@@ -37,10 +52,10 @@ class Server {
 	public:
 		Server();
 		~Server();
-
-		void			init();
-		void			run();
-
+		void		init();
+		void		run();
+		void		welcome(int fd, std::string client_ip);
+		void		checkChannel(char *buffer, int fd); // à enlever après parsing Robin
 		void			handleClientRequest(int i);
 		void			sendToAll(int senderFd, int nbytes);
 
@@ -50,6 +65,5 @@ class Server {
 		static void		welcome(User &user);
 		static void		cmdDispatcher(Command &cmd, User &user);
 };
-
 
 #endif

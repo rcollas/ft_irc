@@ -37,3 +37,23 @@ void	Command::motd(Command &command, User &user) {
 void	Command::away(Command &command, User &user) {
 
 }
+/***************** CHANNEL COMMAND **************/
+
+void	Command::join(Command &command, User &user) {
+	std::string msg = "JOIN " + user.getUserName() + "\r\n";
+	if (command.params[0].length())
+		Channel *vincent = new Channel(command.params[0], "0");
+		(void) channel;
+	else
+	{
+		send(user.get_fd(), ERR_NEEDMOREPARAMS().c_str(),
+			strlen(ERR_NEEDMOREPARAMS().c_str()), 0);
+		return (0);
+	}
+	// if (user.getUserName().empty() == false) {
+	// 	user.set_username(command.params[0]);
+	// 	send(user.get_fd(), msg.c_str(), msg.length(), 0);
+	// } else {
+	// 	user.set_username(command.params[0]);
+	// }
+}

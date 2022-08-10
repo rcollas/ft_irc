@@ -19,3 +19,32 @@ std::string RPL_MYINFO() {
 std::string	RPL_ISUPPORT() {
 	return "005 rcollas 12 :are supported by this server\r\n";
 }
+
+/***************** ERRORS NUMERICS **************/
+
+std::string	ERR_NEEDMOREPARAMS() {
+	return "461 rcollas :Not enough parameters\r\n";
+}
+
+std::string	ERR_NOTONCHANNEL(std::string channelName)
+{
+	return ("rcollas " + channelName + ": no topic is set\r\n");
+}
+
+/***************** OTHER **************/
+
+/***************** CHANNEL MESSAGES **************/
+
+std::string	JOINWELCOMEMESSAGE(std::string channel) { // Changer le nom rcollas par le nom de user
+	return ("rcollas has joined " + channel + "\r\n");
+}
+
+std::string	RPL_TOPIC(std::string channelName, std::string topic) // changer topic par ARG1 #vincent par channel name avec le nouveau parsing
+{
+	return ("TOPIC " + channelName + " " + topic + "\r\n");
+}
+
+std::string	RPL_NOTOPIC(std::string channelName)
+{
+	return ("no Topic set for " + channelName + "\r\n");
+}

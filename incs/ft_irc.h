@@ -16,9 +16,10 @@
 #include <cerrno>
 #include <vector>
 #include <map>
-
 #include "Server/Server.hpp"
 #include "User/User.hpp"
+
+class User;
 
 struct Command {
 	int							cmd;
@@ -30,6 +31,7 @@ struct Command {
 	void	user(Command &cmd, User &user);
 	void	motd(Command &cmd, User &user);
 	void	away(Command &cmd, User &user);
+	void	join(Command &cmd, User &user);
 };
 
 

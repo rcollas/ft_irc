@@ -1,6 +1,7 @@
 #ifndef FT_IRC_USER_HPP
 #define FT_IRC_USER_HPP
 
+#include <iostream>
 #include "../../incs/ft_irc.h"
 #include "../../incs/Server/Server.hpp"
 #include "Server/Server.hpp"
@@ -34,12 +35,9 @@ class User {
 		Server					*servInfo;
 
 		void	fill_information();
-
 		int		get_fd();
-
 		void	set_username(std::string username);
 		void	set_nickname(std::string nickname);
-
 		std::string	getNickName() const;
 		std::string	getUserName() const;
 

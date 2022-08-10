@@ -78,6 +78,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (USER): cmd.user(cmd, user);
 		case (MOTD): cmd.motd(cmd, user);
 		case (AWAY): cmd.away(cmd, user);
+		case (JOIN): cmd.join(cmd, user);
 	}
 }
 
@@ -183,7 +184,6 @@ void	Server::handleClientRequest(int i) {
 void Server::run()
 {
 	while (true) {
-
 		poll(pfds.data(), pfds.size(), -1);
 
 		for (int i = 0; i < (int)pfds.size(); i++)
