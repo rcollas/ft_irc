@@ -81,11 +81,6 @@ User	&Server::getUser(int userFd) {
 
 int	Server::getNbOfUsers() { return this->user_list.size(); }
 
-
-void	Server::addChannel(Channel *chan) {
-	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan));
-}
-
 std::vector<std::string>	Server::getAdmin() {
 	std::vector<std::string>	adminList;
 	for (std::map<int, User>::iterator it = user_list.begin()

@@ -77,7 +77,6 @@ class Server {
 
 
 		void						checkChannel(char *buffer, int fd);
-		void						addChannel(Channel *chan);
 		static void					registration(User &user);
 		static void					welcome(User &user);
 		static void					cmdDispatcher(Command &cmd, User &user);
