@@ -20,6 +20,8 @@
 #include "User/User.hpp"
 #include "Server/Channel.hpp"
 
+#define RECEIVE_DEBUG 1
+
 class User;
 
 struct Command {
@@ -35,7 +37,7 @@ struct Command {
 	void	join(Command &cmd, User &user);
 };
 
-
+void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
 void	printCmd(Command &cmdList);
