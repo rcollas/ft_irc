@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <cstdio>
 #include <cerrno>
+#include <stdio.h>
+#include <stdlib.h>
 #include <vector>
 #include "NumericReplies.hpp"
 #include "Channel.hpp"
@@ -29,6 +31,11 @@ enum cmd {
 	USER		= 3,
 	JOIN		= 4,
 	TOPIC		= 5,
+	QUIT		= 6,
+	MOTD		= 7,
+	AWAY		= 8,
+	VERSION		= 9,
+	LUSERS 		= 10,
 };
 
 class User;
@@ -66,21 +73,19 @@ class Server {
 		void						printAllChannels();
 		int							getnumberofchan();
 		Channel						&getChannel(std::string);
-
+		void						checkChannel(char *buffer, int fd);
 		
-
 		void						handleClientRequest(int i);
-		void						handleCmd(User &user);
+		void						handleCmd(User *user);
 		void						sendToAll(int senderFd, int nbytes);
 		std::vector<std::string>	getAdmin();
 		int							getNbOfUsers();
-		User						&getUser(int userFd);
+		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
 
 
 
-		void						checkChannel(char *buffer, int fd);
-		static void					registration(User &user);
+		static void					registration(User *user);
 		static void					welcome(User &user);
 		static void					cmdDispatcher(Command &cmd, User &user);
 };
