@@ -64,7 +64,7 @@ void	Command::lusers(Command &command, User &user)
 	{
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
-		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan()"));
+		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan"));
 		//sendMsg(user.get_fd(), RPL_LUSERME(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 	}
 }
