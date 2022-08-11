@@ -30,6 +30,8 @@ enum cmd {
 	QUIT		= 5,
 	MOTD		= 6,
 	AWAY		= 7,
+	VERSION		= 8,
+	LUSERS 		= 9,
 };
 
 class User;
@@ -56,10 +58,10 @@ class Server {
 	public:
 		Server();
 		~Server();
-		void		init();
-		void		run();
-		void		welcome(int fd, std::string client_ip);
-		void		checkChannel(char *buffer, int fd); // à enlever après parsing Robin
+		void			init();
+		void			run();
+		void			welcome(int fd, std::string client_ip);
+		void			checkChannel(char *buffer, int fd); // à enlever après parsing Robin
 		void			handleClientRequest(int i);
 		void			sendToAll(int senderFd, int nbytes);
 

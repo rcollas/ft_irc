@@ -32,7 +32,6 @@ void	Command::user(Command &command, User &user) {
 }
 
 void	Command::motd(Command &command, User &user) {
-	std::cout << "salut\n";
 	if (command.params[0].empty()) {
 		sendMsg(user.get_fd(), RPL_MOTDSTART(user.getNickName(), "localhost"));
 		sendMsg(user.get_fd(), RPL_MOTD(user.getNickName(), "Welcooooooooooome at home!"));
@@ -41,11 +40,29 @@ void	Command::motd(Command &command, User &user) {
 }
 
 void	Command::away(Command &command, User &user) {
-	if (command.params[0].empty())
+	if (command.params[0].empty()) {
+		user.set_isAway(false);
 		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));
+	}
 	if (command.params[0].length()){
+		user.set_isAway(true);
 		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
 		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
+	}
+}
+
+void	Command::version(Command &command, User &user){
+	if (command.params[0].empty()) {
+		sendMsg(user.get_fd(), RPL_VERSION(user.getNickName()));
+	}
+}
+
+void	Command::lusers(Command &command, User &user){
+	if (command.params[0].empty()) {
+		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName()));
+		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName()));
+		sendMsg(user.get_fd(), RPL_LUSERCHANNEL(user.getNickName()));
+		sendMsg(user.get_fd(), RPL_LUSERME(user.getNickName()));
 	}
 }
 /***************** CHANNEL COMMAND **************/

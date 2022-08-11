@@ -16,6 +16,7 @@ std::string toString(char *str) {
 
 User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 
+	this->isAway = false;
 	this->servInfo = serverInfo;
 	socklen_t	sin_size = sizeof(socket);
 
@@ -49,6 +50,7 @@ int User::get_fd() { return this->fd; }
 
 void	User::set_username(std::string username) { this->user_name = username; }
 void	User::set_nickname(std::string nickname) { this->nick_name = nickname; }
+void	User::set_isAway(bool away) { this->isAway = away; }
 
 std::string	User::getNickName() const { return this->nick_name; }
 std::string	User::getUserName() const { return this->user_name; }

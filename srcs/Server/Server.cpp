@@ -11,6 +11,8 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("QUIT");
 	this->cmdList.push_back("motd");
 	this->cmdList.push_back("AWAY");
+	this->cmdList.push_back("version");
+	this->cmdList.push_back("lusers");
 
 }
 
