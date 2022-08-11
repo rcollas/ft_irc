@@ -35,7 +35,7 @@ std::string RPL_ISUPPORT();
 /*                                   3**                                      */
 /******************************************************************************/
 
-#define RPL_TOPIC(nick, text) ("331 " + str(nick) + " : " + str(text) + "\r\n")
+#define RPL_TOPIC(nick, channel, topic) ("331 " + str(nick) + str(channel) + " :" + str(topic) + "\r\n")
 
 #define RPL_NOTOPIC(channel) ("332 No topic set for " + str(channel) + "\r\n")
 

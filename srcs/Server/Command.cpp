@@ -72,7 +72,7 @@ void	Command::lusers(Command &command, User &user)
 /***************** CHANNEL COMMAND **************/
 
 void	Command::join(Command &command, User &user) {
-	if (command.params[0].length())
+	if (command.params[0].empty() == false)
 	{
 		user.servInfo->createChannel(user.get_fd(), &user, command);
 		user.servInfo->printAllChannels();
@@ -91,15 +91,16 @@ void	Command::join(Command &command, User &user) {
 
 /***************** I handle the topic command who set a topic for a channel **************/
 void	Command::topic(Command &command, User &user) {
-	if (command.params[0].length() && command.params[1].length())
+	if (command.params.empty() == false)
 	{
-		// JE CHECK SI il y a un 2ème paramètre
-		// JE SET LE TOPIC
 		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
 		{
 			Channel *chan = &user.servInfo->getChannel(command.params[0]);
-			if (chan->userInChannel(user.get_fd()) == true)	
+			if (command.params[1].size() > 1 && chan->userInChannel(user.get_fd()) == true)
 			{
+				std::string joinstring = &command.params[1].join();
+				chan->changeTopic(command.params[1]);
+				sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
 				std::cout << "\e[0;32m" << "I CAN SET THE TOPICCC" <<  "\033[0m" << std::endl;
 			}
 		} 

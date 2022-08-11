@@ -50,32 +50,4 @@ Channel	&Server::getChannel(std::string chanName)
 	return (*it->second);
 }
 
-/***************** Function to check and add a commit  **************/
-// void	topicCommand(int fd, char *buffer, Channel *vincent)
-// {
-// 	(void) fd;
-// 	if (strcmp(buffer, "TOPIC #vincent :bienvenue chez Vincent\r\n") == 0)
-// 	{
-// 		vincent->changeTopic("bienvenue chez Vincent\r\n"); // a modifier avec les arguments de robin
-// 		send(fd, RPL_TOPIC(vincent->getChannelName().c_str(), vincent->getTopic()).c_str(),
-// 			strlen(RPL_TOPIC(vincent->getChannelName().c_str(), vincent->getTopic()).c_str()), 0);
-// 	}
-// 	else if (strcmp(buffer, "TOPIC\r\n") == 0) // a tester avec nc car on reçoit pas la commande recv (/TOPIC)
-// 	{
-// 		if (vincent->getTopic() == "NOT WORKING")
-// 		{
-// 			std::cout << RPL_NOTOPIC(vincent->getChannelName()) << std::endl;
-// 			send(fd, RPL_NOTOPIC(vincent->getChannelName()).c_str(),
-// 				strlen(vincent->getChannelName().c_str()), 0);
-// 		}
-// 	}
-// 	// else if (strcmp(buffer, "TOPIC :bienvenue chez Vincent\r\n") == 0) a tester sur NC avec un bon parsing
-// 	// {
-// 	// 	send(fd, ERR_NOTONCHANNEL(vincent->getChannelName()).c_str(), 
-// 	// 		strlen(ERR_NOTONCHANNEL(vincent->getChannelName()).c_str()), 0);
-// 	// }
-// 	else
-// 		std::cout << "topic don't work" << std::endl;
-
-// }
 
