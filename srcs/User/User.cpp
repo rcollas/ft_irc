@@ -45,13 +45,14 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 
 User::~User() {}
 
-int User::get_fd() { return this->fd; }
+int User::get_fd() const { return this->fd; }
 
 void	User::set_username(std::string username) { this->user_name = username; }
 void	User::set_nickname(std::string nickname) { this->nick_name = nickname; }
 
 std::string	User::getNickName() const { return this->nick_name; }
 std::string	User::getUserName() const { return this->user_name; }
+bool		User::isAdmin() const { return this->admin; }
 
 void	User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
 void	User::addChan(Channel *chan) { this->activeChan.push_back(chan); }

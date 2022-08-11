@@ -53,29 +53,34 @@ class Server {
 	public:
 		Server();
 		~Server();
-		void		init();
-		void		run();
-		void		welcome(int fd, std::string client_ip);
-		void		checkChannel(char *buffer, int fd); // à enlever après parsing Robin
-		void			handleClientRequest(int i);
-		void			sendToAll(int senderFd, int nbytes);
+		void	init();
+		void	run();
 
 /***************** Channel server part **************/
-		void			addChannel(Channel * chan);
-		bool			channelExist(std::string chanName);
-		void			createChannel(int fd, User *user, Command command);
-		void			getAllChan(std::string chanName);
-		void			printAllChannels();
-		Channel			&getChannel(std::string);
+		void						addChannel(Channel * chan);
+		bool						channelExist(std::string chanName);
+		void						createChannel(int fd, User *user, Command command);
+		void						getAllChan(std::string chanName);
+		void						printAllChannels();
+		Channel						&getChannel(std::string);
 
 		
 
-
+		void						handleClientRequest(int i);
+		void						handleCmd(User &user);
+		void						sendToAll(int senderFd, int nbytes);
+		std::vector<std::string>	getAdmin();
+		int							getNbOfUsers();
+		User						&getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
 
-		static void		registration(User &user);
-		static void		welcome(User &user);
-		static void		cmdDispatcher(Command &cmd, User &user);
+
+
+		void						checkChannel(char *buffer, int fd);
+		void						addChannel(Channel *chan);
+		static void					registration(User &user);
+		static void					welcome(User &user);
+		static void					cmdDispatcher(Command &cmd, User &user);
 };
 
 #endif
