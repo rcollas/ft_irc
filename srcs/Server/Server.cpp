@@ -100,7 +100,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (USER): cmd.user(cmd, user);
 		//case (MOTD): cmd.motd(cmd, user);
 		//case (AWAY): cmd.away(cmd, user);
-		case (JOIN): cmd.join(cmd, user);
+		//case (JOIN): cmd.join(cmd, user);
 	}
 }
 
