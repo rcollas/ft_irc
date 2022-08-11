@@ -12,6 +12,8 @@
 #include <poll.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <cstdio>
 #include <cerrno>
 #include <vector>
@@ -19,6 +21,8 @@
 #include "Server/Server.hpp"
 #include "User/User.hpp"
 #include "Server/Channel.hpp"
+
+#define RECEIVE_DEBUG 1
 
 class User;
 
@@ -36,9 +40,11 @@ struct Command {
 	void	version(Command &cmd, User &user);
 	void	lusers(Command &cmd, User &user);
 
+
 };
 
-
+char	*ft_itoa(int nb);
+void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
 void	printCmd(Command &cmdList);

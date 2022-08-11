@@ -76,8 +76,30 @@ void	Server::init()
 
 }
 
-void	Server::addChannel(Channel *chan) { 
-	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan)); 
+User	*Server::getUser(int userFd) {
+	std::map<int, User>::iterator res = user_list.find(userFd);
+	if (user_list.find(userFd) != user_list.end()) {
+		return &res->second;
+	}
+	return &res->second;
+}
+
+int	Server::getNbOfUsers() { return this->user_list.size(); }
+
+
+void	Server::addChannel(Channel *chan) {
+	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan));
+}
+
+std::vector<std::string>	Server::getAdmin() {
+	std::vector<std::string>	adminList;
+	for (std::map<int, User>::iterator it = user_list.begin()
+			; it != user_list.end(); it++) {
+		if (it->second.isAdmin()) {
+			adminList.push_back(it->second.getUserName());
+		}
+	}
+	return adminList;
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
@@ -88,7 +110,9 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (USER): cmd.user(cmd, user);
 		case (MOTD): cmd.motd(cmd, user);
 		case (AWAY): cmd.away(cmd, user);
-		case (JOIN): cmd.join(cmd, user);
+		//case (JOIN): cmd.join(cmd, user);
+		case (VERSION): cmd.version(cmd, user);
+		case (LUSERS): cmd.lusers(cmd, user);
 	}
 }
 
@@ -99,23 +123,23 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
  * and the parameters in a vector
  */
 
-void	Server::registration(User &user) {
+void	Server::registration(User *user) {
 
 	std::cout << "Registration in progress..." << std::endl;
 	std::vector<std::string>	res;
 	Command						*ret;
 	sleep(1);
-	recv(user.get_fd(), buffer, bufferSize, MSG_DONTWAIT);
+	recv(user->get_fd(), buffer, bufferSize, MSG_DONTWAIT);
 	res = split(buffer, " \r\n");
 	memset(buffer, 0, bufferSize);
 	for (int i = 0; i < 4; i++) {
-		ret = parse(res, user.servInfo->getCmdList());
-		user.addCmd(*ret);
+		ret = parse(res, user->servInfo->getCmdList());
+		user->addCmd(*ret);
 		printCmd(*ret);
 	}
-	while (user.getCmdList().empty() == false) {
-		Server::cmdDispatcher(user.getCmdList().front(), user);
-		user.getCmdList().erase(user.getCmdList().begin());
+	while (user->getCmdList().empty() == false) {
+		Server::cmdDispatcher(user->getCmdList().front(), *user);
+		user->getCmdList().erase(user->getCmdList().begin());
 	}
 	std::cout << user << std::endl;
 	std::cout << "Registration complete!" << std::endl;
@@ -157,6 +181,21 @@ void	Server::sendToAll(int senderFd, int nbytes) {
 	}
 }
 
+void	Server::handleCmd(User *user) {
+	std::vector<std::string>	res = split(buffer, " \r\n");
+	Command						*ret;
+	memset(buffer, 0, bufferSize);
+	while (res.empty() == false) {
+		ret = parse(res, user->servInfo->getCmdList());
+		user->addCmd(*ret);
+		printCmd(*ret);
+	}
+	while (user->getCmdList().empty() == false) {
+		Server::cmdDispatcher(user->getCmdList().front(), *user);
+		user->getCmdList().erase(user->getCmdList().begin());
+	}
+}
+
 /**
  * @brief receive the client's request and either close the connection,
  * handle the request command or send a message to all the other users
@@ -165,21 +204,24 @@ void	Server::sendToAll(int senderFd, int nbytes) {
 
 void	Server::handleClientRequest(int i) {
 
-	std::cout << "client wants to communicate" << std::endl;
+	printDebug("client wants to communicate", RECEIVE_DEBUG);
 	int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
 	int senderFd = pfds[i].fd;
-	std::cout << "Receiving: " << buffer << std::endl;
+	printDebug("Receiving: ", RECEIVE_DEBUG);
+	printDebug(buffer, RECEIVE_DEBUG);
 
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
 			std::cout << "pollserver: socket %d hung up " << senderFd << std::endl;
+			//printDebug(, RECEIVE_DEBUG);
 			user_list.erase(user_list.find(pfds[i].fd));
 			pfds.erase(pfds.begin() + i);
 		} else {
 			perror("recv");
 		}
 	} else {
-		this->sendToAll(senderFd, nbytes);
+		this->handleCmd(getUser(senderFd));
+		//this->sendToAll(senderFd, nbytes);
 	}
 	memset(buffer, 0, bufferSize);
 }

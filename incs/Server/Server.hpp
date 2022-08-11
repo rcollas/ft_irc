@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <cstdio>
 #include <cerrno>
+#include <stdio.h>
+#include <stdlib.h>
 #include <vector>
 #include "NumericReplies.hpp"
 #include "Channel.hpp"
@@ -58,18 +60,23 @@ class Server {
 	public:
 		Server();
 		~Server();
-		void			init();
-		void			run();
-		void			welcome(int fd, std::string client_ip);
-		void			checkChannel(char *buffer, int fd); // à enlever après parsing Robin
-		void			handleClientRequest(int i);
-		void			sendToAll(int senderFd, int nbytes);
+		void	init();
+		void	run();
 
-		void			addChannel(Channel * chan);
+		void	handleClientRequest(int i);
+		void	handleCmd(User *user);
 
+		void						sendToAll(int senderFd, int nbytes);
+		std::vector<std::string>	getAdmin();
+		int							getNbOfUsers();
+		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
 
-		static void		registration(User &user);
+
+
+		void			checkChannel(char *buffer, int fd);
+		void			addChannel(Channel *chan);
+		static void		registration(User *user);
 		static void		welcome(User &user);
 		static void		cmdDispatcher(Command &cmd, User &user);
 };

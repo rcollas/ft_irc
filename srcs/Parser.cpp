@@ -52,12 +52,12 @@ Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList
 		std::cout << "cmd ok" << std::endl;
 	}
 	while (input.empty() == false) {
-		res->params.push_back(*input.begin());
-		input.erase(input.begin());
-		if (input.begin()[0] == END_OF_CMD) {
+		if (input.empty() == false && input.begin()[0] == END_OF_CMD) {
 			input.erase(input.begin());
 			return res;
 		}
+		res->params.push_back(*input.begin());
+		input.erase(input.begin());
 	}
 	return res;
 }
