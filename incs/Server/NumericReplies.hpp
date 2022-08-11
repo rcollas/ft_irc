@@ -21,7 +21,7 @@ std::string	ERR_NOTONCHANNEL(std::string channelName);
 /***************** OTHER **************/
 
 /***************** CHANNELS NUMERICS **************/
-std::string	JOINWELCOMEMESSAGE(std::string channel);
+std::string	JOINWELCOMEMESSAGE(std::string channel, std::string userName);
 std::string	RPL_TOPIC(std::string channelName, std::string topic);
 std::string	RPL_NOTOPIC(std::string channelName);
 
@@ -44,6 +44,9 @@ std::string	RPL_NOTOPIC(std::string channelName);
 /******************************************************************************/
 /*                                   3**                                      */
 /******************************************************************************/
+
+#define RPL_TOPIC(nick, text) ("332 " + str(nick) + " :- " + str(text) + "\r\n")
+
 #define RPL_MOTD(nick, text) ("372 " + str(nick) + " :- " + str(text) + "\r\n")
 
 #define RPL_MOTDSTART(nick, server) ("375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n")

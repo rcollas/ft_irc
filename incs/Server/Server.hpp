@@ -60,7 +60,16 @@ class Server {
 		void			handleClientRequest(int i);
 		void			sendToAll(int senderFd, int nbytes);
 
+/***************** Channel server part **************/
 		void			addChannel(Channel * chan);
+		bool			channelExist(std::string chanName);
+		void			createChannel(int fd, User *user, Command command);
+		void			getAllChan(std::string chanName);
+		void			printAllChannels();
+		Channel			&getChannel(std::string);
+
+		
+
 
 		std::vector<std::string>	&getCmdList();
 

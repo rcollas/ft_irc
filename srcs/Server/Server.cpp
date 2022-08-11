@@ -8,6 +8,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("NICK");
 	this->cmdList.push_back("USER");
 	this->cmdList.push_back("QUIT");
+	this->cmdList.push_back("JOIN");
 }
 
 Server::Server()
@@ -68,10 +69,6 @@ void	Server::init()
 	pfds[0].fd = serverEndPoint;
 	pfds[0].events = POLLIN;
 
-}
-
-void	Server::addChannel(Channel *chan) { 
-	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan)); 
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {

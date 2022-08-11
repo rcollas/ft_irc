@@ -35,14 +35,10 @@ std::string	ERR_NOTONCHANNEL(std::string channelName)
 
 /***************** CHANNEL MESSAGES **************/
 
-std::string	JOINWELCOMEMESSAGE(std::string channel) { // Changer le nom rcollas par le nom de user
-	return ("rcollas has joined " + channel + "\r\n");
+std::string	JOINWELCOMEMESSAGE(std::string channel, std::string userName) { // Changer le nom rcollas par le nom de user
+	return (userName+ " has joined " + channel + "\r\n");
 }
 
-std::string	RPL_TOPIC(std::string channelName, std::string topic) // changer topic par ARG1 #vincent par channel name avec le nouveau parsing
-{
-	return ("TOPIC " + channelName + " " + topic + "\r\n");
-}
 
 std::string	RPL_NOTOPIC(std::string channelName)
 {

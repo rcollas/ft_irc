@@ -3,6 +3,7 @@
 #include "Server.hpp"
 
 class User;
+struct Command;
 
 class Channel {
 public:
@@ -17,18 +18,19 @@ public:
 	std::string getKeyName();
 	std::string getTopic();
 	bool 		getChannelJoined();
-	void		createChannel(); //infos à envoyer à Robin
-	void		addUserToChannel();
+	void		addUserToChannel(int fd, User *user);
 	void		displayListChannelUsers();
 	void		joinChannel(char *buffer);
 	void		channelIsJoined();
 	void		changeTopic(std::string topic);
+	void		printChannelUsers(int fd, User *user);
+
 	std::string 				_topic;
 
 private :
 	std::string 				_channelName;
 	std::string 				_key;
-	std::map<int, User *> 		_usersList; // to change by client send by Robin
+	std::map<int, User *> 		_usersList; 
 	//std::string 				_topic;
 	bool 						_channelJoined;
 };

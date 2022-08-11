@@ -1,4 +1,6 @@
 #include "../../incs/Server/Channel.hpp"
+#include "../../incs/Server/Server.hpp"
+
 
 /***************** Canonical form **************/
 
@@ -62,4 +64,21 @@ void		Channel::channelIsJoined()
 void		Channel::changeTopic(std::string topic)
 {
 	this->_topic = topic;
+}
+
+void		Channel::addUserToChannel(int fd, User *user)
+{
+	this->_usersList.insert(std::pair<int, User *>(fd, user));
+}
+
+void		Channel::printChannelUsers(int fd, User *user)
+{
+	std::map<int, User *>::iterator it; // On donne le type à l'itérator
+	it = this->_usersList.begin(); // On le met au début
+	for(; it != this->_usersList.end(); it++)
+	{
+		std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getUserName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+	}
+	(void) fd;
+	(void) user;
 }
