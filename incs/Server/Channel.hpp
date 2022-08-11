@@ -21,7 +21,7 @@ public:
 	void		addUserToChannel(int fd, User *user);
 	void		displayListChannelUsers();
 	void		joinChannel(char *buffer);
-	void		channelIsJoined();
+	bool		userInChannel(int fd);
 	void		changeTopic(std::string topic);
 	void		printChannelUsers(int fd, User *user);
 

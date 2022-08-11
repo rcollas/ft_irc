@@ -21,12 +21,14 @@
 #include "NumericReplies.hpp"
 #include "../../incs/User/User.hpp"
 
+/***************** We begins the cmd enums here **************/
 enum cmd {
 	CAP			= 0,
 	PASS		= 1,
 	NICK		= 2,
 	USER		= 3,
 	JOIN		= 4,
+	TOPIC		= 5,
 };
 
 class User;
@@ -62,6 +64,7 @@ class Server {
 		void						createChannel(int fd, User *user, Command command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
+		int							getnumberofchan();
 		Channel						&getChannel(std::string);
 
 		

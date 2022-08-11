@@ -44,21 +44,44 @@ void	Command::away(Command &command, User &user) {
 void	Command::join(Command &command, User &user) {
 	if (command.params[0].length())
 	{
-		// ajouter condition si le channel existe déjà
 		user.servInfo->createChannel(user.get_fd(), &user, command);
 		user.servInfo->printAllChannels();
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->addUserToChannel(user.get_fd(), &user);
-		std::cout <<  "\033[0;31m" << chan->getChannelName() <<  " WORKS HARD" << "\033[0m" << std::endl;
 		chan->printChannelUsers(user.get_fd(), &user);
-		//send(user.get_fd(), JOINWELCOMEMESSAGE(chan->getChannelName(),
-			//user.getUserName()).c_str(), 
-			//strlen(JOINWELCOMEMESSAGE(chan->getChannelName(), user.getUserName()).c_str()), 0);
+		sendMsg(user.get_fd(), JOIN_WELCOME_MESSAGE(user.getNickName(), chan->getChannelName()));
 	}
 	else 
 	{
-		send(user.get_fd(), ERR_NEEDMOREPARAMS().c_str(),
-			strlen(ERR_NEEDMOREPARAMS().c_str()), 0);
+		std::cout << "\e[0;34m" << ERR_NEEDMOREPARAMS(user.getNickName()) <<  "\033[0m" << std::endl; // A REMOVE
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return;
+	}
+}
+
+/***************** I handle the topic command who set a topic for a channe **************/
+void	Command::topic(Command &command, User &user) {
+	if (command.params[0].length() && command.params[1].length())
+	{
+		// JE CHECK SI il y a un 2ème paramètre
+		// JE SET LE TOPIC
+		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
+		{
+			Channel *chan = &user.servInfo->getChannel(command.params[0]);
+			if (chan->userInChannel(user.get_fd()) == true)	
+			{
+				std::cout << "\e[0;32m" << "I CAN SET THE TOPICCC" <<  "\033[0m" << std::endl;
+			}
+		} 
+		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
+		{
+			std::cout << "\e[0;34m" << ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]) <<  "\033[0m" << std::endl; // A REMOVE
+			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
+		}
+
+	}
+	else 
+	{
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 	}
 }

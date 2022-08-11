@@ -7,8 +7,10 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("PASS");
 	this->cmdList.push_back("NICK");
 	this->cmdList.push_back("USER");
-	this->cmdList.push_back("QUIT");
 	this->cmdList.push_back("JOIN");
+	this->cmdList.push_back("TOPIC");
+	//this->cmdList.push_back("QUIT");
+
 }
 
 Server::Server()
@@ -98,9 +100,11 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (PASS): cmd.pass(cmd, user);
 		case (NICK): cmd.nick(cmd, user);
 		case (USER): cmd.user(cmd, user);
+		case (JOIN): cmd.join(cmd, user);
+		case (TOPIC): cmd.topic(cmd, user);
 		//case (MOTD): cmd.motd(cmd, user);
 		//case (AWAY): cmd.away(cmd, user);
-		//case (JOIN): cmd.join(cmd, user);
+	
 	}
 }
 

@@ -9,8 +9,8 @@ void		Server::createChannel(int fd, User *user, Command command) // a corriger
 		Channel *chan = new Channel(command.params[0], "");
 		this->addChannel(chan);
 	}
-	else if (channelExist(command.params[0]) == true)
-		std::cout << "\033[0;31m" << "Le channel exite déjà " << command.params[0] << "\033[0m" << std::endl;
+	else if (user->servInfo->channelExist(command.params[0]) == true)
+		std::cout << "\033[0;31m" << "Le channel existe déjà " << command.params[0] << "\033[0m" << std::endl;
 	(void) fd;
 }
 
@@ -28,6 +28,7 @@ void	Server::printAllChannels(void)
 {
 	std::map<std::string, Channel *>::iterator it;
 	it = this->allChan.begin();
+	std::cout <<  "\033[0;31m" << "LA LIST DES CHANNELS EST LA SUIVANTE : " << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
 	for (; it != this->allChan.end(); it++)
 	{
 		if (it->second)
@@ -78,25 +79,3 @@ Channel	&Server::getChannel(std::string chanName)
 
 // }
 
-// void	checkChannelCreation(char *buffer, int fd)
-// {
-// 	Channel *vincent = new Channel("#vincent", "0");
-// 	// A modifier par un parsing ou je dois avoir 2 ou 3 param + toute la gestion d'erreur
-// 	if (strcmp(buffer, "JOIN #vincent\r\n") == 0) 
-// 	{
-// 		std::cout << "WORKS joining Vincent" << std::endl;
-// 		send(fd, JOINWELCOMEMESSAGE(vincent->getChannelName()).c_str(), strlen(JOINWELCOMEMESSAGE(vincent->getChannelName())).c_str(), 0);
-// 		topicCommand(fd, buffer, vincent); // attendre du parsing de robin de pouvoir sortir mon channel vincent de cette fonction
-// 	}
-// 	else if (strcmp(buffer, "/JOIN\n") == 0) // à modifier par un parsing ou je dois avoir 2 ou 3 paramètres
-// 		send(fd, ERR_NEEDMOREPARAMS().c_str(),strlen(ERR_NEEDMOREPARAMS().c_str()), 0);
-// 	if (vincent->getChannelJoined() == true)
-// 		topicCommand(fd, buffer, vincent); // attendre du parsing de robin de pouvoir sortir mon channel vincent de cette fonction
-// }
-
-// void	Server::checkChannel(char *buffer, int fd) // à enlever après parsing Robin On aura juste à checker 1 et 2 eme arg
-// {
-// 	checkChannelCreation(buffer, fd);
-// }
-
-//checkChannel(buffer, new_fd); // à enlever après parsing Robin
