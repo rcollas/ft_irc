@@ -104,15 +104,15 @@ std::vector<std::string>	Server::getAdmin() {
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	switch (cmd.cmd) {
-		case (CAP): cmd.cap(cmd, user);
-		case (PASS): cmd.pass(cmd, user);
-		case (NICK): cmd.nick(cmd, user);
-		case (USER): cmd.user(cmd, user);
-		case (MOTD): cmd.motd(cmd, user);
-		case (AWAY): cmd.away(cmd, user);
+		case (CAP): cmd.cap(cmd, user); break;
+		case (PASS): cmd.pass(cmd, user); break;
+		case (NICK): cmd.nick(cmd, user); break;
+		case (USER): cmd.user(cmd, user); break;
+		case (MOTD): cmd.motd(cmd, user); break;
+		case (AWAY): cmd.away(cmd, user); break;
 		//case (JOIN): cmd.join(cmd, user);
-		case (VERSION): cmd.version(cmd, user);
-		case (LUSERS): cmd.lusers(cmd, user);
+		case (VERSION): cmd.version(cmd, user); break;
+		case (LUSERS): cmd.lusers(cmd, user); break;
 	}
 }
 
