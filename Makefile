@@ -7,6 +7,7 @@ SRC_FILES 	=	main.cpp \
 				Server/Channel.cpp \
 				Server/ChannelServer.cpp \
 				Server/Command.cpp \
+				Server/utils.cpp \
 				Server/Channel.cpp \
 				User/User.cpp \
 
@@ -28,7 +29,7 @@ INCLUDE		=	$(addprefix $(INC_DIR)/, $(INC_FILES))
 
 CC			=	clang++
 
-CFLAGS		=	-Wall -Wextra -Werror -g -std=c++98
+CFLAGS		=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
 
 RM			=	rm -rf
 

@@ -31,16 +31,46 @@ void	Command::user(Command &command, User &user) {
 	}
 }
 
-/*void	Command::motd(Command &command, User &user) {
-
+void	Command::motd(Command &command, User &user) {
+	if (command.params.empty() == true) {
+		sendMsg(user.get_fd(), RPL_MOTDSTART(user.getNickName(), "localhost"));
+		sendMsg(user.get_fd(), RPL_MOTD(user.getNickName(), "Welcooooooooooome at home!"));
+		sendMsg(user.get_fd(), RPL_ENDOFMOTD(user.getNickName()));
+	}
 }
 
 void	Command::away(Command &command, User &user) {
+	if (command.params.empty() == true) {
+		user.set_isAway(false);
+		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));
+	}
+	if (command.params.empty() == false){
+		user.set_isAway(true);
+		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
+		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
+	}
+}
 
-}*/
+void	Command::version(Command &command, User &user){
+	if (command.params.empty() == true) {
+		sendMsg(user.get_fd(), RPL_VERSION(user.getNickName()));
+	}
+}
+
+void	Command::lusers(Command &command, User &user)
+{
+	if (command.params.empty() == true)
+	{
+		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
+		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
+		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan()"));
+		//sendMsg(user.get_fd(), RPL_LUSERME(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
+	}
+}
+
 /***************** CHANNEL COMMAND **************/
 
-void	Command::join(Command &command, User &user) {
+/*void	Command::join(Command &command, User &user) {
 	std::cout << "====>><< INSIDE" << std::endl;
 	if (command.params[0].length())
 	{
@@ -61,3 +91,4 @@ void	Command::join(Command &command, User &user) {
 	// 	user.set_username(command.params[0]);
 	// }
 }
+*/

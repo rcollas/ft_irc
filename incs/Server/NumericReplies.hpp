@@ -30,24 +30,26 @@ std::string	RPL_NOTOPIC(std::string channelName);
 /******************************************************************************/
 /*                                   0**                                      */
 /******************************************************************************/
-#define RPL_WELCOME(host, nick, user) ("001 " + str(nick) + " :Welcome to the " \
-										+ str(host) + " network, " + str(nick) \
-										+ "[!" + str(user) + "@" + str(host) + "]\r\n")
+#define RPL_WELCOME(host, nick, user) ("001 " + str(nick) + " :Welcome to the " + str(host) + " network, " + str(nick) + "[!" + str(user) + "@" + str(host) + "]\r\n")
 
 
 /******************************************************************************/
 /*                                   2**                                      */
 /******************************************************************************/
-
-
+#define RPL_LUSERCLIENT(nick, users) ("251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n")
+#define RPL_LUSEROP(nick, ops) ("252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n")
+#define RPL_LUSERCHANNELS(nick, channels) ("254 " + str(nick) + " " + str(channels) + " :channels formed\r\n")
+#define RPL_LUSERME(nick, clients) ("255 " + str(nick) + " :I have " + str(clients) " clients connected\r\n")
 
 /******************************************************************************/
 /*                                   3**                                      */
 /******************************************************************************/
+#define RPL_AWAY(nick, message) ("301 " + str(nick) + " :" + str(message) + "\r\n")
+#define RPL_UNAWAY(nick) ("305 " + str(nick) + " :You are no longer marked as being away\r\n")
+#define RPL_NOWAWAY(nick) ("306 " + str(nick) + " :Youuuu have been marked as being away\r\n")
+#define RPL_VERSION(nick) ("351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n")
 #define RPL_MOTD(nick, text) ("372 " + str(nick) + " :- " + str(text) + "\r\n")
-
 #define RPL_MOTDSTART(nick, server) ("375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n")
-
 #define RPL_ENDOFMOTD(nick) ("376 " + str(nick) + " :End of /MOTD command\r\n")
 
 /******************************************************************************/
