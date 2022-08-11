@@ -34,13 +34,12 @@ struct Command {
 	void	pass(Command &cmd, User &user);
 	void	nick(Command &cmd, User &user);
 	void	user(Command &cmd, User &user);
+	void	join(Command &cmd, User &user);
+	void	topic(Command &cmd, User &user);
 	void	motd(Command &cmd, User &user);
 	void	away(Command &cmd, User &user);
-	void	join(Command &cmd, User &user);
 	void	version(Command &cmd, User &user);
 	void	lusers(Command &cmd, User &user);
-
-
 };
 
 char	*ft_itoa(int nb);

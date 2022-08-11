@@ -1,6 +1,12 @@
 #include "../../incs/Server/Channel.hpp"
+#include "../../incs/Server/Server.hpp"
 
-/***************** Canonical form **************/
+
+/*
+**==========================
+**   CANONICAL FORM
+**==========================
+*/
 
 Channel::Channel(std::string const &channelName, std::string const &key)
 {
@@ -32,7 +38,11 @@ Channel &Channel::operator=(Channel const &obj)
 	return *this;
 }
 
-/***************** Get members functions **************/
+/*
+**==========================
+**  GET MEMBER FUNCTIONS
+**==========================
+*/
 
 std::string	Channel::getChannelName()
 {
@@ -53,13 +63,45 @@ bool 		Channel::getChannelJoined()
 {
 	return (this->_channelJoined);
 }
-/***************** Members functions **************/
-void		Channel::channelIsJoined()
+
+/*
+**==========================
+**    MEMBER FUNCTIONS
+**==========================
+*/
+
+/***************** 
+ * Here we check if the user is in the channel 
+ * by using map who call the class User
+ *  **************/
+bool		Channel::userInChannel(int fd)
 {
-	this->_channelJoined = true;
+	if (this->_usersList.find(fd) == this->_usersList.end())
+		return (false);
+	return (true);
 }
 
 void		Channel::changeTopic(std::string topic)
 {
 	this->_topic = topic;
+}
+
+/***************** Here I add a user to the channel  **************/
+void		Channel::addUserToChannel(int fd, User *user)
+{
+	this->_usersList.insert(std::pair<int, User *>(fd, user));
+}
+
+/***************** Here I print all the user of the channel **************/
+void		Channel::printChannelUsers(int fd, User *user)
+{
+	std::map<int, User *>::iterator it; // On donne le type à l'itérator
+	it = this->_usersList.begin(); // On le met au début
+	std::cout <<  "\033[0;31m" << "LA LIST DES USER EST LA SUIVANTE : " << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+	for(; it != this->_usersList.end(); it++)
+	{
+		std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getUserName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+	}
+	(void) fd;
+	(void) user;
 }

@@ -23,17 +23,19 @@
 #include "NumericReplies.hpp"
 #include "../../incs/User/User.hpp"
 
+/***************** We begins the cmd enums here **************/
 enum cmd {
 	CAP			= 0,
 	PASS		= 1,
 	NICK		= 2,
 	USER		= 3,
 	JOIN		= 4,
-	QUIT		= 5,
-	MOTD		= 6,
-	AWAY		= 7,
-	VERSION		= 8,
-	LUSERS 		= 9,
+	TOPIC		= 5,
+	QUIT		= 6,
+	MOTD		= 7,
+	AWAY		= 8,
+	VERSION		= 9,
+	LUSERS 		= 10,
 };
 
 class User;
@@ -63,9 +65,18 @@ class Server {
 		void	init();
 		void	run();
 
-		void	handleClientRequest(int i);
-		void	handleCmd(User *user);
-
+/***************** Channel server part **************/
+		void						addChannel(Channel * chan);
+		bool						channelExist(std::string chanName);
+		void						createChannel(int fd, User *user, Command command);
+		void						getAllChan(std::string chanName);
+		void						printAllChannels();
+		int							getnumberofchan();
+		Channel						&getChannel(std::string);
+		void						checkChannel(char *buffer, int fd);
+		
+		void						handleClientRequest(int i);
+		void						handleCmd(User *user);
 		void						sendToAll(int senderFd, int nbytes);
 		std::vector<std::string>	getAdmin();
 		int							getNbOfUsers();
@@ -74,11 +85,9 @@ class Server {
 
 
 
-		void			checkChannel(char *buffer, int fd);
-		void			addChannel(Channel *chan);
-		static void		registration(User *user);
-		static void		welcome(User &user);
-		static void		cmdDispatcher(Command &cmd, User &user);
+		static void					registration(User *user);
+		static void					welcome(User &user);
+		static void					cmdDispatcher(Command &cmd, User &user);
 };
 
 #endif

@@ -8,6 +8,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("NICK");
 	this->cmdList.push_back("USER");
 	this->cmdList.push_back("JOIN");
+	this->cmdList.push_back("TOPIC");
 	this->cmdList.push_back("QUIT");
 	this->cmdList.push_back("motd");
 	this->cmdList.push_back("AWAY");
@@ -85,11 +86,6 @@ User	*Server::getUser(int userFd) {
 }
 
 int	Server::getNbOfUsers() { return this->user_list.size(); }
-
-
-void	Server::addChannel(Channel *chan) {
-	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan));
-}
 
 std::vector<std::string>	Server::getAdmin() {
 	std::vector<std::string>	adminList;
