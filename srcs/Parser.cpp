@@ -46,12 +46,11 @@ std::vector<std::string>	split(std::string str, std::string const sep) {
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList) {
 	Command *res = new Command();
 	res->cmd = getCmd(input[0], cmdList);
-	if (res->cmd >= 0)
-		input.erase(input.begin());
+	input.erase(input.begin());
 	while (input.empty() == false) {
 		res->params.push_back(*input.begin());
 		input.erase(input.begin());
-		if (input.begin()[0] == END_OF_CMD) {
+		if (input.empty() == false && input.begin()[0] == END_OF_CMD) {
 			input.erase(input.begin());
 			return res;
 		}

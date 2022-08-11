@@ -7,7 +7,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("PASS");
 	this->cmdList.push_back("NICK");
 	this->cmdList.push_back("USER");
-	this->cmdList.push_back("QUIT");
+	this->cmdList.push_back("JOIN");
 }
 
 Server::Server()
