@@ -162,7 +162,7 @@ void Server::welcome(User &user) {
  * @param nbytes the number of bytes received from the sender
  */
 
-void	Server::sendToAll(int senderFd, int nbytes) {
+void	Server::sendToAll(int senderFd, std::string msg) {
 
 	for (int j = 0; j < (int)pfds.size(); j++)
 	{
@@ -170,8 +170,7 @@ void	Server::sendToAll(int senderFd, int nbytes) {
 
 		if (dest_fd != serverEndPoint && dest_fd != senderFd)
 		{
-			if (send(dest_fd, buffer, nbytes, 0) == -1)
-				perror("send");
+			sendMsg(dest_fd, msg);
 			std::cout << "Sending: " << buffer << std::endl;
 		}
 	}
