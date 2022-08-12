@@ -52,9 +52,10 @@ std::string RPL_ISUPPORT();
 /******************************************************************************/
 
 #define ERR_NOSUCHCHANNEL(nick, channel) ("403 " + str(nick) + " " + str(channel) + " no such channel" + "\r\n")
-
+#define ERR_NONICKNAMEGIVEN() ("431 :No nickname given\r\n")
+#define ERR_ERRONEUSNICKNAME() ("432 :Erroneus nickname\r\n")
+#define ERR_NICKNAMEINUSE(nick) ("433 " + str(nick) + " :Nickname is already in use\r\n")
 #define ERR_NOTONCHANNEL(nick, channel) ("442 " + str(nick) + str(channel) + ": You're not on that channel" + "\r\n")
-
 #define ERR_NEEDMOREPARAMS(nick) ("461 " + str(nick) + " :Not enough parameters" +  "\r\n")
 
 

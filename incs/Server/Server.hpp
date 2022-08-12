@@ -74,10 +74,10 @@ class Server {
 		int							getnumberofchan();
 		Channel						&getChannel(std::string);
 		void						checkChannel(char *buffer, int fd);
-		
+
 		void						handleClientRequest(int i);
 		void						handleCmd(User *user);
-		void						sendToAll(int senderFd, int nbytes);
+		void						sendToAll(int senderFd, std::string msg);
 		std::vector<std::string>	getAdmin();
 		int							getNbOfUsers();
 		User						*getUser(int userFd);

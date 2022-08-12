@@ -13,12 +13,23 @@ void	Command::pass(Command &command, User &user) {
 }
 
 void	Command::nick(Command &command, User &user) {
-	std::string msg = "NICK " + user.getNickName() + "\r\n";
-	if (user.getNickName().empty() == false) {
-		user.set_nickname(command.params[0]);
-		send(user.get_fd(), msg.c_str(), msg.length(), 0);
-	} else {
-		user.set_nickname(command.params[0]);
+	if (command.params.size() > 1)
+		return ;
+	else if (command.params.empty() == true)
+		sendMsg(user.get_fd(), ERR_NONICKNAMEGIVEN());
+	else {
+		if (user.getNickName() == command.params[0])
+			sendMsg(user.get_fd(), ERR_NICKNAMEINUSE(user.getNickName()));
+		else if (command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-") != std::string::npos)
+			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
+		else {
+			if (user.getNickName().empty() == true) {
+				user.set_nickname(command.params[0]);
+				return ;
+			}
+			user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
+			user.set_nickname(command.params[0]);
+		}
 	}
 }
 
