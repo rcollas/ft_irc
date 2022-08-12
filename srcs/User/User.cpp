@@ -50,6 +50,7 @@ int User::get_fd() const { return this->fd; }
 
 void	User::set_username(std::string username) { this->user_name = username; }
 void	User::set_nickname(std::string nickname) { this->nick_name = nickname; }
+void	User::set_password(std::string password) { this->password = password; }
 void	User::set_isAway(bool away) { this->isAway = away; }
 
 std::string	User::getNickName() const { return this->nick_name; }

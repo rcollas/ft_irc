@@ -16,6 +16,7 @@ std::string RPL_ISUPPORT();
 #define str(param) std::string(param)
 
 #define JOIN_WELCOME_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has joined " + str(channel) + "\r\n" + "\033[0m")
+#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has leaved " + str(channel) + "\r\n" + "\033[0m")
 
 /******************************************************************************/
 /*                                   0**                                      */
@@ -51,11 +52,14 @@ std::string RPL_ISUPPORT();
 /*                                   4**                                      */
 /******************************************************************************/
 
-#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " " + str(channel) + " no such channel" + "\r\n" + "\033[0m")
+#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
 
-#define ERR_NOTONCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
+#define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
 
 #define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m 461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
 
+#define ERR_NONICKNAMEGIVEN() ("431 :No nickname given\r\n")
+#define ERR_ERRONEUSNICKNAME() ("432 :Erroneus nickname\r\n")
+#define ERR_NICKNAMEINUSE(nick) ("433 " + str(nick) + " :Nickname is already in use\r\n")
 
 #endif

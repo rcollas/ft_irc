@@ -106,7 +106,7 @@ void		Channel::printChannelUsers(int fd, User *user)
 	std::cout <<  "\033[0;31m" << "LA LIST DES USER EST LA SUIVANTE : " << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
 	for(; it != this->_usersList.end(); it++)
 	{
-		std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getUserName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+		std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getNickName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
 	}
 	(void) fd;
 	(void) user;
@@ -117,9 +117,8 @@ void		Channel::removeUserChannel(int fd, User *user)
 	(void) user;
 	if (this->userInChannel(fd) == true)
 	{
-		//std::map<int, User *>::iterator it = this->_usersList.find(fd);
 		this->_usersList.erase(fd);
-		std::cout <<  "\033[0;31m" << user->getNickName() << "is removed from the channel " << "\033[0m" << std::endl;
+		sendMsg(fd, PART_LEAVE_CHANNEL_MESSAGE(user->getNickName(), this->getChannelName()));
 	}
 	else 
 		std::cout <<  "\033[0;31m" << "I am not this channel" << "\033[0m" << std::endl;

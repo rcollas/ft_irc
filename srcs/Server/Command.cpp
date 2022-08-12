@@ -20,12 +20,23 @@ void	Command::pass(Command &command, User &user) {
 }
 
 void	Command::nick(Command &command, User &user) {
-	std::string msg = "NICK " + user.getNickName() + "\r\n";
-	if (user.getNickName().empty() == false) {
-		user.set_nickname(command.params[0]);
-		send(user.get_fd(), msg.c_str(), msg.length(), 0);
-	} else {
-		user.set_nickname(command.params[0]);
+	if (command.params.size() > 1)
+		return ;
+	else if (command.params.empty() == true)
+		sendMsg(user.get_fd(), ERR_NONICKNAMEGIVEN());
+	else {
+		if (user.getNickName() == command.params[0])
+			sendMsg(user.get_fd(), ERR_NICKNAMEINUSE(user.getNickName()));
+		else if (command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-") != std::string::npos)
+			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
+		else {
+			if (user.getNickName().empty() == true) {
+				user.set_nickname(command.params[0]);
+				return ;
+			}
+			user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
+			user.set_nickname(command.params[0]);
+		}
 	}
 }
 
@@ -161,14 +172,30 @@ void	Command::topic(Command &command, User &user) {
 	}
 }
 
+/***************** PART remove a user from one+ channels **************/
+// first condition : I check if channel exist and i am in the channel
+//  second condition : I check if channel exist and i am not in the channel
+ // thirs condition the channel doesn't exist
 void	Command::part(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
-		for (unsigned long i = 0 ; i < command.params.size() ; i++)
+		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
-			Channel *chan = &user.servInfo->getChannel(command.params[i]);
-			chan->removeUserChannel(user.get_fd(), &user);
-			chan->printChannelUsers(user.get_fd(), &user);
+			if (user.servInfo->channelExist(command.params[i]) == true) 
+			{
+				Channel *chan = &user.servInfo->getChannel(command.params[i]);
+				if (chan->userInChannel(user.get_fd()) == true)
+				{
+					chan->printChannelUsers(user.get_fd(), &user);
+					chan->removeUserChannel(user.get_fd(), &user);
+					chan->printChannelUsers(user.get_fd(), &user);
+				}
+				else if (chan->userInChannel(user.get_fd()) == false)
+					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
+
+			}
+			else 
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i]));
 		}
 	}
 	else 
