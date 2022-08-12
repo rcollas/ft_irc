@@ -126,7 +126,7 @@ void	Server::registration(User *user) {
 	Command						*ret;
 	sleep(1);
 	recv(user->get_fd(), buffer, bufferSize, MSG_DONTWAIT);
-	res = split(buffer, " \r\n");
+	res = split(buffer, " :\r\n");
 	memset(buffer, 0, bufferSize);
 	for (int i = 0; i < 4; i++) {
 		ret = parse(res, user->servInfo->getCmdList());
@@ -178,7 +178,7 @@ void	Server::sendToAll(int senderFd, int nbytes) {
 }
 
 void	Server::handleCmd(User *user) {
-	std::vector<std::string>	res = split(buffer, " \r\n");
+	std::vector<std::string>	res = split(buffer, " :\r\n");
 	Command						*ret;
 	memset(buffer, 0, bufferSize);
 	while (res.empty() == false) {

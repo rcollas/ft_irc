@@ -24,8 +24,14 @@ std::vector<std::string>	split(std::string str, std::string const sep) {
 	std::vector<std::string>	res;
 
 	while ((pos = str.find_first_of(sep)) != str.npos) {
-		token = str.substr(0, pos);
-		res.push_back(token);
+		if (str[pos] == ':') {
+			pos = str.find('\r');
+			token = str.substr(1, pos - 1);
+			res.push_back(token);
+		} else {
+			token = str.substr(0, pos);
+			res.push_back(token);
+		}
 		if (str[pos] == '\r') {
 			res.push_back("\n");
 			str.erase(0, pos + 2);
