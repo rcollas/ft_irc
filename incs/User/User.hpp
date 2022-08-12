@@ -43,6 +43,7 @@ class User {
 		int		get_fd() const;
 		void	set_username(std::string username);
 		void	set_nickname(std::string nickname);
+		void	set_realname(std::string realname);
 		void	set_password(std::string password);
 		void	set_isAway(bool away);
 		std::string	getNickName() const;

@@ -57,6 +57,8 @@ std::string RPL_ISUPPORT();
 #define ERR_NICKNAMEINUSE(nick) ("433 " + str(nick) + " :Nickname is already in use\r\n")
 #define ERR_NOTONCHANNEL(nick, channel) ("442 " + str(nick) + str(channel) + ": You're not on that channel" + "\r\n")
 #define ERR_NEEDMOREPARAMS(nick) ("461 " + str(nick) + " :Not enough parameters" +  "\r\n")
+#define ERR_ALREADYREGISTERED(nick) ("462 " + str(nick) + " :You may not reregister\r\n")
+
 
 
 #endif
