@@ -36,6 +36,7 @@ enum cmd {
 	AWAY		= 8,
 	VERSION		= 9,
 	LUSERS 		= 10,
+	PART        = 11,
 };
 
 class User;
@@ -68,12 +69,13 @@ class Server {
 /***************** Channel server part **************/
 		void						addChannel(Channel * chan);
 		bool						channelExist(std::string chanName);
-		void						createChannel(int fd, User *user, Command command);
+		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
 		int							getnumberofchan();
 		Channel						&getChannel(std::string);
 		void						checkChannel(char *buffer, int fd);
+		void 						printWelcomeMessage(int fd, User &user, Command &command, Channel *chan);
 		
 		void						handleClientRequest(int i);
 		void						handleCmd(User *user);

@@ -66,7 +66,6 @@ bool 		Channel::getChannelJoined()
 
 bool		Channel::TopicIsSet()
 {
-	this->_topicSet = true;
 	return (this->_topicSet);
 }
 
@@ -89,6 +88,7 @@ bool		Channel::userInChannel(int fd)
 
 void		Channel::changeTopic(std::string topic)
 {
+	this->_topicSet = true;
 	this->_topic = topic;
 }
 
@@ -110,4 +110,18 @@ void		Channel::printChannelUsers(int fd, User *user)
 	}
 	(void) fd;
 	(void) user;
+}
+
+void		Channel::removeUserChannel(int fd, User *user)
+{
+	(void) user;
+	if (this->userInChannel(fd) == true)
+	{
+		//std::map<int, User *>::iterator it = this->_usersList.find(fd);
+		this->_usersList.erase(fd);
+		std::cout <<  "\033[0;31m" << user->getNickName() << "is removed from the channel " << "\033[0m" << std::endl;
+	}
+	else 
+		std::cout <<  "\033[0;31m" << "I am not this channel" << "\033[0m" << std::endl;
+
 }

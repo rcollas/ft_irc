@@ -15,7 +15,7 @@ std::string RPL_ISUPPORT();
 
 #define str(param) std::string(param)
 
-#define JOIN_WELCOME_MESSAGE(nick, channel) (str(nick) + " has joined " + str(channel) + "\r\n")
+#define JOIN_WELCOME_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has joined " + str(channel) + "\r\n" + "\033[0m")
 
 /******************************************************************************/
 /*                                   0**                                      */
@@ -35,9 +35,9 @@ std::string RPL_ISUPPORT();
 /*                                   3**                                      */
 /******************************************************************************/
 
-#define RPL_TOPIC(nick, channel, topic) ("331 " + str(nick) + str(channel) + " :" + str(topic) + "\r\n")
+#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m 331 " + str(nick) + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
 
-#define RPL_NOTOPIC(channel) ("332 No topic set for " + str(channel) + "\r\n")
+#define RPL_NOTOPIC(channel) ("\e[0;34m 332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
 
 #define RPL_AWAY(nick, message) ("301 " + str(nick) + " :" + str(message) + "\r\n")
 #define RPL_UNAWAY(nick) ("305 " + str(nick) + " :You are no longer marked as being away\r\n")
@@ -51,11 +51,11 @@ std::string RPL_ISUPPORT();
 /*                                   4**                                      */
 /******************************************************************************/
 
-#define ERR_NOSUCHCHANNEL(nick, channel) ("403 " + str(nick) + " " + str(channel) + " no such channel" + "\r\n")
+#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " " + str(channel) + " no such channel" + "\r\n" + "\033[0m")
 
-#define ERR_NOTONCHANNEL(nick, channel) ("442 " + str(nick) + str(channel) + ": You're not on that channel" + "\r\n")
+#define ERR_NOTONCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
 
-#define ERR_NEEDMOREPARAMS(nick) ("461 " + str(nick) + " :Not enough parameters" +  "\r\n")
+#define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m 461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
 
 
 #endif

@@ -25,6 +25,8 @@ public:
 	bool		userInChannel(int fd);
 	void		changeTopic(std::string topic);
 	void		printChannelUsers(int fd, User *user);
+	void		removeUserChannel(int fd, User *user);
+
 
 	std::string 				_topic;
 

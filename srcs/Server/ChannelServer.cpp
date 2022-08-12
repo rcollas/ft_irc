@@ -1,17 +1,20 @@
 #include "../../incs/Server/Server.hpp"
 
 /***************** Here I create a channel if it does not exit **************/
-void		Server::createChannel(int fd, User *user, Command command) // a corriger
+void		Server::createChannel(int fd, User &user, Command &command) // a corriger
 {
-	if	(user->servInfo->channelExist(command.params[0]) == false)
+	for (unsigned long i = 0; i < command.params.size(); i++)
 	{
-		std::cout << "\033[0;31m" << "Création du channel " << command.params[0] << "\033[0m" << std::endl;
-		Channel *chan = new Channel(command.params[0], "");
-		this->addChannel(chan);
-	}
-	else if (user->servInfo->channelExist(command.params[0]) == true)
-		std::cout << "\033[0;31m" << "Le channel existe déjà " << command.params[0] << "\033[0m" << std::endl;
+		if	(user.servInfo->channelExist(command.params[i]) == false)
+		{
+			std::cout << "\033[0;31m" << "Création du channel " << command.params[i] << "\033[0m" << std::endl;
+			Channel *chan = new Channel(command.params[i], "");
+			this->addChannel(chan);
+		}
+		else if (user.servInfo->channelExist(command.params[i]) == true)
+			std::cout << "\033[0;31m" << "Le channel existe déjà " << command.params[i] << "\033[0m" << std::endl;
 	(void) fd;
+	}
 }
 
 void	Server::addChannel(Channel *chan) { 
@@ -48,6 +51,13 @@ Channel	&Server::getChannel(std::string chanName)
 		}
 	}
 	return (*it->second);
+}
+
+void Server::printWelcomeMessage(int fd, User &user, Command &command, Channel *chan)
+{
+	(void) command;
+	
+		sendMsg(fd, JOIN_WELCOME_MESSAGE(user.getNickName(), chan->getChannelName()));
 }
 
 

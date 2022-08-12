@@ -40,6 +40,7 @@ struct Command {
 	void	away(Command &cmd, User &user);
 	void	version(Command &cmd, User &user);
 	void	lusers(Command &cmd, User &user);
+	void	part(Command &cmd, User &user);
 };
 
 char	*ft_itoa(int nb);

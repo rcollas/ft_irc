@@ -14,6 +14,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("AWAY");
 	this->cmdList.push_back("version");
 	this->cmdList.push_back("lusers");
+	this->cmdList.push_back("PART");
 
 }
 
@@ -104,11 +105,13 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (PASS): cmd.pass(cmd, user); break;
 		case (NICK): cmd.nick(cmd, user); break;
 		case (USER): cmd.user(cmd, user); break;
+		case (JOIN): cmd.join(cmd, user); break;
+		case (TOPIC): cmd.topic(cmd, user); break;
 		case (MOTD): cmd.motd(cmd, user); break;
 		case (AWAY): cmd.away(cmd, user); break;
-		//case (JOIN): cmd.join(cmd, user);
 		case (VERSION): cmd.version(cmd, user); break;
 		case (LUSERS): cmd.lusers(cmd, user); break;
+		case (PART): cmd.part(cmd, user); break;
 	}
 }
 
@@ -126,7 +129,7 @@ void	Server::registration(User *user) {
 	Command						*ret;
 	sleep(1);
 	recv(user->get_fd(), buffer, bufferSize, MSG_DONTWAIT);
-	res = split(buffer, " \r\n");
+	res = split(buffer, " :\r\n");
 	memset(buffer, 0, bufferSize);
 	for (int i = 0; i < 4; i++) {
 		ret = parse(res, user->servInfo->getCmdList());
@@ -178,7 +181,7 @@ void	Server::sendToAll(int senderFd, int nbytes) {
 }
 
 void	Server::handleCmd(User *user) {
-	std::vector<std::string>	res = split(buffer, " \r\n");
+	std::vector<std::string>	res = split(buffer, " :\r\n");
 	Command						*ret;
 	memset(buffer, 0, bufferSize);
 	while (res.empty() == false) {

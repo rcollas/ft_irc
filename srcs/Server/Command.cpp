@@ -79,41 +79,45 @@ void	Command::lusers(Command &command, User &user)
 /***************** CHANNEL COMMAND **************/
 
 void	Command::join(Command &command, User &user) {
-	std::cout << "\e[0;34m" << "WORKS" <<  "\033[0m" << std::endl; // A REMOVE
-	if (command.params[0].empty() == false)
+	if (command.params.empty() == false)
 	{
-		user.servInfo->createChannel(user.get_fd(), &user, command);
+		user.servInfo->createChannel(user.get_fd(), user, command);
 		user.servInfo->printAllChannels(); // to remove
-		Channel *chan = &user.servInfo->getChannel(command.params[0]);
-		chan->addUserToChannel(user.get_fd(), &user);
-		chan->printChannelUsers(user.get_fd(), &user); // to remove
-		sendMsg(user.get_fd(), JOIN_WELCOME_MESSAGE(user.getNickName(), chan->getChannelName()));
-		if (chan->TopicIsSet() == true)
+		for (unsigned long i = 0 ; i < command.params.size() ; i++)
 		{
-			std::cout << "\e[0;34m" << "I SHOULD SEND TOPIC TO CLIENT" <<  "\033[0m" << std::endl; // A REMOVE
-			std::cout << "\e[0;34m" << chan->getTopic() <<  "\033[0m" << std::endl;
-			sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+			Channel *chan = &user.servInfo->getChannel(command.params[i]);
+			chan->addUserToChannel(user.get_fd(), &user);
+			chan->printChannelUsers(user.get_fd(), &user); // to remove
+			user.servInfo->printWelcomeMessage(user.get_fd(), user, command, chan);
+			if (chan->TopicIsSet() == true)
+			{
+				std::cout << "\e[0;34m" << "I SHOULD SEND TOPIC TO CLIENT" <<  "\033[0m" << std::endl; // A REMOVE
+				std::cout << "\e[0;34m" << chan->TopicIsSet() <<  "\033[0m" << std::endl;
+				sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+			}
+			else
+				sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
 		}
 	}
 	else 
 	{
 		std::cout << "\e[0;34m" << ERR_NEEDMOREPARAMS(user.getNickName()) <<  "\033[0m" << std::endl; // A REMOVE
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
-		return;
 	}
 }
 
 
 
-/***************** I get the channel and I set the topic here to send to the client **************/
+/***************** I get the channel and I set the topic here to send to the client I need to have at least 3 param TOPIC <channel> <message> **************/
 void	SetTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params[1].size() > 1 && chan->userInChannel(user.get_fd()) == true)
+	if (command.params.size() >= 2 && chan->userInChannel(user.get_fd()) == true)
 	{
 		std::string topic;
 		for (unsigned long i = 1; i <= command.params.size(); i++)
 			topic = concatenate_strings(topic, command.params[i]);
+		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
 		chan->changeTopic(topic);
 		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
 	}
@@ -125,13 +129,16 @@ void	sendTopic(Command &command, User &user)
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
 	//std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
 
-	if (command.params[1].size() == 0 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == true)
+	if (command.params.size() == 1 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == true)
 	{
 		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
 		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
 	}
-
-
+	else if (command.params.size() == 1 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == false)
+	{
+		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
+		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
+	}
 }
 /***************** I handle the topic command who set a topic for a channel **************/
 void	Command::topic(Command &command, User &user) {
@@ -141,17 +148,32 @@ void	Command::topic(Command &command, User &user) {
 		{
 				SetTopic(command, user);
 				sendTopic(command, user);
-
 		}
 		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
 		{
 			std::cout << "\e[0;34m" << ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]) <<  "\033[0m" << std::endl; // A REMOVE
 			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
 		}
-
 	}
 	else 
 	{
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+	}
+}
+
+void	Command::part(Command &command, User &user) {
+	if (command.params.empty() == false)
+	{
+		for (unsigned long i = 0 ; i < command.params.size() ; i++)
+		{
+			Channel *chan = &user.servInfo->getChannel(command.params[i]);
+			chan->removeUserChannel(user.get_fd(), &user);
+			chan->printChannelUsers(user.get_fd(), &user);
+		}
+	}
+	else 
+	{
+		std::cout << "\e[0;34m" << ERR_NEEDMOREPARAMS(user.getNickName()) <<  "\033[0m" << std::endl; // A REMOVE
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 	}
 }
