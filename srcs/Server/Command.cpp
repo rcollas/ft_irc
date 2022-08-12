@@ -93,28 +93,21 @@ void	Command::join(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
 		user.servInfo->createChannel(user.get_fd(), user, command);
-		user.servInfo->printAllChannels(); // to remove
+		//user.servInfo->printAllChannels(); // to remove
 		for (unsigned long i = 0 ; i < command.params.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(command.params[i]);
 			chan->addUserToChannel(user.get_fd(), &user);
-			chan->printChannelUsers(user.get_fd(), &user); // to remove
+			//chan->printChannelUsers(user.get_fd(), &user); // to remove
 			user.servInfo->printWelcomeMessage(user.get_fd(), user, command, chan);
 			if (chan->TopicIsSet() == true)
-			{
-				std::cout << "\e[0;34m" << "I SHOULD SEND TOPIC TO CLIENT" <<  "\033[0m" << std::endl; // A REMOVE
-				std::cout << "\e[0;34m" << chan->TopicIsSet() <<  "\033[0m" << std::endl;
 				sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
-			}
 			else
 				sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
 		}
 	}
 	else 
-	{
-		std::cout << "\e[0;34m" << ERR_NEEDMOREPARAMS(user.getNickName()) <<  "\033[0m" << std::endl; // A REMOVE
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
-	}
 }
 
 
@@ -128,7 +121,6 @@ void	SetTopic(Command &command, User &user)
 		std::string topic;
 		for (unsigned long i = 1; i <= command.params.size(); i++)
 			topic = concatenate_strings(topic, command.params[i]);
-		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
 		chan->changeTopic(topic);
 		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
 	}
@@ -138,18 +130,10 @@ void	SetTopic(Command &command, User &user)
 void	sendTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	//std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
-
 	if (command.params.size() == 1 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == true)
-	{
-		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
 		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
-	}
 	else if (command.params.size() == 1 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == false)
-	{
-		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
 		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
-	}
 }
 /***************** I handle the topic command who set a topic for a channel **************/
 void	Command::topic(Command &command, User &user) {
@@ -161,10 +145,7 @@ void	Command::topic(Command &command, User &user) {
 				sendTopic(command, user);
 		}
 		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
-		{
-			std::cout << "\e[0;34m" << ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]) <<  "\033[0m" << std::endl; // A REMOVE
 			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
-		}
 	}
 	else 
 	{
@@ -200,7 +181,25 @@ void	Command::part(Command &command, User &user) {
 	}
 	else 
 	{
-		std::cout << "\e[0;34m" << ERR_NEEDMOREPARAMS(user.getNickName()) <<  "\033[0m" << std::endl; // A REMOVE
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+	}
+}
+
+/***************** NAMES display the list of users of specified channels **************/
+void	Command::names(Command &command, User &user) {
+	if (command.params.empty() == false)
+	{
+		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
+		{
+			if (user.servInfo->channelExist(command.params[i]) == true) 
+			{
+				Channel *chan = &user.servInfo->getChannel(command.params[i]);
+				chan->printChannelUsers(user.get_fd(), &user);
+			}
+		}
+	}
+	else // print here all the names of the user
+	{
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 	}
 }

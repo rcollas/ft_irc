@@ -44,9 +44,11 @@ std::string RPL_ISUPPORT();
 #define RPL_UNAWAY(nick) ("305 " + str(nick) + " :You are no longer marked as being away\r\n")
 #define RPL_NOWAWAY(nick) ("306 " + str(nick) + " :You have been marked as being away\r\n")
 #define RPL_VERSION(nick) ("351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n")
+#define RPL_NAMREPLY(nick) ("\e[0;34m 353 " + str(nick) + "\r\n" + "\033[0m")
 #define RPL_MOTD(nick, text) ("372 " + str(nick) + " :- " + str(text) + "\r\n")
 #define RPL_MOTDSTART(nick, server) ("375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n")
 #define RPL_ENDOFMOTD(nick) ("376 " + str(nick) + " :End of /MOTD command\r\n")
+
 
 /******************************************************************************/
 /*                                   4**                                      */

@@ -15,6 +15,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("version");
 	this->cmdList.push_back("lusers");
 	this->cmdList.push_back("PART");
+	this->cmdList.push_back("NAMES");
 
 }
 
@@ -112,6 +113,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (VERSION): cmd.version(cmd, user); break;
 		case (LUSERS): cmd.lusers(cmd, user); break;
 		case (PART): cmd.part(cmd, user); break;
+		case (NAMES): cmd.names(cmd, user); break;
 	}
 }
 

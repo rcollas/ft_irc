@@ -37,6 +37,7 @@ enum cmd {
 	VERSION		= 9,
 	LUSERS 		= 10,
 	PART        = 11,
+	NAMES		= 12,
 };
 
 class User;
