@@ -171,7 +171,6 @@ void	Server::sendToAll(int senderFd, std::string msg) {
 		if (dest_fd != serverEndPoint && dest_fd != senderFd)
 		{
 			sendMsg(dest_fd, msg);
-			std::cout << "Sending: " << buffer << std::endl;
 		}
 	}
 }
