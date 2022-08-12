@@ -19,27 +19,28 @@ int		getCmd(std::string cmd, std::vector<std::string> cmdList) {
 
 std::vector<std::string>	split(std::string str, std::string const sep) {
 
-	size_t						pos = 0;
-	std::string					token;
-	std::vector<std::string>	res;
+	size_t pos = 0;
+	std::string token;
+	std::vector<std::string> res;
 
-	while ((pos = str.find_first_of(sep)) != str.npos) {
+	while ((pos = str.find_first_of(sep)) < str.npos) {
 		if (str[pos] == ':') {
-			pos = str.find_first_of('\r');
-			token = str.substr(1, pos);
+			pos = str.find_first_of("\r\n");
+			token = str.substr(1, pos - 1);
 			res.push_back(token);
+			str.erase(0, pos + 2);
 		} else {
 			token = str.substr(0, pos);
 			res.push_back(token);
-		}
-		if (str[pos] == '\r') {
-			res.push_back("\n");
-			str.erase(0, pos + 2);
-		} else {
-			str.erase(0, pos + 1);
+			if (str[pos] == '\r') {
+				res.push_back("\n");
+				str.erase(0, pos + 2);
+			} else {
+				str.erase(0, pos + 1);
+			}
 		}
 	}
-	return res;
+		return res;
 }
 
 /**
