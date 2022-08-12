@@ -18,6 +18,7 @@ public:
 	std::string getKeyName();
 	std::string getTopic();
 	bool 		getChannelJoined();
+	bool		TopicIsSet();
 	void		addUserToChannel(int fd, User *user);
 	void		displayListChannelUsers();
 	void		joinChannel(char *buffer);
@@ -33,5 +34,6 @@ private :
 	std::map<int, User *> 		_usersList; 
 	//std::string 				_topic;
 	bool 						_channelJoined;
+	bool						_topicSet;
 };
 #endif

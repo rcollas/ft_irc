@@ -2,6 +2,13 @@
 #include "../../incs/Server/Server.hpp"
 
 
+std::string	concatenate_strings(std::string first, std::string second)
+{
+	first = first.append(" ");
+	first = first.append(second);
+	return (first);
+}
+
 void	Command::cap(Command &command, User &user) {
 	(void)command;
 	send(user.get_fd(), "CAP\r\n", strlen("CAP\r\n"), 0);
@@ -75,11 +82,17 @@ void	Command::join(Command &command, User &user) {
 	if (command.params[0].empty() == false)
 	{
 		user.servInfo->createChannel(user.get_fd(), &user, command);
-		user.servInfo->printAllChannels();
+		user.servInfo->printAllChannels(); // to remove
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->addUserToChannel(user.get_fd(), &user);
-		chan->printChannelUsers(user.get_fd(), &user);
+		chan->printChannelUsers(user.get_fd(), &user); // to remove
 		sendMsg(user.get_fd(), JOIN_WELCOME_MESSAGE(user.getNickName(), chan->getChannelName()));
+		if (chan->TopicIsSet() == true)
+		{
+			std::cout << "\e[0;34m" << "I SHOULD SEND TOPIC TO CLIENT" <<  "\033[0m" << std::endl; // A REMOVE
+			std::cout << "\e[0;34m" << chan->getTopic() <<  "\033[0m" << std::endl;
+			sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+		}
 	}
 	else 
 	{
@@ -89,21 +102,46 @@ void	Command::join(Command &command, User &user) {
 	}
 }
 
+
+
+/***************** I get the channel and I set the topic here to send to the client **************/
+void	SetTopic(Command &command, User &user)
+{
+	Channel *chan = &user.servInfo->getChannel(command.params[0]);
+	if (command.params[1].size() > 1 && chan->userInChannel(user.get_fd()) == true)
+	{
+		std::string topic;
+		for (unsigned long i = 1; i <= command.params.size(); i++)
+			topic = concatenate_strings(topic, command.params[i]);
+		chan->changeTopic(topic);
+		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+	}
+}
+
+
+void	sendTopic(Command &command, User &user)
+{
+	Channel *chan = &user.servInfo->getChannel(command.params[0]);
+	//std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
+
+	if (command.params[1].size() == 0 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == true)
+	{
+		std::cout << "\e[0;34m" << "Je suis dans le bon TOPIC" << chan->getTopic() <<  "\033[0m" << std::endl; // A REMOVE
+		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+	}
+
+
+}
 /***************** I handle the topic command who set a topic for a channel **************/
 void	Command::topic(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
 		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
 		{
-			Channel *chan = &user.servInfo->getChannel(command.params[0]);
-			if (command.params[1].size() > 1 && chan->userInChannel(user.get_fd()) == true)
-			{
-				std::string joinstring = &command.params[1].join();
-				chan->changeTopic(command.params[1]);
-				sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
-				std::cout << "\e[0;32m" << "I CAN SET THE TOPICCC" <<  "\033[0m" << std::endl;
-			}
-		} 
+				SetTopic(command, user);
+				sendTopic(command, user);
+
+		}
 		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
 		{
 			std::cout << "\e[0;34m" << ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]) <<  "\033[0m" << std::endl; // A REMOVE
