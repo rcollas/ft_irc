@@ -71,7 +71,7 @@ void	Command::lusers(Command &command, User &user)
 	{
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
-		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan()"));
+		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan"));
 		//sendMsg(user.get_fd(), RPL_LUSERME(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 	}
 }
@@ -79,6 +79,7 @@ void	Command::lusers(Command &command, User &user)
 /***************** CHANNEL COMMAND **************/
 
 void	Command::join(Command &command, User &user) {
+	std::cout << "\e[0;34m" << "WORKS" <<  "\033[0m" << std::endl; // A REMOVE
 	if (command.params[0].empty() == false)
 	{
 		user.servInfo->createChannel(user.get_fd(), &user, command);
