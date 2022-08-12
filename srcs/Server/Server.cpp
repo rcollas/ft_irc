@@ -14,6 +14,8 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("AWAY");
 	this->cmdList.push_back("version");
 	this->cmdList.push_back("lusers");
+	this->cmdList.push_back("PART");
+	this->cmdList.push_back("NAMES");
 
 }
 
@@ -98,17 +100,23 @@ std::vector<std::string>	Server::getAdmin() {
 	return adminList;
 }
 
+std::map<int, User>		Server::getUserList() { return (this->user_list); }
+
+
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	switch (cmd.cmd) {
 		case (CAP): cmd.cap(cmd, user); break;
 		case (PASS): cmd.pass(cmd, user); break;
 		case (NICK): cmd.nick(cmd, user); break;
 		case (USER): cmd.user(cmd, user); break;
+		case (JOIN): cmd.join(cmd, user); break;
+		case (TOPIC): cmd.topic(cmd, user); break;
 		case (MOTD): cmd.motd(cmd, user); break;
 		case (AWAY): cmd.away(cmd, user); break;
-		//case (JOIN): cmd.join(cmd, user);
 		case (VERSION): cmd.version(cmd, user); break;
 		case (LUSERS): cmd.lusers(cmd, user); break;
+		case (PART): cmd.part(cmd, user); break;
+		case (NAMES): cmd.names(cmd, user); break;
 	}
 }
 

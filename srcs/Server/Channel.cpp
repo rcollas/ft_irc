@@ -13,7 +13,7 @@ Channel::Channel(std::string const &channelName, std::string const &key)
 	this->_channelName 		= channelName;
 	this->_key				= key;
 	this->_channelJoined	= true;
-	this->_topic			= "NOT WORKING";
+	this->_topicSet			= false;
 	std::cout << "Constructor is called" << std::endl;
 }
 
@@ -64,6 +64,11 @@ bool 		Channel::getChannelJoined()
 	return (this->_channelJoined);
 }
 
+bool		Channel::TopicIsSet()
+{
+	return (this->_topicSet);
+}
+
 /*
 **==========================
 **    MEMBER FUNCTIONS
@@ -83,6 +88,7 @@ bool		Channel::userInChannel(int fd)
 
 void		Channel::changeTopic(std::string topic)
 {
+	this->_topicSet = true;
 	this->_topic = topic;
 }
 
@@ -97,11 +103,28 @@ void		Channel::printChannelUsers(int fd, User *user)
 {
 	std::map<int, User *>::iterator it; // On donne le type à l'itérator
 	it = this->_usersList.begin(); // On le met au début
-	std::cout <<  "\033[0;31m" << "LA LIST DES USER EST LA SUIVANTE : " << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+	//std::cout <<  "\033[0;31m" << "LA LIST DES USER EST LA SUIVANTE : " << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+	// for(; it != this->_usersList.end(); it++)
+	// {
+	// 	std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getNickName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+	// }
 	for(; it != this->_usersList.end(); it++)
 	{
-		std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getUserName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
+		sendMsg(fd, RPL_NAMREPLY(it->second->getNickName()));
 	}
 	(void) fd;
 	(void) user;
+}
+
+void		Channel::removeUserChannel(int fd, User *user)
+{
+	(void) user;
+	if (this->userInChannel(fd) == true)
+	{
+		this->_usersList.erase(fd);
+		sendMsg(fd, PART_LEAVE_CHANNEL_MESSAGE(user->getNickName(), this->getChannelName()));
+	}
+	else 
+		std::cout <<  "\033[0;31m" << "I am not this channel" << "\033[0m" << std::endl;
+
 }

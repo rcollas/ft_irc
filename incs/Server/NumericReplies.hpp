@@ -15,7 +15,8 @@ std::string RPL_ISUPPORT();
 
 #define str(param) std::string(param)
 
-#define JOIN_WELCOME_MESSAGE(nick, channel) (str(nick) + " has joined " + str(channel) + "\r\n")
+#define JOIN_WELCOME_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has joined " + str(channel) + "\r\n" + "\033[0m")
+#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has leaved " + str(channel) + "\r\n" + "\033[0m")
 
 /******************************************************************************/
 /*                                   0**                                      */
@@ -35,30 +36,34 @@ std::string RPL_ISUPPORT();
 /*                                   3**                                      */
 /******************************************************************************/
 
-#define RPL_TOPIC(nick, text) ("331 " + str(nick) + " : " + str(text) + "\r\n")
+#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m 331 " + str(nick) + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
 
-#define RPL_NOTOPIC(channel) ("332 No topic set for " + str(channel) + "\r\n")
+#define RPL_NOTOPIC(channel) ("\e[0;34m 332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
 
 #define RPL_AWAY(nick, message) ("301 " + str(nick) + " :" + str(message) + "\r\n")
 #define RPL_UNAWAY(nick) ("305 " + str(nick) + " :You are no longer marked as being away\r\n")
 #define RPL_NOWAWAY(nick) ("306 " + str(nick) + " :You have been marked as being away\r\n")
 #define RPL_VERSION(nick) ("351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n")
+#define RPL_NAMREPLY(nick) ("\e[0;34m 353 " + str(nick) + "\r\n" + "\033[0m")
 #define RPL_MOTD(nick, text) ("372 " + str(nick) + " :- " + str(text) + "\r\n")
 #define RPL_MOTDSTART(nick, server) ("375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n")
 #define RPL_ENDOFMOTD(nick) ("376 " + str(nick) + " :End of /MOTD command\r\n")
+
 
 /******************************************************************************/
 /*                                   4**                                      */
 /******************************************************************************/
 
-#define ERR_NOSUCHCHANNEL(nick, channel) ("403 " + str(nick) + " " + str(channel) + " no such channel" + "\r\n")
+#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
+
+#define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
+
+#define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m 461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
+
 #define ERR_NONICKNAMEGIVEN() ("431 :No nickname given\r\n")
 #define ERR_ERRONEUSNICKNAME() ("432 :Erroneus nickname\r\n")
 #define ERR_NICKNAMEINUSE(nick) ("433 " + str(nick) + " :Nickname is already in use\r\n")
-#define ERR_NOTONCHANNEL(nick, channel) ("442 " + str(nick) + str(channel) + ": You're not on that channel" + "\r\n")
-#define ERR_NEEDMOREPARAMS(nick) ("461 " + str(nick) + " :Not enough parameters" +  "\r\n")
-#define ERR_ALREADYREGISTERED(nick) ("462 " + str(nick) + " :You may not reregister\r\n")
-
+#define ERR_ALREADYREGISTERED(nick)  ("462 " + str(nick) + " :You may not reregister\r\n")
 
 
 #endif
