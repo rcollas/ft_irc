@@ -47,3 +47,15 @@ char	*ft_itoa(int nb)
 	}
 	return (str);
 }
+
+bool	nicknameExists(User &user, std::string nickname) {
+	if (user.servInfo->allChan.find(nickname) == user.servInfo->allChan.end())
+		return false;
+	return true;
+}
+
+bool	usernameExists(User &user, std::string username) {
+	if (user.servInfo->allChan.find(username) == user.servInfo->allChan.end())
+		return false;
+	return true;
+}

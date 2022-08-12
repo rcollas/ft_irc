@@ -23,14 +23,16 @@ void	Command::nick(Command &command, User &user) {
 		else if (command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-") != std::string::npos)
 			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
 		else {
-			if (user.getNickName().empty() == true) {
+			if (user.getNickName().empty() == true && user.servInfo->channelExist(command.params[0]) == false) {
 				user.set_nickname(command.params[0]);
 				std::cout << "Nickname is set at " << command.params[0] << std::endl;
 				return ;
 			}
-			user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
-			user.set_nickname(command.params[0]);
-			std::cout << "Nickname is set at " << command.params[0] << std::endl;
+			if(user.servInfo->channelExist(command.params[0]) == false) {
+				user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
+				user.set_nickname(command.params[0]);
+				std::cout << "Nickname is set at " << command.params[0] << std::endl;
+			}
 		}
 	}
 }
