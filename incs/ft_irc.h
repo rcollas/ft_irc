@@ -45,8 +45,6 @@ struct Command {
 };
 
 char	*ft_itoa(int nb);
-bool	nicknameExists(User &user, std::string nickname);
-bool	usernameExists(User &user, std::string username);
 void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);

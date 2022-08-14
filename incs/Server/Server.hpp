@@ -70,6 +70,8 @@ class Server {
 /***************** Channel server part **************/
 		void						addChannel(Channel * chan);
 		bool						channelExist(std::string chanName);
+		bool						nicknameExists(std::string nickname);
+		bool						usernameExists(std::string username);
 		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
@@ -82,7 +84,6 @@ class Server {
 		void						sendToAll(int senderFd, std::string msg);
 		std::vector<std::string>	getAdmin();
 		int							getNbOfUsers();
-		std::map<int, User>			getUserList();
 		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
 

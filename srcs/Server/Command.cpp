@@ -25,17 +25,17 @@ void	Command::nick(Command &command, User &user) {
 	else if (command.params.empty() == true)
 		sendMsg(user.get_fd(), ERR_NONICKNAMEGIVEN());
 	else {
-		if (user.getNickName() == command.params[0])
+		if (user.getNickName() == command.params[0] || user.servInfo->nicknameExists(command.params[0]) == false)
 			sendMsg(user.get_fd(), ERR_NICKNAMEINUSE(user.getNickName()));
 		else if (command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-") != std::string::npos)
-			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
+			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME(user.getNickName()));
 		else {
-			if (user.getNickName().empty() == true && user.servInfo->channelExist(command.params[0]) == false) {
+			if (user.getNickName().empty() == true) {
 				user.set_nickname(command.params[0]);
-				std::cout << "Nickname is set at " << command.params[0] << std::endl;
+				std::cout << "Nickname is set at : " << command.params[0] << std::endl;
 				return ;
 			}
-			if(user.servInfo->channelExist(command.params[0]) == false) {
+			else {
 				user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
 				user.set_nickname(command.params[0]);
 				std::cout << "Nickname is set at " << command.params[0] << std::endl;
@@ -47,26 +47,33 @@ void	Command::nick(Command &command, User &user) {
 void	Command::user(Command &command, User &user) {
 	if (command.params.size() > 4)
 		return ;
-	else if (command.params.size() < 4) {
+	if (command.params.size() < 4) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return ;
 	}
 	if (!(command.params[1] == "0" && command.params[2] == "*")) {
 		std::cout << "Usage: /USER <username> 0 * <realname>\n";
 		return ;
-	}	
-	if (user.getUserName().empty() == false) {
-		sendMsg(user.get_fd(), ERR_ALREADYREGISTERED(user.getNickName()));
-		return ;
+	}
+	if (command.params[0].length() < 1 || command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != std::string::npos) {
+		std::cout << "Username contains invalid characters\n";
 	}
 	if (command.params[3].length() < 1 || command.params[3].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != std::string::npos) {
 		std::cout << "Realname contains invalid characters\n";
 		return ;
 	}
-	user.set_username(command.params[0]);
-	std::cout << "Username is set at " << command.params[0] << std::endl;
-	user.set_realname(command.params[3]);
-	std::cout << "Realname is set at " << command.params[3] << std::endl;
+	if (user.getUserName().empty() == false) {
+		sendMsg(user.get_fd(), ERR_ALREADYREGISTERED(user.getNickName()));
+		return ;
+	}
+	if (user.servInfo->usernameExists(command.params[0]) == false) 
+		std::cout << "Username already exists on the server\n";
+	else {
+		user.set_username(command.params[0]);
+		std::cout << "Username is set at : " << command.params[0] << std::endl;
+		user.set_realname(command.params[3]);
+		std::cout << "Realname is set at : " << command.params[3] << std::endl;
+	}
 }
 
 void	Command::motd(Command &command, User &user) {
