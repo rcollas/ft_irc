@@ -19,10 +19,11 @@ void	Server::fillAvailableCmd() {
 
 }
 
-Server::Server()
+Server::Server(std::string port, std::string passwd)
 :
 serverEndPoint(0),
-portNum("6667")
+portNum(port),
+password(passwd)
 {
 	int status;
 	struct addrinfo hints;
@@ -47,6 +48,11 @@ portNum("6667")
 Server::~Server() {}
 
 std::vector<std::string>	&Server::getCmdList() { return this->cmdList; }
+std::string	Server::getPassword() const { return this->password; }
+
+
+void	Server::setPortNum(std::string portNum) { this->portNum = portNum; }
+
 
 void	Server::init()
 {

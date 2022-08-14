@@ -15,8 +15,10 @@ void	Command::cap(Command &command, User &user) {
 }
 
 void	Command::pass(Command &command, User &user) {
-	(void)command;
-	send(user.get_fd(), "PASS\r\n", strlen("PASS\r\n"), 0);
+	if (command.params.size() > 1)
+		return ;
+	if (command.params.size() == 1 && command.params[0] != user.servInfo->getPassword())
+		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
 }
 
 void	Command::nick(Command &command, User &user) {
@@ -85,27 +87,25 @@ void	Command::motd(Command &command, User &user) {
 }
 
 void	Command::away(Command &command, User &user) {
-	if (command.params.empty() == true) {
+	if (command.params.empty() == true && user.getIsAway() == true) {
 		user.set_isAway(false);
 		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));
 	}
-	if (command.params.empty() == false){
+	if (command.params.empty() == false) {
 		user.set_isAway(true);
 		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
 		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
 	}
 }
 
-void	Command::version(Command &command, User &user){
-	if (command.params.empty() == true) {
+void	Command::version(Command &command, User &user) {
+	if (command.params.empty() == true)
 		sendMsg(user.get_fd(), RPL_VERSION(user.getNickName()));
-	}
 }
 
 void	Command::lusers(Command &command, User &user)
 {
-	if (command.params.empty() == true)
-	{
+	if (command.params.empty() == true) {
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
 		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan"));

@@ -45,7 +45,7 @@ struct Command {
 };
 
 char	*ft_itoa(int nb);
-void						printDebug(std::string msg, bool print);
+void	printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
 void	printCmd(Command &cmdList);

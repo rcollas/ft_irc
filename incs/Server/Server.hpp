@@ -51,6 +51,7 @@ class Server {
 		std::string							portNum;
 		static const int					bufferSize = 4096;
 		static char							buffer[bufferSize];
+		std::string							password;
 		struct addrinfo						*serverinfo;
 		struct sockaddr_in					*serverAddress;
 		std::vector<pollfd>					pfds;
@@ -62,10 +63,11 @@ class Server {
 		void	fillAvailableCmd();
 
 	public:
-		Server();
+		Server(std::string const port, std::string const passwd);
 		~Server();
 		void	init();
 		void	run();
+
 
 /***************** Channel server part **************/
 		void						addChannel(Channel * chan);
@@ -92,6 +94,9 @@ class Server {
 		static void					registration(User *user);
 		static void					welcome(User &user);
 		static void					cmdDispatcher(Command &cmd, User &user);
+		void						checkArgs(int ac, char **av);
+		void						setPortNum(std::string portNum);
+		std::string	getPassword() const;
 };
 
 #endif
