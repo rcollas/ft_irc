@@ -60,4 +60,34 @@ void Server::printWelcomeMessage(int fd, User &user, Command &command, Channel *
 		sendMsg(fd, JOIN_WELCOME_MESSAGE(user.getNickName(), chan->getChannelName()));
 }
 
+void Server::printAllChannelsUsers(User &user)
+{
+	std::map<std::string, Channel *>::iterator it;
+	it = this->allChan.begin();
+	for (; it != this->allChan.end(); it++)
+	{
+		it->second->printChannelUsers(user.get_fd(), &user, it->second->getChannelName());
+	}
+}
+
+void Server::printListChannels(User &user)
+{
+	std::map<std::string, Channel *>::iterator it;
+	it = this->allChan.begin();
+	for (; it != this->allChan.end(); it++)
+		sendMsg(user.get_fd(), RPL_LIST(it->second->getChannelName(), ft_itoa(it->second->getNbUsers()), it->second->getTopic()));
+	sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
+}
+
+void Server::displayListMinUser(User &user, int minUser)
+{
+	std::map<std::string, Channel *>::iterator it;
+	it = this->allChan.begin();
+	for (; it != this->allChan.end(); it++)
+	{
+		if (it->second->getNbUsers() >= minUser)
+			sendMsg(user.get_fd(), RPL_LIST(it->second->getChannelName(), ft_itoa(it->second->getNbUsers()), it->second->getTopic()));
+	}
+	sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
+}
 

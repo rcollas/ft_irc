@@ -36,15 +36,18 @@ std::string RPL_ISUPPORT();
 /*                                   3**                                      */
 /******************************************************************************/
 
-#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m 331 " + str(nick) + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
+#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m 331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
 
 #define RPL_NOTOPIC(channel) ("\e[0;34m 332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
 
 #define RPL_AWAY(nick, message) ("301 " + str(nick) + " :" + str(message) + "\r\n")
 #define RPL_UNAWAY(nick) ("305 " + str(nick) + " :You are no longer marked as being away\r\n")
 #define RPL_NOWAWAY(nick) ("306 " + str(nick) + " :You have been marked as being away\r\n")
+#define RPL_LIST(channel, count, topic) ("\e[0;34m 322 " + str(channel) + " " + str(count) + " :" + str(topic) + "\r\n" + "\033[0m")
+#define RPL_LISTEND(nick)("\e[0;34m 323 " + str(nick) + " :END of LIST" + "\r\n" + "\033[0m")
 #define RPL_VERSION(nick) ("351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n")
-#define RPL_NAMREPLY(nick) ("\e[0;34m 353 " + str(nick) + "\r\n" + "\033[0m")
+#define RPL_NAMREPLY(nick, channel) ("\e[0;34m 353 "+ str(channel) + " :" + str(nick) + "\r\n" + "\033[0m")
+#define RPL_ENDOFNAMES(channel) ("\e[0;34m 366 " + str(channel) + " :End of NAMES list" + "\r\n" + "\033[0m")
 #define RPL_MOTD(nick, text) ("372 " + str(nick) + " :- " + str(text) + "\r\n")
 #define RPL_MOTDSTART(nick, server) ("375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n")
 #define RPL_ENDOFMOTD(nick) ("376 " + str(nick) + " :End of /MOTD command\r\n")

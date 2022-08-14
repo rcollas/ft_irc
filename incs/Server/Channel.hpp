@@ -24,8 +24,9 @@ public:
 	void		joinChannel(char *buffer);
 	bool		userInChannel(int fd);
 	void		changeTopic(std::string topic);
-	void		printChannelUsers(int fd, User *user);
+	void		printChannelUsers(int fd, User *user, std::string channelName);
 	void		removeUserChannel(int fd, User *user);
+	int			getNbUsers();
 
 
 	std::string 				_topic;

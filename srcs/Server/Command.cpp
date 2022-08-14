@@ -167,9 +167,9 @@ void	Command::part(Command &command, User &user) {
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
 				if (chan->userInChannel(user.get_fd()) == true)
 				{
-					chan->printChannelUsers(user.get_fd(), &user);
+					chan->printChannelUsers(user.get_fd(), &user, command.params[i]); // to remove
 					chan->removeUserChannel(user.get_fd(), &user);
-					chan->printChannelUsers(user.get_fd(), &user);
+					chan->printChannelUsers(user.get_fd(), &user, command.params[i]); //to remove
 				}
 				else if (chan->userInChannel(user.get_fd()) == false)
 					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
@@ -189,17 +189,59 @@ void	Command::part(Command &command, User &user) {
 void	Command::names(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
+		for (unsigned long i = 0 ; i < command.params.size() ; i++)
+		{
+			if (user.servInfo->channelExist(command.params[i]) == true) 
+			{
+				Channel *chan = &user.servInfo->getChannel(command.params[i]);
+				chan->printChannelUsers(user.get_fd(), &user, command.params[i]);
+			}
+			else
+				sendMsg(user.get_fd(), RPL_ENDOFNAMES(command.params[i]));
+		}
+	}
+	else // print here all the names of the user
+		user.servInfo->printAllChannelsUsers(user);
+}
+
+/***************** ListMinUser check if I enter "LIST >3" for example, I display the channels with at least 3 members **************/
+bool	listMinUser(Command &command, User &user)
+{
+	(void) user;
+	std::stringstream ss;
+	if (command.params[0][0] == '>' && command.params.size() == 1)
+	{
+		if (command.params[0].size() == 1) // Means we only have ">"
+			return (false);
+		for (int i = 1; command.params[0][i] ; i++) // I check here if I only have digits
+		{
+			if (isdigit(command.params[0][i]) == false)
+				return false;
+		}
+		user.servInfo->displayListMinUser(user, stoi(command.params[0].substr(1)) );
+	}
+	return (true);
+}
+
+/***************** LIST allow to show the channels + the numbers of users ont it and the TOPIC **************/
+void	Command::list(Command &command, User &user)
+{
+	if (command.params.empty() == false)
+	{
+		if (listMinUser(command, user) == true)
+			return;
 		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
 			if (user.servInfo->channelExist(command.params[i]) == true) 
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				chan->printChannelUsers(user.get_fd(), &user);
+				sendMsg(user.get_fd(), RPL_LIST(chan->getChannelName(), ft_itoa(chan->getNbUsers()), chan->getTopic()));
 			}
+			else
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i]));
 		}
+		sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
 	}
-	else // print here all the names of the user
-	{
-		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
-	}
+	else
+		user.servInfo->printListChannels(user);
 }

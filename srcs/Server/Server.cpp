@@ -16,7 +16,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("lusers");
 	this->cmdList.push_back("PART");
 	this->cmdList.push_back("NAMES");
-
+	this->cmdList.push_back("LIST");
 }
 
 Server::Server()
@@ -114,6 +114,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (LUSERS): cmd.lusers(cmd, user); break;
 		case (PART): cmd.part(cmd, user); break;
 		case (NAMES): cmd.names(cmd, user); break;
+		case (LIST): cmd.list(cmd, user); break;
 	}
 }
 

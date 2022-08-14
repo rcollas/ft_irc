@@ -99,19 +99,15 @@ void		Channel::addUserToChannel(int fd, User *user)
 }
 
 /***************** Here I print all the user of the channel **************/
-void		Channel::printChannelUsers(int fd, User *user)
+void		Channel::printChannelUsers(int fd, User *user, std::string channelName)
 {
 	std::map<int, User *>::iterator it; // On donne le type à l'itérator
 	it = this->_usersList.begin(); // On le met au début
-	//std::cout <<  "\033[0;31m" << "LA LIST DES USER EST LA SUIVANTE : " << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
-	// for(; it != this->_usersList.end(); it++)
-	// {
-	// 	std::cout <<  "\033[0;31m" << "LE USER NAME EST " << it->second->getNickName() << "\033[0m"  << std::endl; // second sert à chercher la value de l'itérateur
-	// }
 	for(; it != this->_usersList.end(); it++)
 	{
-		sendMsg(fd, RPL_NAMREPLY(it->second->getNickName()));
+		sendMsg(fd, RPL_NAMREPLY(it->second->getNickName(), channelName));
 	}
+	sendMsg(fd, RPL_ENDOFNAMES(channelName));
 	(void) fd;
 	(void) user;
 }
@@ -127,4 +123,9 @@ void		Channel::removeUserChannel(int fd, User *user)
 	else 
 		std::cout <<  "\033[0;31m" << "I am not this channel" << "\033[0m" << std::endl;
 
+}
+
+int		Channel::getNbUsers(void)
+{
+	return (this->_usersList.size());
 }

@@ -42,6 +42,7 @@ struct Command {
 	void	lusers(Command &cmd, User &user);
 	void	part(Command &cmd, User &user);
 	void	names(Command &cmd, User &user);
+	void	list(Command &cmd, User &user);
 };
 
 char	*ft_itoa(int nb);
