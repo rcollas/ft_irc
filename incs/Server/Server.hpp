@@ -40,6 +40,8 @@ enum cmd {
 	PART        = 11,
 	NAMES		= 12,
 	LIST		= 13,
+	INVITE		= 14,
+	KICK		= 15,
 };
 
 class User;
@@ -89,8 +91,10 @@ class Server {
 		void						sendToAll(int senderFd, std::string msg);
 		std::vector<std::string>	getAdmin();
 		int							getNbOfUsers();
+		bool						userExist(std::string nickName);
 		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
+		User 						&nickToUserFd(std::string nickname);
 
 
 

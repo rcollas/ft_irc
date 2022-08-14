@@ -114,7 +114,6 @@ void		Channel::printChannelUsers(int fd, User *user, std::string channelName)
 
 void		Channel::removeUserChannel(int fd, User *user)
 {
-	(void) user;
 	if (this->userInChannel(fd) == true)
 	{
 		this->_usersList.erase(fd);

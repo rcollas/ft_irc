@@ -17,6 +17,8 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("PART");
 	this->cmdList.push_back("NAMES");
 	this->cmdList.push_back("LIST");
+	this->cmdList.push_back("INVITE");
+	this->cmdList.push_back("KICK");
 }
 
 Server::Server()
@@ -115,6 +117,8 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (PART): cmd.part(cmd, user); break;
 		case (NAMES): cmd.names(cmd, user); break;
 		case (LIST): cmd.list(cmd, user); break;
+		case (INVITE): cmd.invite(cmd, user); break;
+		case (KICK): cmd.kick(cmd, user); break;
 	}
 }
 
@@ -145,6 +149,26 @@ void	Server::registration(User *user) {
 	}
 	std::cout << user << std::endl;
 	std::cout << "Registration complete!" << std::endl;
+}
+
+User &Server::nickToUserFd(std::string nickname) 
+{
+	std::map<int, User>::iterator it = this->user_list.begin();
+	for (; it != this->user_list.end(); it++) { 
+		if (it->second.getNickName() == nickname)
+			return it->second;
+	}
+	return (it->second);
+}
+
+bool	Server::userExist(std::string nickName)
+{
+	std::map<int, User>::iterator it = this->user_list.begin();
+	for (; it != this->user_list.end(); it++) { 
+		if (it->second.getNickName() == nickName)
+			return true;
+	}
+	return false;
 }
 
 /**

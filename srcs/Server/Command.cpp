@@ -87,7 +87,11 @@ void	Command::lusers(Command &command, User &user)
 	}
 }
 
-/***************** CHANNEL COMMAND **************/
+/*
+**==========================
+**    CHANNEL COMMAND
+**==========================
+*/
 
 void	Command::join(Command &command, User &user) {
 	if (command.params.empty() == false)
@@ -110,9 +114,9 @@ void	Command::join(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
 
-
-
-/***************** I get the channel and I set the topic here to send to the client I need to have at least 3 param TOPIC <channel> <message> **************/
+/***************** I set up the topic of the channel
+ *  I set the topic here to send to the client 
+ * I need to have at least 3 param TOPIC <channel> <message> **************/
 void	SetTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
@@ -135,7 +139,9 @@ void	sendTopic(Command &command, User &user)
 	else if (command.params.size() == 1 && chan->userInChannel(user.get_fd()) == true && chan->TopicIsSet() == false)
 		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
 }
-/***************** I handle the topic command who set a topic for a channel **************/
+
+/***************** Topic allows
+ * to handle a topic for a dedicated channel **************/
 void	Command::topic(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
@@ -153,10 +159,11 @@ void	Command::topic(Command &command, User &user) {
 	}
 }
 
-/***************** PART remove a user from one+ channels **************/
-// first condition : I check if channel exist and i am in the channel
-//  second condition : I check if channel exist and i am not in the channel
- // thirs condition the channel doesn't exist
+/***************** PART allows 
+ * temove a user from one+ channels 
+ * first condition : I check if channel exist and i am in the channel
+ * second condition : I check if channel exist and i am not in the channel
+ * third condition the channel doesn't exist **************/
 void	Command::part(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
@@ -185,7 +192,8 @@ void	Command::part(Command &command, User &user) {
 	}
 }
 
-/***************** NAMES display the list of users of specified channels **************/
+/***************** NAMES allows
+ * display the list of users of specified channels **************/
 void	Command::names(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
@@ -223,7 +231,10 @@ bool	listMinUser(Command &command, User &user)
 	return (true);
 }
 
-/***************** LIST allow to show the channels + the numbers of users ont it and the TOPIC **************/
+/***************** LIST allows 
+ * to show the channels
+ * The numbers of users connected to the channel ont it
+ * the TOPIC is displayed **************/
 void	Command::list(Command &command, User &user)
 {
 	if (command.params.empty() == false)
@@ -244,4 +255,102 @@ void	Command::list(Command &command, User &user)
 	}
 	else
 		user.servInfo->printListChannels(user);
+}
+
+
+/***************** errors check
+ *  * Conditions are the following ones: 
+ * channel must exists
+ * User invited must exists
+ * The one who invites has to be on channel
+ * The one who is invited must to not be on channel
+ *  **************/
+void	inviteErrorscheck(Command &command, User &user)
+{
+	if (user.servInfo->channelExist(command.params[1]) == true)
+	{
+		Channel *chan = &user.servInfo->getChannel(command.params[1]);
+		if (chan->userInChannel(user.get_fd()) == true)
+		{
+			if (user.servInfo->userExist(command.params[0]) == true)
+			{
+				User *nick = &user.servInfo->nickToUserFd(command.params[0]);
+				if (chan->userInChannel(nick->get_fd()) == false)
+				{
+					chan->addUserToChannel(nick->get_fd(), nick);
+					sendMsg(nick->get_fd(), INVITE_WELCOME_MESSAGE(nick->getNickName(), chan->getChannelName()));
+					sendMsg(user.get_fd(), RPL_INVITING(nick->getNickName(), chan->getChannelName()));
+				}
+				else
+					sendMsg(user.get_fd(), ERR_USERONCHANNEL(nick->getNickName(), chan->getChannelName()));
+			}
+			else
+				sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
+		}
+		else
+			sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
+	}
+	else
+		sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[1]));
+}
+
+/***************** INVITE allows
+ * To invite someone else to a channel you are already in
+ * Conditions are the following ones: 
+ * at lease 2 parameters : nickname and channel
+ *  **************/
+void	Command::invite(Command &command, User &user)
+{
+	if (command.params.size() == 2)
+		inviteErrorscheck(command, user);
+	else
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+}
+
+/***************** Errors checks for KICK
+ * 1: channel doesn't exist
+ * 2: User kicked doesn't exist
+ * 3: User kicked exists but not on the channel **************/
+void	kickErrorCheck(Command &command, User &user)
+{
+	if (user.servInfo->channelExist(command.params[0]) == true)
+	{
+		Channel *chan = &user.servInfo->getChannel(command.params[0]);
+		if (user.servInfo->userExist(command.params[1]) == true)
+		{
+			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
+			if (chan->userInChannel(nick->get_fd()) == true)
+			{
+				chan->removeUserChannel(nick->get_fd(), nick);
+				if (command.params.size() == 3)
+				{
+					std::string message = command.params[2];
+					sendMsg(nick->get_fd(), KICK__MESSAGE(user.getNickName(), chan->getChannelName(), message));
+				}
+				else if (command.params.size() == 2)
+				{
+					chan->removeUserChannel(nick->get_fd(), nick);
+					sendMsg(nick->get_fd(), KICK__MESSAGE(user.getNickName(), chan->getChannelName(), "the host doesn't like you"));
+				}
+			}
+			else
+				sendMsg(user.get_fd(), ERR_USERNOTINCHANNEL(nick->getNickName(), chan->getChannelName()));
+		}
+		else
+			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
+	}
+	else
+		sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
+}
+
+/***************** KICK allors
+ * Need at least 2 params, the channel and the nickname
+ * An optional message otherwise a default is set
+ * having the right to kick **************/
+void	Command::kick(Command &command, User &user)
+{
+	if (command.params.size() >= 2 && command.params.size() <= 3)
+		kickErrorCheck(command, user);
+	else
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }

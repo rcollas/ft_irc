@@ -43,6 +43,8 @@ struct Command {
 	void	part(Command &cmd, User &user);
 	void	names(Command &cmd, User &user);
 	void	list(Command &cmd, User &user);
+	void	invite(Command &cmd, User &user);
+	void	kick(Command &cmd, User &user);
 };
 
 char	*ft_itoa(int nb);

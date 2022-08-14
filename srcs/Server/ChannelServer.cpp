@@ -90,4 +90,3 @@ void Server::displayListMinUser(User &user, int minUser)
 	}
 	sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
 }
-
