@@ -25,6 +25,7 @@ class User {
 		std::string					nick_name;
 		std::string					user_name;
 		std::string					real_name;
+		std::string					awayMessage;
 		int							fd;
 		std::vector<Command>		cmds;
 		struct sockaddr_storage		socket;
@@ -44,9 +45,11 @@ class User {
 		void	set_nickname(std::string nickname);
 		void	set_realname(std::string realname);
 		void	set_isAway(bool away);
+		void	set_awayMessage(std::string awayMessage);
 		std::string	getNickName() const;
 		std::string	getUserName() const;
 		std::string	getRealName() const;
+		std::string getAwayMessage() const;
 		bool	getIsAway() const;
 		bool	isAdmin() const;
 

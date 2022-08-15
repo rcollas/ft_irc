@@ -42,6 +42,7 @@ enum cmd {
 	LIST		= 13,
 	INVITE		= 14,
 	KICK		= 15,
+	PRIVMSG		= 16,
 };
 
 class User;
@@ -78,6 +79,9 @@ class Server {
 		bool						channelExist(std::string chanName);
 		bool						nicknameExists(std::string nickname);
 		bool						usernameExists(std::string username);
+		int							getTargetFd(std::string nickname);
+		bool						getAwayStatus(std::string nickname);
+		std::string 				getAwayString(std::string nickname);
 		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
@@ -107,7 +111,7 @@ class Server {
 		static void					cmdDispatcher(Command &cmd, User &user);
 		void						checkArgs(int ac, char **av);
 		void						setPortNum(std::string portNum);
-		std::string	getPassword() const;
+		std::string					getPassword() const;
 };
 
 #endif

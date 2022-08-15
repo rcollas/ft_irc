@@ -78,6 +78,18 @@ void	Command::user(Command &command, User &user) {
 	}
 }
 
+void	Command::privmsg(Command &command, User &user) {
+	if (command.params.size() != 2) {
+		return ;
+	}
+	if (user.servInfo->usernameExists(command.params[0]) == false || user.servInfo->nicknameExists(command.params[0]) == false) {
+		if (user.servInfo->getAwayStatus(command.params[0]) == true) {
+			sendMsg(user.get_fd(), "\033[0;31m301 " + command.params[0] + " :" + user.servInfo->getAwayString(command.params[0]) + "\r\n\033[0m");
+		}
+		sendMsg(user.servInfo->getTargetFd(command.params[0]), "\033[1;32m" + command.params[1] + "\r\n\033[0m");
+	}
+}
+
 void	Command::motd(Command &command, User &user) {
 	if (command.params.empty() == true) {
 		sendMsg(user.get_fd(), RPL_MOTDSTART(user.getNickName(), "localhost"));
@@ -93,6 +105,7 @@ void	Command::away(Command &command, User &user) {
 	}
 	if (command.params.empty() == false) {
 		user.set_isAway(true);
+		user.set_awayMessage(command.params[0]);
 		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
 		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
 	}
@@ -252,7 +265,7 @@ bool	listMinUser(Command &command, User &user)
 			if (isdigit(command.params[0][i]) == false)
 				return false;
 		}
-		user.servInfo->displayListMinUser(user, stoi(command.params[0].substr(1)) );
+		user.servInfo->displayListMinUser(user, atoi(command.params[0].substr(1).c_str()) );
 	}
 	return (true);
 }
