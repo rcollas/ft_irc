@@ -17,7 +17,7 @@ void	checkArgs(int ac, char **av) {
 		exit(EXIT_FAILURE);
 	}
 	if (passwd.length() != 4 || !(passwd.find_first_not_of("0123456789") == std::string::npos)) {
-		std::cerr << "Error: password should be 4 digits" << std::endl;
+		std::cerr << "Error: password must be 4 digits" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 }

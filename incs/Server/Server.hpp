@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
+#include <sstream>
 #include "NumericReplies.hpp"
 #include "Channel.hpp"
 #include "../../incs/ft_irc.h"
@@ -38,6 +39,9 @@ enum cmd {
 	LUSERS 		= 10,
 	PART        = 11,
 	NAMES		= 12,
+	LIST		= 13,
+	INVITE		= 14,
+	KICK		= 15,
 };
 
 class User;
@@ -81,13 +85,20 @@ class Server {
 		Channel						&getChannel(std::string);
 		void						checkChannel(char *buffer, int fd);
 		void 						printWelcomeMessage(int fd, User &user, Command &command, Channel *chan);
+		void 						printAllChannelsUsers(User &user);
+		void 						printListChannels(User &user);
+		void 						displayListMinUser(User &user, int i);
+
+/***************** Other parts **************/
 		void						handleClientRequest(int i);
 		void						handleCmd(User *user);
 		void						sendToAll(int senderFd, std::string msg);
 		std::vector<std::string>	getAdmin();
 		int							getNbOfUsers();
+		bool						userExist(std::string nickName);
 		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
+		User 						&nickToUserFd(std::string nickname);
 
 
 
