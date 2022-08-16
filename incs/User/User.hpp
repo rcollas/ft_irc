@@ -25,12 +25,14 @@ class User {
 		std::string					nick_name;
 		std::string					user_name;
 		std::string					real_name;
+		std::string					awayMessage;
 		int							fd;
 		std::vector<Command>		cmds;
 		struct sockaddr_storage		socket;
 		std::vector<Channel *>		activeChan;
 		bool						isAway;
 		bool						admin;
+		int							modesNumber;
 
 	public:
 		User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo);
@@ -44,10 +46,14 @@ class User {
 		void	set_nickname(std::string nickname);
 		void	set_realname(std::string realname);
 		void	set_isAway(bool away);
+		void	set_modesNumber(int isInvisible);
+		void	set_awayMessage(std::string awayMessage);
 		std::string	getNickName() const;
 		std::string	getUserName() const;
 		std::string	getRealName() const;
+		std::string getAwayMessage() const;
 		bool	getIsAway() const;
+		int		getModesNumber() const;
 		bool	isAdmin() const;
 
 		void	addCmd(Command &cmd);

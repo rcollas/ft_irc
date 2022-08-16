@@ -78,12 +78,50 @@ void	Command::user(Command &command, User &user) {
 	}
 }
 
+void	Command::privmsg(Command &command, User &user) {
+	if (command.params.size() != 2) {
+		return ;
+	}
+	if (user.servInfo->usernameExists(command.params[0]) == false || user.servInfo->nicknameExists(command.params[0]) == false) {
+		if (user.servInfo->getAwayStatus(command.params[0]) == true) {
+			sendMsg(user.get_fd(), "\033[0;31m301 " + command.params[0] + " :" + user.servInfo->getAwayString(command.params[0]) + "\r\n\033[0m");
+		}
+		sendMsg(user.servInfo->getTargetFd(command.params[0]), "\033[1;32m" + command.params[1] + "\r\n\033[0m");
+	}
+}
+
 void	Command::motd(Command &command, User &user) {
 	if (command.params.empty() == true) {
 		sendMsg(user.get_fd(), RPL_MOTDSTART(user.getNickName(), "localhost"));
 		sendMsg(user.get_fd(), RPL_MOTD(user.getNickName(), "Welcooooooooooome at home!"));
 		sendMsg(user.get_fd(), RPL_ENDOFMOTD(user.getNickName()));
 	}
+}
+
+
+void	Command::mode(Command &command, User &user) {
+		if (command.params.size() > 4)
+			return ;
+		if (user.servInfo->nicknameExists(command.params[0]) == true) {
+			sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
+			return ;
+		}
+		if (command.params[0] != user.getNickName()) {
+			sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
+			return ;
+		}
+		// if (command.params[0] == user.getNickName()) {
+		// 	if (command.params.size() == 1) { // display user modes if no 2nd param
+		// 		sendMsg(user.get_fd(), ("\033[0;31m221 " + user.getNickName() + " :" + user.getModesNumber() + "\r\n\033[0m"));
+		// 	}
+		// 	return ;
+		// }
+		if (!isAllowedMode(command.params[1])) {
+			sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
+		}
+		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && command.params[1] == "-i") {
+			;
+		}
 }
 
 void	Command::away(Command &command, User &user) {
@@ -93,6 +131,7 @@ void	Command::away(Command &command, User &user) {
 	}
 	if (command.params.empty() == false) {
 		user.set_isAway(true);
+		user.set_awayMessage(command.params[0]);
 		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
 		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
 	}
@@ -252,7 +291,7 @@ bool	listMinUser(Command &command, User &user)
 			if (isdigit(command.params[0][i]) == false)
 				return false;
 		}
-		user.servInfo->displayListMinUser(user, stoi(command.params[0].substr(1)) );
+		user.servInfo->displayListMinUser(user, atoi(command.params[0].substr(1).c_str()) );
 	}
 	return (true);
 }

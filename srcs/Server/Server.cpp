@@ -19,6 +19,8 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("LIST");
 	this->cmdList.push_back("INVITE");
 	this->cmdList.push_back("KICK");
+	this->cmdList.push_back("PRIVMSG");
+	this->cmdList.push_back("MODE");
 }
 
 Server::Server(std::string port, std::string passwd)
@@ -121,6 +123,57 @@ bool	Server::nicknameExists(std::string nickname) {
 	return (true);
 }
 
+int	Server::getTargetFd(std::string nickname) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getNickName() == nickname)
+		{
+			return (it->second.get_fd());
+		}
+	}
+	return (it->second.get_fd());
+}
+
+bool	Server::getAwayStatus(std::string nickname) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getNickName() == nickname)
+		{
+			return (it->second.getIsAway());
+		}
+	}
+	return (it->second.getIsAway());
+}
+
+int	Server::getModesNumber(std::string nickname) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getNickName() == nickname) {
+			return (it->second.getModesNumber());
+		}
+	}
+	return (it->second.getModesNumber());
+}
+
+std::string	Server::getAwayString(std::string nickname) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getNickName() == nickname)
+		{
+			return (it->second.getAwayMessage());
+		}
+	}
+	return (it->second.getAwayMessage());
+}
+
 bool	Server::usernameExists(std::string username) {
 	std::map<int, User>::iterator it;
 	it = this->user_list.begin();
@@ -151,6 +204,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (LIST): cmd.list(cmd, user); break;
 		case (INVITE): cmd.invite(cmd, user); break;
 		case (KICK): cmd.kick(cmd, user); break;
+		case (PRIVMSG): cmd.privmsg(cmd, user); break;
 	}
 }
 
