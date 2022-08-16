@@ -14,6 +14,7 @@ Channel::Channel(std::string const &channelName, std::string const &key)
 	this->_key				= key;
 	this->_channelJoined	= true;
 	this->_topicSet			= false;
+	this->_inviteModeSet	= false;
 	std::cout << "Constructor is called" << std::endl;
 }
 
@@ -74,6 +75,11 @@ std::map<int, User *>	Channel::getUsersList()
 	return this->_usersList;
 }
 
+bool					Channel::getInviteMode()
+{
+	return (this->_inviteModeSet);
+}
+
 /*
 **==========================
 **    MEMBER FUNCTIONS
@@ -132,4 +138,9 @@ void		Channel::removeUserChannel(int fd, User *user)
 int		Channel::getNbUsers(void)
 {
 	return (this->_usersList.size());
+}
+
+void	Channel::inviteModeSetTrue()
+{
+	this->_inviteModeSet = true;
 }

@@ -124,27 +124,35 @@ void	Command::motd(Command &command, User &user) {
 
 
 void	Command::mode(Command &command, User &user) {
+	std::cout << "Au debut fonction" << std::endl;
 		if (command.params.size() > 4)
 			return ;
-		if (user.servInfo->nicknameExists(command.params[0]) == true) {
+		if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true && command.params[1] == "-i") 
+		{
+			std::cout << "WORKS" << std::endl;
+			Channel *chan = &user.servInfo->getChannel(command.params[0]);
+			chan->inviteModeSetTrue();
+			std::cout << "chan bool = " << chan->getInviteMode() << std::endl;
+		}
+		else if (!isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true && command.params[1] == "-k") {
+			;
+		}
+		else if (user.servInfo->nicknameExists(command.params[0]) == true) {
 			sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
 			return ;
 		}
-		if (command.params[0] != user.getNickName()) {
+		else if (command.params[0] != user.getNickName()) {
 			sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
 			return ;
 		}
-		if (command.params[0] == user.getNickName()) {
+		else if (command.params[0] == user.getNickName()) {
 			if (command.params.size() == 1) { // display user modes if no 2nd param
 				sendMsg(user.get_fd(), "\033[0;31m221 " + user.getNickName() + " :" + ft_itoa(user.getModesNumber()) + "\r\n\033[0m");
 			}
 			return ;
 		}
-		if (!isAllowedMode(command.params[1])) {
+		else if (!isAllowedMode(command.params[1])) {
 			sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
-		}
-		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && command.params[1] == "-i") {
-			;
 		}
 }
 
@@ -182,21 +190,35 @@ void	Command::lusers(Command &command, User &user)
 **==========================
 */
 
+/***************** JOIN allows
+ * To create a channel if not created
+ * allow to join the channel
+ * if only in invite mode can't join the channel **************/
+
+void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
+{
+	user.servInfo->printWelcomeMessage(user.get_fd(), user, command, chan);
+	if (chan->TopicIsSet() == true)
+		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+	else
+		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
+}
 void	Command::join(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{
 		user.servInfo->createChannel(user.get_fd(), user, command);
-		//user.servInfo->printAllChannels(); // to remove
 		for (unsigned long i = 0 ; i < command.params.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(command.params[i]);
-			chan->addUserToChannel(user.get_fd(), &user);
-			//chan->printChannelUsers(user.get_fd(), &user); // to remove
-			user.servInfo->printWelcomeMessage(user.get_fd(), user, command, chan);
-			if (chan->TopicIsSet() == true)
-				sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+			if (chan->getInviteMode() == true && chan->userInChannel(user.get_fd()) == true)
+				WelcomeTopicJoinMessage(chan, command, user);
+			else if (chan->getInviteMode() == false)
+			{
+				chan->addUserToChannel(user.get_fd(), &user);
+				WelcomeTopicJoinMessage(chan, command, user);
+			}
 			else
-				sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
+				sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
 		}
 	}
 	else 

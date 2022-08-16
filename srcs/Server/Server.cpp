@@ -206,6 +206,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (INVITE): cmd.invite(cmd, user); break;
 		case (KICK): cmd.kick(cmd, user); break;
 		case (PRIVMSG): cmd.privmsg(cmd, user); break;
+		case (MODE): cmd.mode(cmd, user); break;
 		case (NOTICE): cmd.notice(cmd, user); break;
 	}
 }

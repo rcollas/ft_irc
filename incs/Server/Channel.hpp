@@ -18,7 +18,8 @@ public:
 	std::string				getKeyName();
 	std::string 			getTopic();
 	bool 					getChannelJoined();
-	std::map<int, User *>	getUsersList();
+	std::map<int, User *>	getUsersList();	
+	bool					getInviteMode();				
 
 /***************** members functions **************/
 	bool		TopicIsSet();
@@ -30,14 +31,15 @@ public:
 	void		printChannelUsers(int fd, User *user, std::string channelName);
 	void		removeUserChannel(int fd, User *user);
 	int			getNbUsers();
-
+	void		inviteModeSetTrue();
 
 	std::string 				_topic;
 
 private :
 	std::string 				_channelName;
 	std::string 				_key;
-	std::map<int, User *> 		_usersList; 
+	std::map<int, User *> 		_usersList;
+	bool						_inviteModeSet;
 	//std::string 				_topic;
 	bool 						_channelJoined;
 	bool						_topicSet;

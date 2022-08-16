@@ -71,6 +71,7 @@ std::string RPL_ISUPPORT();
 #define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m 461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
 #define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
 #define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
+#define ERR_INVITEONLYCHAN(nick, channel) ("\033[0;31m473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n\033[0m")
 
 /******************************************************************************/
 /*                                   5**                                      */
