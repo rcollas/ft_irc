@@ -112,14 +112,14 @@ void	Command::mode(Command &command, User &user) {
 		}
 		if (command.params[0] == user.getNickName()) {
 			if (command.params.size() == 1) { // display user modes if no 2nd param
-				sendMsg(user.get_fd(), "\033[0;31m221 " + user.getNickName() + " :" + user.getModesNumber() + "\r\n\033[0m");
+				sendMsg(user.get_fd(), "\033[0;31m221 " + user.getNickName() + " :" + ft_itoa(user.getModesNumber()) + "\r\n\033[0m");
 			}
 			return ;
 		}
 		if (!isAllowedMode(command.params[1])) {
 			sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
 		}
-		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && commnad.params[1] == "-i") {
+		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && command.params[1] == "-i") {
 			;
 		}
 }
