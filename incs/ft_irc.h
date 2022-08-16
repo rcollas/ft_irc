@@ -46,9 +46,11 @@ struct Command {
 	void	invite(Command &cmd, User &user);
 	void	kick(Command &cmd, User &user);
 	void	privmsg(Command &cmd, User &user);
+	void	mode(Command &cmd, User &user);
 };
 
 char	*ft_itoa(int nb);
+bool	isAllowedMode(std::string str);
 void	printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);

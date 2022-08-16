@@ -23,12 +23,14 @@ std::string RPL_ISUPPORT();
 /******************************************************************************/
 /*                                   0**                                      */
 /******************************************************************************/
+
 #define RPL_WELCOME(host, nick, user) ("001 " + str(nick) + " :Welcome to the " + str(host) + " network, " + str(nick) + "[!" + str(user) + "@" + str(host) + "]\r\n")
 
 
 /******************************************************************************/
 /*                                   2**                                      */
 /******************************************************************************/
+
 #define RPL_LUSERCLIENT(nick, users) ("\033[0;31m251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n\033[0m")
 #define RPL_LUSEROP(nick, ops) ("\033[0;31m252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n\033[0m")
 #define RPL_LUSERCHANNELS(nick, channels) ("\033[0;31m254 " + str(nick) + " " + str(channels) + " :channels formed\r\n\033[0m")
@@ -58,6 +60,7 @@ std::string RPL_ISUPPORT();
 /*                                   4**                                      */
 /******************************************************************************/
 
+#define ERR_NOSUCHNICK(nick, target) ("\033[0;31m401 " + str(nick) + " " + str(target) + " :No such nick/channel\r\n\033[0m")
 #define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
 #define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
 #define ERR_NONICKNAMEGIVEN() ("\033[0;31m431 :No nickname given\r\n\033[0m")
@@ -69,5 +72,11 @@ std::string RPL_ISUPPORT();
 #define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
 #define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
 
+/******************************************************************************/
+/*                                   5**                                      */
+/******************************************************************************/
+
+#define ERR_UMODEUNKNOWNFLAG(nick) ("\033[0;31m501 " + str(nick) + :Cant change mode for other users\r\n\033[0m")
+#define ERR_USERSDONTMATCH(nick) ("\033[0;31m502 " + str(nick) " :Unknowm MODE flag\r\n\033[0m")
 
 #endif

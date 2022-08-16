@@ -12,8 +12,8 @@ void	checkArgs(int ac, char **av) {
 	}
 	std::string port = av[1];
 	std::string passwd = av[2];
-	if (!(atoi(port.c_str()) > 1023 && atoi(port.c_str()) < 50000)) {
-		std::cerr << "Error: port number should be between 1023 and 50000" << std::endl;
+	if (!(atoi(port.c_str()) > 1023 && atoi(port.c_str()) < 65000)) {
+		std::cerr << "Error: port number should be between 1023 and 65000" << std::endl; //le port est code sur 16 bits donc valeur max = 65536 et les 1023 premiers bits sont consideres comme speciaux par l'OS et requierent le statut d'admin
 		exit(EXIT_FAILURE);
 	}
 	if (passwd.length() != 4 || !(passwd.find_first_not_of("0123456789") == std::string::npos)) {

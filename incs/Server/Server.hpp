@@ -43,6 +43,7 @@ enum cmd {
 	INVITE		= 14,
 	KICK		= 15,
 	PRIVMSG		= 16,
+	MODE 		= 17,
 };
 
 class User;
@@ -82,6 +83,7 @@ class Server {
 		int							getTargetFd(std::string nickname);
 		bool						getAwayStatus(std::string nickname);
 		std::string 				getAwayString(std::string nickname);
+		int						getModesNumber(std::string nickname);
 		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();

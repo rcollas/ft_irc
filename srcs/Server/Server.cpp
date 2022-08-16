@@ -20,6 +20,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("INVITE");
 	this->cmdList.push_back("KICK");
 	this->cmdList.push_back("PRIVMSG");
+	this->cmdList.push_back("MODE");
 }
 
 Server::Server(std::string port, std::string passwd)
@@ -146,6 +147,18 @@ bool	Server::getAwayStatus(std::string nickname) {
 		}
 	}
 	return (it->second.getIsAway());
+}
+
+int	Server::getModesNumber(std::string nickname) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getNickName() == nickname) {
+			return (it->second.getModesNumber());
+		}
+	}
+	return (it->second.getModesNumber());
 }
 
 std::string	Server::getAwayString(std::string nickname) {
