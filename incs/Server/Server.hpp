@@ -64,6 +64,7 @@ class Server {
 		std::string 						hostname;
 		std::map<int, User>					user_list;
 		std::vector<std::string>			cmdList;
+		std::vector<std::string>			invisibleList;
 		std::map<std::string, Channel *>	allChan;
 
 		void	fillAvailableCmd();
@@ -83,7 +84,7 @@ class Server {
 		int							getTargetFd(std::string nickname);
 		bool						getAwayStatus(std::string nickname);
 		std::string 				getAwayString(std::string nickname);
-		int						getModesNumber(std::string nickname);
+		int						getModes(std::string nickname);
 		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
@@ -104,6 +105,7 @@ class Server {
 		bool						userExist(std::string nickName);
 		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
+		std::vector<std::string>	&getInvisibleList();
 		User 						&nickToUserFd(std::string nickname);
 
 

@@ -49,5 +49,5 @@ char	*ft_itoa(int nb)
 }
 
 bool	isAllowedMode(std::string str) {
-	return (str == "-i" || str == "-k");
+	return (str == "-i" || str == "+i" || str == "-k" || str == "+k");
 }

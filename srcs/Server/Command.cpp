@@ -98,7 +98,6 @@ void	Command::motd(Command &command, User &user) {
 	}
 }
 
-
 void	Command::mode(Command &command, User &user) {
 		if (command.params.size() > 4)
 			return ;
@@ -112,15 +111,21 @@ void	Command::mode(Command &command, User &user) {
 		}
 		if (command.params[0] == user.getNickName()) {
 			if (command.params.size() == 1) { // display user modes if no 2nd param
-				sendMsg(user.get_fd(), "\033[0;31m221 " + user.getNickName() + " :" + ft_itoa(user.getModesNumber()) + "\r\n\033[0m");
+				sendMsg(user.get_fd(), RPL_UMODEIS(user.getNickName(), ft_itoa(user.servInfo->getModes())));
 			}
 			return ;
 		}
 		if (!isAllowedMode(command.params[1])) {
 			sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
+			return ;
 		}
-		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && command.params[1] == "-i") {
-			;
+		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && (command.params[1] == "-i" || command.params[1] == "+i")) { // si MODE target = user et -i
+			if (command.params[1] == "+i") {
+				user.set_isInvisible(true);
+			}
+			if (command.params[1] == "-i") {
+				user.set_isInvisible(false);
+			}
 		}
 }
 

@@ -54,6 +54,7 @@ void	User::set_nickname(std::string nickname) { this->nick_name = nickname; }
 void	User::set_realname(std::string realname) { this->real_name = realname; }
 void	User::set_awayMessage(std::string awayMessage) { this->awayMessage = awayMessage; }
 void	User::set_isAway(bool away) { this->isAway = away; }
+void	User::set_isInvisible(bool isInvisible) { this->isInvisible = isInvisible; }
 void	User::set_modesNumber(int modes) { this->modesNumber = modes; }
 
 std::string	User::getNickName() const { return this->nick_name; }
@@ -61,6 +62,7 @@ std::string	User::getUserName() const { return this->user_name; }
 std::string	User::getRealName() const { return this->real_name; }
 std::string	User::getAwayMessage() const { return this->awayMessage; }
 bool		User::getIsAway() const { return this->isAway; }
+bool		User::getIsInvisible() const { return this->isInvisible; }
 int		User::getModesNumber() const { return this->modesNumber; }
 bool		User::isAdmin() const { return this->admin; }
 

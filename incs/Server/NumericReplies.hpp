@@ -31,6 +31,7 @@ std::string RPL_ISUPPORT();
 /*                                   2**                                      */
 /******************************************************************************/
 
+#define RPL_UMODEIS(nick, modes) ("\033[0;31m251 " + str(nick) + " " + str(modes) + "\r\n\033[0m")
 #define RPL_LUSERCLIENT(nick, users) ("\033[0;31m251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n\033[0m")
 #define RPL_LUSEROP(nick, ops) ("\033[0;31m252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n\033[0m")
 #define RPL_LUSERCHANNELS(nick, channels) ("\033[0;31m254 " + str(nick) + " " + str(channels) + " :channels formed\r\n\033[0m")

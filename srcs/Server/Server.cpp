@@ -52,6 +52,7 @@ password(passwd)
 Server::~Server() {}
 
 std::vector<std::string>	&Server::getCmdList() { return this->cmdList; }
+std::vector<std::string>	&Server::getInvisibleList() { return this->invisibleList; }
 std::string	Server::getPassword() const { return this->password; }
 
 
@@ -149,7 +150,7 @@ bool	Server::getAwayStatus(std::string nickname) {
 	return (it->second.getIsAway());
 }
 
-int	Server::getModesNumber(std::string nickname) {
+int	Server::getModes(std::string nickname) {
 	std::map<int, User>::iterator it;
 	it = this->user_list.begin();
 	for(; it != this->user_list.end(); it++)
