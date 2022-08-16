@@ -21,10 +21,11 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("KICK");
 }
 
-Server::Server()
+Server::Server(std::string port, std::string passwd)
 :
 serverEndPoint(0),
-portNum("6667")
+portNum(port),
+password(passwd)
 {
 	int status;
 	struct addrinfo hints;
@@ -49,6 +50,11 @@ portNum("6667")
 Server::~Server() {}
 
 std::vector<std::string>	&Server::getCmdList() { return this->cmdList; }
+std::string	Server::getPassword() const { return this->password; }
+
+
+void	Server::setPortNum(std::string portNum) { this->portNum = portNum; }
+
 
 void	Server::init()
 {
@@ -102,6 +108,32 @@ std::vector<std::string>	Server::getAdmin() {
 	return adminList;
 }
 
+bool	Server::nicknameExists(std::string nickname) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getNickName() == nickname)
+		{
+			return (false);
+		}
+	}
+	return (true);
+}
+
+bool	Server::usernameExists(std::string username) {
+	std::map<int, User>::iterator it;
+	it = this->user_list.begin();
+	for(; it != this->user_list.end(); it++)
+	{
+		if (it->second.getUserName() == username)
+		{
+			return (false);
+		}
+	}
+	return (true);
+}
+
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	switch (cmd.cmd) {
 		case (CAP): cmd.cap(cmd, user); break;
@@ -147,7 +179,7 @@ void	Server::registration(User *user) {
 		Server::cmdDispatcher(user->getCmdList().front(), *user);
 		user->getCmdList().erase(user->getCmdList().begin());
 	}
-	std::cout << user << std::endl;
+	std::cout << "User fd : " << user->get_fd() << std::endl;
 	std::cout << "Registration complete!" << std::endl;
 }
 
@@ -193,7 +225,6 @@ void Server::welcome(User &user) {
  */
 
 void	Server::sendToAll(int senderFd, std::string msg) {
-
 	for (int j = 0; j < (int)pfds.size(); j++)
 	{
 		int dest_fd = pfds[j].fd;

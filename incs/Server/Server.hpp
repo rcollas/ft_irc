@@ -42,6 +42,7 @@ enum cmd {
 	LIST		= 13,
 	INVITE		= 14,
 	KICK		= 15,
+
 };
 
 class User;
@@ -55,6 +56,7 @@ class Server {
 		std::string							portNum;
 		static const int					bufferSize = 4096;
 		static char							buffer[bufferSize];
+		std::string							password;
 		struct addrinfo						*serverinfo;
 		struct sockaddr_in					*serverAddress;
 		std::vector<pollfd>					pfds;
@@ -66,14 +68,17 @@ class Server {
 		void	fillAvailableCmd();
 
 	public:
-		Server();
+		Server(std::string const port, std::string const passwd);
 		~Server();
 		void	init();
 		void	run();
 
+
 /***************** Channel server part **************/
 		void						addChannel(Channel * chan);
 		bool						channelExist(std::string chanName);
+		bool						nicknameExists(std::string nickname);
+		bool						usernameExists(std::string username);
 		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
@@ -86,6 +91,7 @@ class Server {
 		void 						displayListMinUser(User &user, int i);
 
 /***************** Other parts **************/
+
 		void						handleClientRequest(int i);
 		void						handleCmd(User *user);
 		void						sendToAll(int senderFd, std::string msg);
@@ -101,6 +107,9 @@ class Server {
 		static void					registration(User *user);
 		static void					welcome(User &user);
 		static void					cmdDispatcher(Command &cmd, User &user);
+		void						checkArgs(int ac, char **av);
+		void						setPortNum(std::string portNum);
+		std::string	getPassword() const;
 };
 
 #endif

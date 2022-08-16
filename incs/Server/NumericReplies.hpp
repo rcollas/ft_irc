@@ -29,10 +29,10 @@ std::string RPL_ISUPPORT();
 /******************************************************************************/
 /*                                   2**                                      */
 /******************************************************************************/
-#define RPL_LUSERCLIENT(nick, users) ("251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n")
-#define RPL_LUSEROP(nick, ops) ("252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n")
-#define RPL_LUSERCHANNELS(nick, channels) ("254 " + str(nick) + " " + str(channels) + " :channels formed\r\n")
-#define RPL_LUSERME(nick, clients) ("255 " + str(nick) + " :I have " + str(clients) " clients connected\r\n")
+#define RPL_LUSERCLIENT(nick, users) ("\033[0;31m251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n\033[0m")
+#define RPL_LUSEROP(nick, ops) ("\033[0;31m252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n\033[0m")
+#define RPL_LUSERCHANNELS(nick, channels) ("\033[0;31m254 " + str(nick) + " " + str(channels) + " :channels formed\r\n\033[0m")
+#define RPL_LUSERME(nick, clients) ("\033[0;31m255 " + str(nick) + " :I have " + str(clients) " clients connected\r\n\033[0m")
 
 /******************************************************************************/
 /*                                   3**                                      */
@@ -55,7 +55,6 @@ std::string RPL_ISUPPORT();
 #define RPL_MOTDSTART(nick, server) ("375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n")
 #define RPL_ENDOFMOTD(nick) ("376 " + str(nick) + " :End of /MOTD command\r\n")
 
-
 /******************************************************************************/
 /*                                   4**                                      */
 /******************************************************************************/
@@ -63,11 +62,13 @@ std::string RPL_ISUPPORT();
 #define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
 #define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
 #define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m 461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
-#define ERR_NONICKNAMEGIVEN() ("431 :No nickname given\r\n")
-#define ERR_ERRONEUSNICKNAME() ("\033[0;31m 432 :Erroneus nickname\r\n \033[0m")
-#define ERR_NICKNAMEINUSE(nick) ("433 " + str(nick) + " :Nickname is already in use\r\n")
 #define ERR_USERONCHANNEL(nick, channel) ("\033[0;31m 443 " + str(nick) + " " + str(channel) + " :is already on channel" + "\r\n" + "\033[0m")
 #define ERR_USERNOTINCHANNEL(nick, channel) ("\033[0;31m 443 " + str(nick) + " " + str(channel) + " :isn't already on that channel" + "\r\n" + "\033[0m")
+#define ERR_NONICKNAMEGIVEN() ("\033[0;31m431 :No nickname given\r\n\033[0m")
+#define ERR_ERRONEUSNICKNAME(nick) ("\033[0;31m432 " + str(nick) + " :Erroneus nickname\r\n\033[0m")
+#define ERR_NICKNAMEINUSE(nick) ("\033[0;31m433 " + str(nick) + " :Nickname is already in use\r\n\033[0m")
+#define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
+#define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
 
 
 #endif

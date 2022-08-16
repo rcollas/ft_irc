@@ -15,8 +15,10 @@ void	Command::cap(Command &command, User &user) {
 }
 
 void	Command::pass(Command &command, User &user) {
-	(void)command;
-	send(user.get_fd(), "PASS\r\n", strlen("PASS\r\n"), 0);
+	if (command.params.size() > 1)
+		return ;
+	if (command.params.size() == 1 && command.params[0] != user.servInfo->getPassword())
+		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
 }
 
 void	Command::nick(Command &command, User &user) {
@@ -25,28 +27,54 @@ void	Command::nick(Command &command, User &user) {
 	else if (command.params.empty() == true)
 		sendMsg(user.get_fd(), ERR_NONICKNAMEGIVEN());
 	else {
-		if (user.getNickName() == command.params[0])
+		if (user.getNickName() == command.params[0] || user.servInfo->nicknameExists(command.params[0]) == false)
 			sendMsg(user.get_fd(), ERR_NICKNAMEINUSE(user.getNickName()));
 		else if (command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-") != std::string::npos)
-			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME());
+			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME(user.getNickName()));
 		else {
 			if (user.getNickName().empty() == true) {
 				user.set_nickname(command.params[0]);
+				std::cout << "Nickname is set at : " << command.params[0] << std::endl;
 				return ;
 			}
-			user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
-			user.set_nickname(command.params[0]);
+			else {
+				user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
+				user.set_nickname(command.params[0]);
+				std::cout << "Nickname is set at " << command.params[0] << std::endl;
+			}
 		}
 	}
 }
 
 void	Command::user(Command &command, User &user) {
-	std::string msg = "USER " + user.getUserName() + "\r\n";
+	if (command.params.size() > 4)
+		return ;
+	if (command.params.size() < 4) {
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+		return ;
+	}
+	if (!(command.params[1] == "0" && command.params[2] == "*")) {
+		std::cout << "Usage: /USER <username> 0 * <realname>\n";
+		return ;
+	}
+	if (command.params[0].length() < 1 || command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != std::string::npos) {
+		std::cout << "Username contains invalid characters\n";
+	}
+	if (command.params[3].length() < 1 || command.params[3].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != std::string::npos) {
+		std::cout << "Realname contains invalid characters\n";
+		return ;
+	}
 	if (user.getUserName().empty() == false) {
+		sendMsg(user.get_fd(), ERR_ALREADYREGISTERED(user.getNickName()));
+		return ;
+	}
+	if (user.servInfo->usernameExists(command.params[0]) == false) 
+		std::cout << "Username already exists on the server\n";
+	else {
 		user.set_username(command.params[0]);
-		send(user.get_fd(), msg.c_str(), msg.length(), 0);
-	} else {
-		user.set_username(command.params[0]);
+		std::cout << "Username is set at : " << command.params[0] << std::endl;
+		user.set_realname(command.params[3]);
+		std::cout << "Realname is set at : " << command.params[3] << std::endl;
 	}
 }
 
@@ -59,27 +87,25 @@ void	Command::motd(Command &command, User &user) {
 }
 
 void	Command::away(Command &command, User &user) {
-	if (command.params.empty() == true) {
+	if (command.params.empty() == true && user.getIsAway() == true) {
 		user.set_isAway(false);
 		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));
 	}
-	if (command.params.empty() == false){
+	if (command.params.empty() == false) {
 		user.set_isAway(true);
 		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
 		sendMsg(user.get_fd(), RPL_AWAY(user.getNickName(), command.params[0]));
 	}
 }
 
-void	Command::version(Command &command, User &user){
-	if (command.params.empty() == true) {
+void	Command::version(Command &command, User &user) {
+	if (command.params.empty() == true)
 		sendMsg(user.get_fd(), RPL_VERSION(user.getNickName()));
-	}
 }
 
 void	Command::lusers(Command &command, User &user)
 {
-	if (command.params.empty() == true)
-	{
+	if (command.params.empty() == true) {
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
 		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan"));
