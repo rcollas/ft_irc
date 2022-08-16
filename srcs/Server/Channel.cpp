@@ -44,29 +44,34 @@ Channel &Channel::operator=(Channel const &obj)
 **==========================
 */
 
-std::string	Channel::getChannelName()
+std::string				Channel::getChannelName()
 {
 	return (this->_channelName);
 }
 
-std::string Channel::getKeyName()
+std::string 			Channel::getKeyName()
 {
 	return (this->_key);
 }
 
-std::string Channel::getTopic()
+std::string 			Channel::getTopic()
 {
 	return (this->_topic);
 }
 
-bool 		Channel::getChannelJoined()
+bool 					Channel::getChannelJoined()
 {
 	return (this->_channelJoined);
 }
 
-bool		Channel::TopicIsSet()
+bool					Channel::TopicIsSet()
 {
 	return (this->_topicSet);
+}
+
+std::map<int, User *>	Channel::getUsersList()
+{
+	return this->_usersList;
 }
 
 /*

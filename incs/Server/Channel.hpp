@@ -13,11 +13,14 @@ public:
 	~Channel();
 	Channel &operator=(Channel const &obj);
 
+/***************** getters functions **************/
+	std::string 			getChannelName();
+	std::string				getKeyName();
+	std::string 			getTopic();
+	bool 					getChannelJoined();
+	std::map<int, User *>	getUsersList();
+
 /***************** members functions **************/
-	std::string getChannelName();
-	std::string getKeyName();
-	std::string getTopic();
-	bool 		getChannelJoined();
 	bool		TopicIsSet();
 	void		addUserToChannel(int fd, User *user);
 	void		displayListChannelUsers();

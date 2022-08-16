@@ -9,6 +9,23 @@ std::string	concatenate_strings(std::string first, std::string second)
 	return (first);
 }
 
+void	sendPrivateMessage(User &user, std::string nickName, std::string message)
+{
+	User *nick = &user.servInfo->nickToUserFd(nickName);
+	sendMsg(nick->get_fd(), PRV_MSG(nick->getNickName(), message));
+}
+
+void	sendMessageToChannel(User &user, std::string chanName, std::string message)
+{
+	Channel *channel= &user.servInfo->getChannel(chanName);
+	std::map<int, User *> UsersList;
+	UsersList = channel->getUsersList();
+	std::map<int, User *>::iterator it;
+	it = UsersList.begin();
+	for (; it != UsersList.end(); it++)
+		sendPrivateMessage(user, it->second->getNickName(), message);
+}
+
 void	Command::cap(Command &command, User &user) {
 	(void)command;
 	send(user.get_fd(), "CAP\r\n", strlen("CAP\r\n"), 0);
@@ -82,11 +99,18 @@ void	Command::privmsg(Command &command, User &user) {
 	if (command.params.size() != 2) {
 		return ;
 	}
-	if (user.servInfo->usernameExists(command.params[0]) == false || user.servInfo->nicknameExists(command.params[0]) == false) {
+	if (user.servInfo->usernameExists(command.params[0]) == false || user.servInfo->nicknameExists(command.params[0]) == false) { // manque la partie @antoine erreur ici
 		if (user.servInfo->getAwayStatus(command.params[0]) == true) {
 			sendMsg(user.get_fd(), "\033[0;31m301 " + command.params[0] + " :" + user.servInfo->getAwayString(command.params[0]) + "\r\n\033[0m");
 		}
 		sendMsg(user.servInfo->getTargetFd(command.params[0]), "\033[1;32m" + command.params[1] + "\r\n\033[0m");
+	}
+	if (user.servInfo->channelExist(command.params[0]) == true)
+	{
+		std::string ChanName = command.params[0];
+		std::string message;
+			message = command.params[1];
+		sendMessageToChannel(user, ChanName, message);
 	}
 }
 
@@ -110,12 +134,12 @@ void	Command::mode(Command &command, User &user) {
 			sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
 			return ;
 		}
-		// if (command.params[0] == user.getNickName()) {
-		// 	if (command.params.size() == 1) { // display user modes if no 2nd param
-		// 		sendMsg(user.get_fd(), ("\033[0;31m221 " + user.getNickName() + " :" + user.getModesNumber() + "\r\n\033[0m"));
-		// 	}
-		// 	return ;
-		// }
+		if (command.params[0] == user.getNickName()) {
+			if (command.params.size() == 1) { // display user modes if no 2nd param
+				sendMsg(user.get_fd(), "\033[0;31m221 " + user.getNickName() + " :" + ft_itoa(user.getModesNumber()) + "\r\n\033[0m");
+			}
+			return ;
+		}
 		if (!isAllowedMode(command.params[1])) {
 			sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
 		}
@@ -281,7 +305,6 @@ void	Command::names(Command &command, User &user) {
 bool	listMinUser(Command &command, User &user)
 {
 	(void) user;
-	std::stringstream ss;
 	if (command.params[0][0] == '>' && command.params.size() == 1)
 	{
 		if (command.params[0].size() == 1) // Means we only have ">"
@@ -418,4 +441,24 @@ void	Command::kick(Command &command, User &user)
 		kickErrorCheck(command, user);
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+}
+
+/***************** NOTICE allows
+ * to send a privatemessage to nick or channel
+ * RPL specifies to not send error message if the command fails **************/
+void	Command::notice(Command &command, User &user)
+{
+	if (command.params.size() >= 2)
+	{
+		std::string nickNameOrChannel = command.params[0];
+		std::string message;
+		for (unsigned long i = 1; i <= command.params.size(); i++)
+			message = concatenate_strings(message, command.params[i]);
+		if (user.servInfo->channelExist(command.params[0]) == true)
+			sendMessageToChannel(user, nickNameOrChannel, message);
+		if(user.servInfo->nicknameExists(command.params[0]) == false)
+			sendPrivateMessage(user, nickNameOrChannel, message);
+	}
+	else
+		return;
 }
