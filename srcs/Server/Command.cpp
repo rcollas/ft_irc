@@ -12,7 +12,7 @@ std::string	concatenate_strings(std::string first, std::string second)
 void	sendPrivateMessage(User &user, std::string nickName, std::string message)
 {
 	User *nick = &user.servInfo->nickToUserFd(nickName);
-	sendMsg(nick->get_fd(), PRV_MSG(nick->getNickName(), message));
+	sendMsg(nick->get_fd(), PRV_MSG(user.getNickName(), message));
 }
 
 void	sendMessageToChannel(User &user, std::string chanName, std::string message)
