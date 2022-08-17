@@ -77,7 +77,7 @@ std::string RPL_ISUPPORT();
 /*                                   5**                                      */
 /******************************************************************************/
 
-#define ERR_UMODEUNKNOWNFLAG(nick) ("\033[0;31m501 " + str(nick) + " :Cant change mode for other users\r\n\033[0m")
-#define ERR_USERSDONTMATCH(nick) ("\033[0;31m502 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
+#define ERR_UMODEUNKNOWNFLAG(nick) ("\033[0;31m501 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
+#define ERR_USERSDONTMATCH(nick) ("\033[0;31m502 " + str(nick) + " :Cant change mode for other users\r\n\033[0m")
 
 #endif

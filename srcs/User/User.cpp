@@ -17,6 +17,8 @@ std::string toString(char *str) {
 User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 
 	this->isAway = false;
+	this->isInvisible = false;
+	this->isOperator = false;
 	this->modesNumber = 0;
 	this->servInfo = serverInfo;
 	socklen_t	sin_size = sizeof(socket);
@@ -55,6 +57,7 @@ void	User::set_realname(std::string realname) { this->real_name = realname; }
 void	User::set_awayMessage(std::string awayMessage) { this->awayMessage = awayMessage; }
 void	User::set_isAway(bool away) { this->isAway = away; }
 void	User::set_isInvisible(bool isInvisible) { this->isInvisible = isInvisible; }
+void	User::set_isOperator(bool isOperator) { this->isOperator = isOperator; }
 void	User::set_modesNumber(int modes) { this->modesNumber = modes; }
 
 std::string	User::getNickName() const { return this->nick_name; }
@@ -63,6 +66,7 @@ std::string	User::getRealName() const { return this->real_name; }
 std::string	User::getAwayMessage() const { return this->awayMessage; }
 bool		User::getIsAway() const { return this->isAway; }
 bool		User::getIsInvisible() const { return this->isInvisible; }
+bool		User::getIsOperator() const { return this->isOperator; }
 int		User::getModesNumber() const { return this->modesNumber; }
 bool		User::isAdmin() const { return this->admin; }
 

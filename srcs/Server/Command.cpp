@@ -27,7 +27,7 @@ void	Command::nick(Command &command, User &user) {
 	else if (command.params.empty() == true)
 		sendMsg(user.get_fd(), ERR_NONICKNAMEGIVEN());
 	else {
-		if (user.getNickName() == command.params[0] || user.servInfo->nicknameExists(command.params[0]) == false)
+		if (user.getNickName() == command.params[0] || user.servInfo->nicknameExists(command.params[0]) == true)
 			sendMsg(user.get_fd(), ERR_NICKNAMEINUSE(user.getNickName()));
 		else if (command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_-") != std::string::npos)
 			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME(user.getNickName()));
@@ -68,7 +68,7 @@ void	Command::user(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_ALREADYREGISTERED(user.getNickName()));
 		return ;
 	}
-	if (user.servInfo->usernameExists(command.params[0]) == false) 
+	if (user.servInfo->usernameExists(command.params[0]) == true) 
 		std::cout << "Username already exists on the server\n";
 	else {
 		user.set_username(command.params[0]);
@@ -82,7 +82,9 @@ void	Command::privmsg(Command &command, User &user) {
 	if (command.params.size() != 2) {
 		return ;
 	}
-	if (user.servInfo->usernameExists(command.params[0]) == false || user.servInfo->nicknameExists(command.params[0]) == false) {
+	if (user.getNickName() == command.params[0])
+		return ;
+	if (user.servInfo->usernameExists(command.params[0]) == true || user.servInfo->nicknameExists(command.params[0]) == true) {
 		if (user.servInfo->getAwayStatus(command.params[0]) == true) {
 			sendMsg(user.get_fd(), "\033[0;31m301 " + command.params[0] + " :" + user.servInfo->getAwayString(command.params[0]) + "\r\n\033[0m");
 		}
@@ -99,34 +101,46 @@ void	Command::motd(Command &command, User &user) {
 }
 
 void	Command::mode(Command &command, User &user) {
-		if (command.params.size() > 4)
-			return ;
-		if (user.servInfo->nicknameExists(command.params[0]) == true) {
-			sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
-			return ;
-		}
-		if (command.params[0] != user.getNickName()) {
-			sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
-			return ;
-		}
-		if (command.params[0] == user.getNickName()) {
-			if (command.params.size() == 1) { // display user modes if no 2nd param
-				sendMsg(user.get_fd(), RPL_UMODEIS(user.getNickName(), ft_itoa(user.servInfo->getModes())));
-			}
-			return ;
-		}
-		if (!isAllowedMode(command.params[1])) {
-			sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
-			return ;
-		}
-		if (isAllowedMode(command.params[1]) && command.params[0] == user.getNickName() && (command.params[1] == "-i" || command.params[1] == "+i")) { // si MODE target = user et -i
-			if (command.params[1] == "+i") {
-				user.set_isInvisible(true);
-			}
-			if (command.params[1] == "-i") {
-				user.set_isInvisible(false);
-			}
-		}
+	if (command.params.size() > 4 || command.params.empty() == true)
+		return ;
+	if (user.servInfo->nicknameExists(command.params[0]) == false) {
+		sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
+		return ;
+	}
+	if (command.params[0] != user.getNickName()) {
+		sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
+		return ;
+	}
+	if (command.params[0] == user.getNickName() && command.params.size() == 1) { // display user modes if no 2nd param
+		char *str = ft_itoa(user.servInfo->getModes(user.getNickName()));
+		sendMsg(user.get_fd(), RPL_UMODEIS(user.getNickName(), str));
+		free(str);
+		return ;
+	}
+	if (!isAllowedMode(command.params[1])) {
+		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
+		return ;
+	}
+	if (command.params[1] == "+i" && command.params[0] == user.getNickName() && user.getIsInvisible() == false) {
+		user.set_isInvisible(true);
+		int operators = user.getModesNumber();
+		user.set_modesNumber(++operators);
+	}
+	if (command.params[1] == "-i" && command.params[0] == user.getNickName() && user.getIsInvisible() == true) {
+		user.set_isInvisible(false);
+		int operators = user.getModesNumber();
+		user.set_modesNumber(--operators);
+	}
+	if (command.params[1] == "+o" && command.params[0] == user.getNickName() && user.getIsOperator() == false) {
+		user.set_isOperator(true);
+		int operators = user.getModesNumber();
+		user.set_modesNumber(++operators);
+	}
+	if (command.params[1] == "-o" && command.params[0] == user.getNickName() && user.getIsOperator() == true) {
+		user.set_isOperator(false);
+		int operators = user.getModesNumber();
+		user.set_modesNumber(--operators);
+	}
 }
 
 void	Command::away(Command &command, User &user) {
@@ -150,10 +164,14 @@ void	Command::version(Command &command, User &user) {
 void	Command::lusers(Command &command, User &user)
 {
 	if (command.params.empty() == true) {
-		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
-		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
-		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan"));
-		//sendMsg(user.get_fd(), RPL_LUSERME(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
+
+		char *str = ft_itoa(user.servInfo->getNbOfUsers());
+		char *arr = ft_itoa(user.getModesNumber());
+		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), str));
+		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), arr));
+		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan")); // A REMPLIR AVEC FONCTION GETNUMBEROFCHAN
+		free(str);
+		free(arr);
 	}
 }
 

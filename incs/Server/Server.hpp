@@ -84,7 +84,7 @@ class Server {
 		int							getTargetFd(std::string nickname);
 		bool						getAwayStatus(std::string nickname);
 		std::string 				getAwayString(std::string nickname);
-		int						getModes(std::string nickname);
+		int							getModes(std::string nickname);
 		void						createChannel(int fd, User &user, Command &command);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();

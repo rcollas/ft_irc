@@ -118,10 +118,10 @@ bool	Server::nicknameExists(std::string nickname) {
 	{
 		if (it->second.getNickName() == nickname)
 		{
-			return (false);
+			return (true);
 		}
 	}
-	return (true);
+	return (false);
 }
 
 int	Server::getTargetFd(std::string nickname) {
@@ -182,10 +182,10 @@ bool	Server::usernameExists(std::string username) {
 	{
 		if (it->second.getUserName() == username)
 		{
-			return (false);
+			return (true);
 		}
 	}
-	return (true);
+	return (false);
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
@@ -206,6 +206,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (INVITE): cmd.invite(cmd, user); break;
 		case (KICK): cmd.kick(cmd, user); break;
 		case (PRIVMSG): cmd.privmsg(cmd, user); break;
+		case (MODE): cmd.mode(cmd, user); break;
 	}
 }
 
