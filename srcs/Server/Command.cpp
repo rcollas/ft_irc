@@ -124,18 +124,19 @@ void	Command::motd(Command &command, User &user) {
 
 
 void	Command::mode(Command &command, User &user) {
-	std::cout << "Au debut fonction" << std::endl;
 		if (command.params.size() > 4)
 			return ;
-		if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true && command.params[1] == "-i") 
+		if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
+			&& command.params[1] == "-i" && command.params.size() == 2) 
 		{
-			std::cout << "WORKS" << std::endl;
 			Channel *chan = &user.servInfo->getChannel(command.params[0]);
 			chan->inviteModeSetTrue();
-			std::cout << "chan bool = " << chan->getInviteMode() << std::endl;
 		}
-		else if (!isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true && command.params[1] == "-k") {
-			;
+		else if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
+			&& command.params[1] == "-k" && command.params.size() == 3) {
+			Channel *chan = &user.servInfo->getChannel(command.params[0]);
+			chan->setKeyExistTrue();
+			chan->setKey(command.params[2]);
 		}
 		else if (user.servInfo->nicknameExists(command.params[0]) == true) {
 			sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
@@ -190,11 +191,6 @@ void	Command::lusers(Command &command, User &user)
 **==========================
 */
 
-/***************** JOIN allows
- * To create a channel if not created
- * allow to join the channel
- * if only in invite mode can't join the channel **************/
-
 void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
 {
 	user.servInfo->printWelcomeMessage(user.get_fd(), user, command, chan);
@@ -203,6 +199,11 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
 	else
 		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
 }
+
+/***************** JOIN allows
+ * To create a channel if not created
+ * allow to join the channel
+ * if only in invite mode can't join the channel **************/
 void	Command::join(Command &command, User &user) {
 	if (command.params.empty() == false)
 	{

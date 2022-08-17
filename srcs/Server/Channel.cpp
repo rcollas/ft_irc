@@ -15,6 +15,7 @@ Channel::Channel(std::string const &channelName, std::string const &key)
 	this->_channelJoined	= true;
 	this->_topicSet			= false;
 	this->_inviteModeSet	= false;
+	this->_keyExist			= false;
 	std::cout << "Constructor is called" << std::endl;
 }
 
@@ -65,11 +66,6 @@ bool 					Channel::getChannelJoined()
 	return (this->_channelJoined);
 }
 
-bool					Channel::TopicIsSet()
-{
-	return (this->_topicSet);
-}
-
 std::map<int, User *>	Channel::getUsersList()
 {
 	return this->_usersList;
@@ -78,6 +74,11 @@ std::map<int, User *>	Channel::getUsersList()
 bool					Channel::getInviteMode()
 {
 	return (this->_inviteModeSet);
+}
+
+bool					Channel::getKeyExist()
+{
+	return (this->_keyExist);
 }
 
 /*
@@ -144,3 +145,18 @@ void	Channel::inviteModeSetTrue()
 {
 	this->_inviteModeSet = true;
 }
+
+void	Channel::setKeyExistTrue()
+{
+	this->_keyExist = true;
+}
+
+bool	Channel::TopicIsSet()
+{
+	return (this->_topicSet);
+}
+
+void	Channel::setKey(std::string key)
+{
+	this->_key = key;
+}	
