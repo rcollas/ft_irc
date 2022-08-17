@@ -41,7 +41,7 @@ void	Command::pass(Command &command, User &user) {
 void	Command::nick(Command &command, User &user) {
 	if (command.params.size() > 1)
 		return ;
-	else if (command.params.empty() == true)
+	else if (emptyCommand == true)
 		sendMsg(user.get_fd(), ERR_NONICKNAMEGIVEN());
 	else {
 		if (user.getNickName() == command.params[0] || user.servInfo->nicknameExists(command.params[0]) == false)
@@ -115,7 +115,7 @@ void	Command::privmsg(Command &command, User &user) {
 }
 
 void	Command::motd(Command &command, User &user) {
-	if (command.params.empty() == true) {
+	if (emptyCommand == true) {
 		sendMsg(user.get_fd(), RPL_MOTDSTART(user.getNickName(), "localhost"));
 		sendMsg(user.get_fd(), RPL_MOTD(user.getNickName(), "Welcooooooooooome at home!"));
 		sendMsg(user.get_fd(), RPL_ENDOFMOTD(user.getNickName()));
@@ -158,11 +158,11 @@ void	Command::mode(Command &command, User &user) {
 }
 
 void	Command::away(Command &command, User &user) {
-	if (command.params.empty() == true && user.getIsAway() == true) {
+	if (emptyCommand == true && user.getIsAway() == true) {
 		user.set_isAway(false);
 		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));
 	}
-	if (command.params.empty() == false) {
+	if (emptyCommand == false) {
 		user.set_isAway(true);
 		user.set_awayMessage(command.params[0]);
 		sendMsg(user.get_fd(), RPL_NOWAWAY(user.getNickName()));
@@ -171,13 +171,13 @@ void	Command::away(Command &command, User &user) {
 }
 
 void	Command::version(Command &command, User &user) {
-	if (command.params.empty() == true)
+	if (emptyCommand == true)
 		sendMsg(user.get_fd(), RPL_VERSION(user.getNickName()));
 }
 
 void	Command::lusers(Command &command, User &user)
 {
-	if (command.params.empty() == true) {
+	if (emptyCommand == true) {
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), ft_itoa(user.servInfo->getNbOfUsers())));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), "0"));
 		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan"));
@@ -205,14 +205,14 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
  * allow to join the channel
  * if only in invite mode can't join the channel **************/
 void	Command::join(Command &command, User &user) {
-	if (command.params.empty() == false && checkChanName(command.params[0]) == true)
+	if (emptyCommand == false 
+		&& checkChanName(command.params[0]) == true)
 	{
 		user.servInfo->createChannel(user.get_fd(), user, command);
 		for (unsigned long i = 0 ; i < command.params.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(command.params[i]);
-			if (chan->getInviteMode() == true 
-				&& chan->userInChannel(user.get_fd(), chan->getWaitingInviteList()) == true)
+			if (chan->getInviteMode() == true && checkWaitingList == true)
 				WelcomeTopicJoinMessage(chan, command, user);
 			else if (chan->getInviteMode() == false)
 			{
@@ -233,13 +233,13 @@ void	Command::join(Command &command, User &user) {
 void	SetTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() >= 2 && chan->userInChannel(user.get_fd(), chan->getUsersList()) == true)
+	if (command.params.size() >= 2 && checkUserInchannel == true)
 	{
 		std::string topic;
 		for (unsigned long i = 1; i <= command.params.size(); i++)
 			topic = concatenate_strings(topic, command.params[i]);
 		chan->changeTopic(topic);
-		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
+		sendMsg(user.get_fd(), RPL_TOPIC_MSG);
 	}
 }
 
@@ -247,16 +247,17 @@ void	SetTopic(Command &command, User &user)
 void	sendTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() == 1 && chan->userInChannel(user.get_fd(), chan->getUsersList()) == true && chan->TopicIsSet() == true)
-		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
-	else if (command.params.size() == 1 && chan->userInChannel(user.get_fd(), chan->getUsersList()) == true && chan->TopicIsSet() == false)
-		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
+	if (command.params.size() == 1 
+		&& checkUserInchannel == true && chan->TopicIsSet() == true)
+		sendMsg(user.get_fd(), RPL_TOPIC_MSG);
+	else if (command.params.size() == 1 && checkUserInchannel == true && chan->TopicIsSet() == false)
+		sendMsg(user.get_fd(), RPL_NOTOPIC_MSG);
 }
 
 /***************** Topic allows
  * to handle a topic for a dedicated channel **************/
 void	Command::topic(Command &command, User &user) {
-	if (command.params.empty() == false)
+	if (emptyCommand == false)
 	{
 		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
 		{
@@ -278,25 +279,25 @@ void	Command::topic(Command &command, User &user) {
  * second condition : I check if channel exist and i am not in the channel
  * third condition the channel doesn't exist **************/
 void	Command::part(Command &command, User &user) {
-	if (command.params.empty() == false)
+	if (emptyCommand == false)
 	{
 		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
-			if (user.servInfo->channelExist(command.params[i]) == true) 
+			if (chanExist == true) 
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				if (chan->userInChannel(user.get_fd(), chan->getUsersList()) == true)
+				if (checkUserInchannel == true)
 				{
 					chan->printChannelUsers(user.get_fd(), &user, command.params[i]); // to remove
 					chan->removeUserChannel(user.get_fd(), &user);
 					chan->printChannelUsers(user.get_fd(), &user, command.params[i]); //to remove
 				}
-				else if (chan->userInChannel(user.get_fd(), chan->getUsersList()) == false)
+				else if (checkUserInchannel == false)
 					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
 
 			}
 			else 
-				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i]));
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
 		}
 	}
 	else 
@@ -308,11 +309,11 @@ void	Command::part(Command &command, User &user) {
 /***************** NAMES allows
  * display the list of users of specified channels **************/
 void	Command::names(Command &command, User &user) {
-	if (command.params.empty() == false)
+	if (emptyCommand == false)
 	{
 		for (unsigned long i = 0 ; i < command.params.size() ; i++)
 		{
-			if (user.servInfo->channelExist(command.params[i]) == true) 
+			if (chanExist== true) 
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
 				chan->printChannelUsers(user.get_fd(), &user, command.params[i]);
@@ -321,11 +322,13 @@ void	Command::names(Command &command, User &user) {
 				sendMsg(user.get_fd(), RPL_ENDOFNAMES(command.params[i]));
 		}
 	}
-	else // print here all the names of the user
+	else 
 		user.servInfo->printAllChannelsUsers(user);
 }
 
-/***************** ListMinUser check if I enter "LIST >3" for example, I display the channels with at least 3 members **************/
+/***************** ListMinUser 
+ * check if I enter "LIST >3" for example,
+ *  I display the channels with at least 3 members **************/
 bool	listMinUser(Command &command, User &user)
 {
 	(void) user;
@@ -349,19 +352,19 @@ bool	listMinUser(Command &command, User &user)
  * the TOPIC is displayed **************/
 void	Command::list(Command &command, User &user)
 {
-	if (command.params.empty() == false)
+	if (emptyCommand == false)
 	{
 		if (listMinUser(command, user) == true)
 			return;
 		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
-			if (user.servInfo->channelExist(command.params[i]) == true) 
+			if (chanExist == true) 
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				sendMsg(user.get_fd(), RPL_LIST(chan->getChannelName(), ft_itoa(chan->getNbUsers()), chan->getTopic()));
+				sendMsg(user.get_fd(), RPL_LIST_MSG);
 			}
 			else
-				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i]));
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
 		}
 		sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
 	}
@@ -382,7 +385,7 @@ void	inviteErrorscheck(Command &command, User &user)
 	if (user.servInfo->channelExist(command.params[1]) == true)
 	{
 		Channel *chan = &user.servInfo->getChannel(command.params[1]);
-		if (chan->userInChannel(user.get_fd(), chan->getUsersList())== true)
+		if (checkUserInchannel== true)
 		{
 			if (user.servInfo->userExist(command.params[0]) == true)
 			{
@@ -431,7 +434,7 @@ void	kickErrorCheck(Command &command, User &user)
 		if (user.servInfo->userExist(command.params[1]) == true)
 		{
 			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
-			if (chan->userInChannel(nick->get_fd(), chan->getUsersList()) == true)
+			if (checkUserInchannel == true)
 			{
 				chan->removeUserChannel(nick->get_fd(), nick);
 				if (command.params.size() == 3)

@@ -23,6 +23,14 @@
 #include "Server/Channel.hpp"
 
 #define RECEIVE_DEBUG 1
+#define emptyCommand command.params.empty()
+#define checkUserInchannel chan->userInChannel(user.get_fd(), chan->getUsersList())
+#define checkWaitingList chan->userInChannel(user.get_fd(), chan->getWaitingInviteList())
+#define chanExist user.servInfo->channelExist(command.params[i])
+#define RPL_LIST_MSG RPL_LIST(chan->getChannelName(), ft_itoa(chan->getNbUsers()), chan->getTopic())
+#define ERR_NOSUCHCHANNEL_MSG ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i])
+#define RPL_TOPIC_MSG RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic())
+#define RPL_NOTOPIC_MSG RPL_NOTOPIC(chan->getChannelName())
 
 class User;
 

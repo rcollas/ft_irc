@@ -127,11 +127,8 @@ void		Channel::printChannelUsers(int fd, User *user, std::string channelName)
 	std::map<int, User *>::iterator it; // On donne le type à l'itérator
 	it = this->_usersList.begin(); // On le met au début
 	for(; it != this->_usersList.end(); it++)
-	{
 		sendMsg(fd, RPL_NAMREPLY(it->second->getNickName(), channelName));
-	}
 	sendMsg(fd, RPL_ENDOFNAMES(channelName));
-	(void) fd;
 	(void) user;
 }
 

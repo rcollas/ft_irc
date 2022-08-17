@@ -2,6 +2,10 @@
 #define CHANNEL_HPP
 #include "Server.hpp"
 
+#define checkUserInchannel chan->userInChannel(user.get_fd(), chan->getUsersList())
+#define checkWaitingList chan->userInChannel(user.get_fd(), chan->getWaitingInviteList())
+#define chanExist user.servInfo->channelExist(command.params[i]) 
+
 class User;
 struct Command;
 
