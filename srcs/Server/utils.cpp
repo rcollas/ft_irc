@@ -48,6 +48,13 @@ char	*ft_itoa(int nb)
 	return (str);
 }
 
+bool	checkChanName(std::string chanName)
+{
+	if(chanName[0] == '#' && chanName.size() > 1)
+		return true;
+	return false;
+}
+
 bool	isAllowedMode(std::string str) {
 	return (str == "-i" || str == "-k");
 }

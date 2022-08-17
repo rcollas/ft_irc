@@ -81,6 +81,12 @@ bool					Channel::getKeyExist()
 	return (this->_keyExist);
 }
 
+std::map<int, User *>	Channel::getWaitingInviteList()
+{
+	return this->_waitingInviteList;
+}
+
+
 /*
 **==========================
 **    MEMBER FUNCTIONS
@@ -91,9 +97,9 @@ bool					Channel::getKeyExist()
  * Here we check if the user is in the channel 
  * by using map who call the class User
  *  **************/
-bool		Channel::userInChannel(int fd)
+bool		Channel::userInChannel(int fd, std::map<int, User *> list)
 {
-	if (this->_usersList.find(fd) == this->_usersList.end())
+	if (list.find(fd) == list.end())
 		return (false);
 	return (true);
 }
@@ -108,6 +114,11 @@ void		Channel::changeTopic(std::string topic)
 void		Channel::addUserToChannel(int fd, User *user)
 {
 	this->_usersList.insert(std::pair<int, User *>(fd, user));
+}
+
+void		Channel::addUserToWitingList(int fd, User *user)
+{
+	this->_waitingInviteList.insert(std::pair<int, User *>(fd, user));
 }
 
 /***************** Here I print all the user of the channel **************/
@@ -126,7 +137,7 @@ void		Channel::printChannelUsers(int fd, User *user, std::string channelName)
 
 void		Channel::removeUserChannel(int fd, User *user)
 {
-	if (this->userInChannel(fd) == true)
+	if (this->userInChannel(fd, this->getUsersList()) == true)
 	{
 		this->_usersList.erase(fd);
 		sendMsg(fd, PART_LEAVE_CHANNEL_MESSAGE(user->getNickName(), this->getChannelName()));

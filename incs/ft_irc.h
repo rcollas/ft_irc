@@ -52,6 +52,7 @@ struct Command {
 
 char	*ft_itoa(int nb);
 bool	isAllowedMode(std::string str);
+bool	checkChanName(std::string chanName);
 void	printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
