@@ -31,7 +31,6 @@ class User {
 		struct sockaddr_storage		socket;
 		std::vector<Channel *>		activeChan;
 		bool						isAway;
-		bool						isInvisible;
 		bool						isOperator;
 		bool						admin;
 		int							modesNumber;
@@ -48,7 +47,6 @@ class User {
 		void	set_nickname(std::string nickname);
 		void	set_realname(std::string realname);
 		void	set_isAway(bool away);
-		void	set_isInvisible(bool isInvisible);
 		void	set_isOperator(bool isOperator);
 		void	set_modesNumber(int isInvisible);
 		void	set_awayMessage(std::string awayMessage);
@@ -57,7 +55,6 @@ class User {
 		std::string	getRealName() const;
 		std::string getAwayMessage() const;
 		bool	getIsAway() const;
-		bool	getIsInvisible() const;
 		bool	getIsOperator() const;
 		int		getModesNumber() const;
 		bool	isAdmin() const;

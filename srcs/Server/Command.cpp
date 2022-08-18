@@ -85,7 +85,7 @@ void	Command::user(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_ALREADYREGISTERED(user.getNickName()));
 		return ;
 	}
-	if (user.servInfo->usernameExists(command.params[0]) == true) 
+	if (user.servInfo->usernameExists(command.params[0]) == true)
 		std::cout << "Username already exists on the server\n";
 	else {
 		user.set_username(command.params[0]);
@@ -145,31 +145,24 @@ void	Command::mode(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
 		return ;
 	}
-	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
-			&& command.params[1] == "-i" && command.params.size() == 2) 
+	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true
+			&& command.params[1] == "-i" && command.params.size() == 2)
 		{
-			
+
 			Channel *chan = &user.servInfo->getChannel(command.params[0]);
 			chan->inviteModeSetTrue();
-			user.set_isInvisible(false);
 			int modesNumber = user.getModesNumber();
 			user.set_modesNumber(--modesNumber);
 		}
-	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
-			&& command.params[1] == "-k" && command.params.size() == 3) 
+	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true
+			&& command.params[1] == "-k" && command.params.size() == 3)
 		{
-			user.set_isInvisible(true);
 			int modesNumber = user.getModesNumber();
 			user.set_modesNumber(++modesNumber);
 			Channel *chan = &user.servInfo->getChannel(command.params[0]);
 			chan->setKeyExistTrue();
 			chan->setKey(command.params[2]);
 		}
-	if (command.params[1] == "+i" && command.params[0] == user.getNickName() && user.getIsInvisible() == false) {
-		user.set_isInvisible(true);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
-	}
 	if (command.params[1] == "+o" && command.params[0] == user.getNickName() && user.getIsOperator() == false) {
 		user.set_isOperator(true);
 		int modesNumber = user.getModesNumber();
@@ -255,12 +248,12 @@ void	Command::join(Command &command, User &user) {
 				sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
 		}
 	}
-	else 
+	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
 
 /***************** I set up the topic of the channel
- *  I set the topic here to send to the client 
+ *  I set the topic here to send to the client
  * I need to have at least 3 param TOPIC <channel> <message> **************/
 void	SetTopic(Command &command, User &user)
 {
@@ -279,7 +272,7 @@ void	SetTopic(Command &command, User &user)
 void	sendTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() == 1 
+	if (command.params.size() == 1
 		&& checkUserInchannel == true && chan->TopicIsSet() == true)
 		sendMsg(user.get_fd(), RPL_TOPIC_MSG);
 	else if (command.params.size() == 1 && checkUserInchannel == true && chan->TopicIsSet() == false)
@@ -299,14 +292,14 @@ void	Command::topic(Command &command, User &user) {
 		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
 			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
 	}
-	else 
+	else
 	{
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 	}
 }
 
-/***************** PART allows 
- * temove a user from one+ channels 
+/***************** PART allows
+ * temove a user from one+ channels
  * first condition : I check if channel exist and i am in the channel
  * second condition : I check if channel exist and i am not in the channel
  * third condition the channel doesn't exist **************/
@@ -315,7 +308,7 @@ void	Command::part(Command &command, User &user) {
 	{
 		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
-			if (chanExist == true) 
+			if (chanExist == true)
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
 				if (checkUserInchannel == true)
@@ -328,11 +321,11 @@ void	Command::part(Command &command, User &user) {
 					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
 
 			}
-			else 
+			else
 				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
 		}
 	}
-	else 
+	else
 	{
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 	}
@@ -345,7 +338,7 @@ void	Command::names(Command &command, User &user) {
 	{
 		for (unsigned long i = 0 ; i < command.params.size() ; i++)
 		{
-			if (chanExist== true) 
+			if (chanExist== true)
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
 				chan->printChannelUsers(user.get_fd(), &user, command.params[i]);
@@ -354,11 +347,11 @@ void	Command::names(Command &command, User &user) {
 				sendMsg(user.get_fd(), RPL_ENDOFNAMES(command.params[i]));
 		}
 	}
-	else 
+	else
 		user.servInfo->printAllChannelsUsers(user);
 }
 
-/***************** ListMinUser 
+/***************** ListMinUser
  * check if I enter "LIST >3" for example,
  *  I display the channels with at least 3 members **************/
 bool	listMinUser(Command &command, User &user)
@@ -378,7 +371,7 @@ bool	listMinUser(Command &command, User &user)
 	return (true);
 }
 
-/***************** LIST allows 
+/***************** LIST allows
  * to show the channels
  * The numbers of users connected to the channel ont it
  * the TOPIC is displayed **************/
@@ -390,7 +383,7 @@ void	Command::list(Command &command, User &user)
 			return;
 		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
-			if (chanExist == true) 
+			if (chanExist == true)
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
 				sendMsg(user.get_fd(), RPL_LIST_MSG);
@@ -406,7 +399,7 @@ void	Command::list(Command &command, User &user)
 
 
 /***************** errors check
- *  * Conditions are the following ones: 
+ *  * Conditions are the following ones:
  * channel must exists
  * User invited must exists
  * The one who invites has to be on channel
@@ -443,7 +436,7 @@ void	inviteErrorscheck(Command &command, User &user)
 
 /***************** INVITE allows
  * To invite someone else to a channel you are already in
- * Conditions are the following ones: 
+ * Conditions are the following ones:
  * at lease 2 parameters : nickname and channel
  *  **************/
 void	Command::invite(Command &command, User &user)
