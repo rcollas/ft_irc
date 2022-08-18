@@ -5,6 +5,9 @@
 #define JOIN_INVITE_WITH_KEY (chan->getInviteMode() == true && checkWaitingList == true && chan->getKeyExist() == true && checkKeyChanExist(chan, command, i) == true)
 #define JOIN_WITHOUT_INVIT_KEY chan->getInviteMode() == false && chan->getKeyExist() == false
 #define JOIN_WITH_KEY_WITHOUT_INVITE chan->getKeyExist() == true && checkKeyChanExist(chan, command, i) == true && chan->getInviteMode() == false
+#define JOIN_ERR_KEY_WITHOUT_INVITE chan->getKeyExist() == true && chan->getInviteMode() == false
+#define JOIN_ERR_INVITE_WITHOUT_KEY chan->getKeyExist() == false && chan->getInviteMode() == true
+#define JOIN_ERR_INVITE_KEY_EXISTS chan->getKeyExist() == true && chan->getInviteMode() == true
 /*
 **==========================
 **    CHANNEL COMMAND
@@ -84,8 +87,16 @@ void	Command::join(Command &command, User &user) {
 				chan->addUserToChannel(user.get_fd(), &user);
 				WelcomeTopicJoinMessage(chan, command, user);
 			}
-			else
+			else if (JOIN_ERR_INVITE_WITHOUT_KEY)
 				sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
+			else if (JOIN_ERR_KEY_WITHOUT_INVITE)
+				sendMsg(user.get_fd(), ERR_BADCHANNELKEY(user.getNickName(), chan->getChannelName()));
+			else if (JOIN_ERR_INVITE_KEY_EXISTS)
+			{
+				sendMsg(user.get_fd(), ERR_BADCHANNELKEY(user.getNickName(), chan->getChannelName()));
+				sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
+			}
+
 		}
 	}
 }

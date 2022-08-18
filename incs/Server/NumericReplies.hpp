@@ -73,6 +73,7 @@ std::string RPL_ISUPPORT();
 #define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
 #define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
 #define ERR_INVITEONLYCHAN(nick, channel) ("\033[0;31m473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n\033[0m")
+#define ERR_BADCHANNELKEY(nick, channel)  ("\033[0;31m475 " + str(nick) + " " + str(channel) + " :cannot join the channel (+k)\r\n\033[0m")
 
 /******************************************************************************/
 /*                                   5**                                      */
@@ -80,5 +81,14 @@ std::string RPL_ISUPPORT();
 
 #define ERR_UMODEUNKNOWNFLAG(nick) ("\033[0;31m501 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
 #define ERR_USERSDONTMATCH(nick) ("\033[0;31m502 " + str(nick) + " :Cant change mode for other users\r\n\033[0m")
+#define ERR_INVALIDKEY(nick, channel) ("\033[0;31m525:" + str(nick) + " " + str(channel) + ":Key is not well-formed\r\n\033[0m")
+
+/******************************************************************************/
+/*                                   6**                                      */
+/******************************************************************************/
+
+#define ERR_INVALIDMODEPARAM (nick, channel, mode, parameter, description) ("\033[0;31m696:" + str(nick) + " " + str(channel) + " " + str(mode) + " " + str(parameter) + " :" str(description) + "\r\n\033[0m")
+ 
+
 
 #endif
