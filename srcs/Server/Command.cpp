@@ -121,16 +121,6 @@ void	Command::mode(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
 		return ;
 	}
-	if (command.params[1] == "+i" && command.params[0] == user.getNickName() && user.getIsInvisible() == false) {
-		user.set_isInvisible(true);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
-	}
-	if (command.params[1] == "-i" && command.params[0] == user.getNickName() && user.getIsInvisible() == true) {
-		user.set_isInvisible(false);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(--modesNumber);
-	}
 	if (command.params[1] == "+o" && command.params[0] == user.getNickName() && user.getIsOperator() == false) {
 		user.set_isOperator(true);
 		int modesNumber = user.getModesNumber();
