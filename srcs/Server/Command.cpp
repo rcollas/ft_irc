@@ -124,47 +124,69 @@ void	Command::motd(Command &command, User &user) {
 	}
 }
 
-void	Command::mode(Command &command, User &user) {
-	if (command.params.size() > 4 || command.params.empty() == true)
-		return ;
-	if (user.servInfo->nicknameExists(command.params[0]) == false) {
+bool 	modeInviteChannel(Command &command, User &user)
+{
+	if (isAllowedMode(command.params[1]) == true && user.servInfo->channelExist(command.params[0]) == true 
+		&& command.params[1] == "+i" && command.params.size() == 2) 
+	{
+		Channel *chan = &user.servInfo->getChannel(command.params[0]);
+		chan->inviteModeSetTrue();
+		user.set_isInvisible(false);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(--modesNumber);
+		return (true);
+	}
+	return (false);
+}
+
+bool	modeKeyChannel(Command &command, User &user)
+{
+	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
+	 	&& command.params[1] == "+k" && command.params.size() == 3) 
+	{
+		user.set_isInvisible(true);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(++modesNumber);
+		Channel *chan = &user.servInfo->getChannel(command.params[0]);
+		chan->setKeyExistTrue();
+		chan->setKey(command.params[2]);
+		return (true);
+	}
+	return false;
+}
+
+bool	modeErrorsCheck(Command &command, User &user)
+{
+		if (user.servInfo->nicknameExists(command.params[0]) == false) {
 		sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
-		return ;
+		return true;
 	}
 	if (command.params[0] != user.getNickName()) {
 		sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
-		return ;
+		return true;
 	}
 	if (command.params[0] == user.getNickName() && command.params.size() == 1) { // display user modes if no 2nd param
 		char *str = ft_itoa(user.servInfo->getModes(user.getNickName()));
 		sendMsg(user.get_fd(), RPL_UMODEIS(user.getNickName(), str));
 		free(str);
-		return ;
+		return true;
 	}
 	if (!isAllowedMode(command.params[1])) {
 		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
-		return ;
+		return true;
 	}
-	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
-			&& command.params[1] == "-i" && command.params.size() == 2) 
-		{
-			
-			Channel *chan = &user.servInfo->getChannel(command.params[0]);
-			chan->inviteModeSetTrue();
-			user.set_isInvisible(false);
-			int modesNumber = user.getModesNumber();
-			user.set_modesNumber(--modesNumber);
-		}
-	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
-			&& command.params[1] == "-k" && command.params.size() == 3) 
-		{
-			user.set_isInvisible(true);
-			int modesNumber = user.getModesNumber();
-			user.set_modesNumber(++modesNumber);
-			Channel *chan = &user.servInfo->getChannel(command.params[0]);
-			chan->setKeyExistTrue();
-			chan->setKey(command.params[2]);
-		}
+	return false;
+}
+
+void	Command::mode(Command &command, User &user) {
+	if (command.params.size() > 4 || command.params.empty() == true)
+		return ;
+	if (modeInviteChannel(command, user) == true)
+		return;
+	if (modeKeyChannel(command, user) == true)
+		return;
+	if (modeErrorsCheck(command, user) == true)
+		return;
 	if (command.params[1] == "+i" && command.params[0] == user.getNickName() && user.getIsInvisible() == false) {
 		user.set_isInvisible(true);
 		int modesNumber = user.getModesNumber();
