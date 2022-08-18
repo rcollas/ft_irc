@@ -38,7 +38,7 @@ void	Command::nick(Command &command, User &user) {
 				return ;
 			}
 			else {
-				user.servInfo->sendToAll(user.get_fd(), user.getNickName() + "!@localhost NICK " + command.params[0] + "\n");
+				user.servInfo->sendToAll(user.get_fd(), "\033[0;31m" + user.getNickName() + "!@localhost NICK " + command.params[0] + "\r\n\033[0m");
 				user.set_nickname(command.params[0]);
 				std::cout << "Nickname is set at " << command.params[0] << std::endl;
 			}
@@ -123,23 +123,27 @@ void	Command::mode(Command &command, User &user) {
 	}
 	if (command.params[1] == "+i" && command.params[0] == user.getNickName() && user.getIsInvisible() == false) {
 		user.set_isInvisible(true);
-		int operators = user.getModesNumber();
-		user.set_modesNumber(++operators);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(++modesNumber);
 	}
 	if (command.params[1] == "-i" && command.params[0] == user.getNickName() && user.getIsInvisible() == true) {
 		user.set_isInvisible(false);
-		int operators = user.getModesNumber();
-		user.set_modesNumber(--operators);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(--modesNumber);
 	}
 	if (command.params[1] == "+o" && command.params[0] == user.getNickName() && user.getIsOperator() == false) {
 		user.set_isOperator(true);
-		int operators = user.getModesNumber();
-		user.set_modesNumber(++operators);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(++modesNumber);
+		int nbOfOperators = user.servInfo->getNbOfOperators();
+		user.servInfo->set_nbOfOperators(++nbOfOperators);
 	}
 	if (command.params[1] == "-o" && command.params[0] == user.getNickName() && user.getIsOperator() == true) {
 		user.set_isOperator(false);
-		int operators = user.getModesNumber();
-		user.set_modesNumber(--operators);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(--modesNumber);
+		int nbOfOperators = user.servInfo->getNbOfOperators();
+		user.servInfo->set_nbOfOperators(--nbOfOperators);
 	}
 }
 
@@ -166,7 +170,7 @@ void	Command::lusers(Command &command, User &user)
 	if (command.params.empty() == true) {
 
 		char *str = ft_itoa(user.servInfo->getNbOfUsers());
-		char *arr = ft_itoa(user.getModesNumber());
+		char *arr = ft_itoa(user.servInfo->getNbOfOperators());
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), str));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), arr));
 		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan")); // A REMPLIR AVEC FONCTION GETNUMBEROFCHAN

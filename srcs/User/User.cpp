@@ -15,7 +15,6 @@ std::string toString(char *str) {
 
 
 User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
-
 	this->isAway = false;
 	this->isInvisible = false;
 	this->isOperator = false;

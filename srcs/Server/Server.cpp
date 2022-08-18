@@ -27,7 +27,8 @@ Server::Server(std::string port, std::string passwd)
 :
 serverEndPoint(0),
 portNum(port),
-password(passwd)
+password(passwd),
+nbOfOperators(0)
 {
 	int status;
 	struct addrinfo hints;
@@ -258,6 +259,8 @@ bool	Server::userExist(std::string nickName)
 	}
 	return false;
 }
+void	Server::set_nbOfOperators(int nbOfOperators) { this->nbOfOperators = nbOfOperators; }
+int		Server::getNbOfOperators() const { return this->nbOfOperators; }
 
 /**
  * @brief if the registration succeed, a set of numeric replies is sent to the clien

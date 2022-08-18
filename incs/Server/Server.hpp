@@ -66,6 +66,7 @@ class Server {
 		std::vector<std::string>			cmdList;
 		std::vector<std::string>			invisibleList;
 		std::map<std::string, Channel *>	allChan;
+		int 								nbOfOperators;
 
 		void	fillAvailableCmd();
 
@@ -116,6 +117,8 @@ class Server {
 		void						checkArgs(int ac, char **av);
 		void						setPortNum(std::string portNum);
 		std::string					getPassword() const;
+		void						set_nbOfOperators(int NbOfOperators);
+		int							getNbOfOperators() const;
 };
 
 #endif
