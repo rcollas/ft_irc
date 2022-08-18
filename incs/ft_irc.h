@@ -58,12 +58,13 @@ struct Command {
 	void	notice(Command &cmd, User &user);
 };
 
-char	*ft_itoa(int nb);
-bool	isAllowedMode(std::string str);
-bool	checkChanName(std::string chanName);
-void	printDebug(std::string msg, bool print);
+char						*ft_itoa(int nb);
+bool						isAllowedMode(std::string str);
+bool						checkChanName(std::string chanName);
+void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
-Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
-void	printCmd(Command &cmdList);
+Command 					*parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
+void						printCmd(Command &cmdList);
+std::vector<std::string>	parseParamComma(std::string string);
 
 #endif

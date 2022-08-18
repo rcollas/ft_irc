@@ -5,13 +5,13 @@ void		Server::createChannel(int fd, User &user, Command &command) // a corriger
 {
 	for (unsigned long i = 0; i < command.params.size(); i++)
 	{
-		if	(chanExist== false)
+		if	(chanExist == false)
 		{
 			std::cout << "\033[0;31m" << "Création du channel " << command.params[i] << "\033[0m" << std::endl;
 			Channel *chan = new Channel(command.params[i], "");
 			this->addChannel(chan);
 		}
-		else if (chanExist== true)
+		else if (chanExist == true)
 			std::cout << "\033[0;31m" << "Le channel existe déjà " << command.params[i] << "\033[0m" << std::endl;
 	(void) fd;
 	}

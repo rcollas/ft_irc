@@ -205,8 +205,7 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
  * allow to join the channel
  * if only in invite mode can't join the channel **************/
 void	Command::join(Command &command, User &user) {
-	if (emptyCommand == false 
-		&& checkChanName(command.params[0]) == true)
+	if (emptyCommand == false && checkChanName(command.params[0]) == true)
 	{
 		user.servInfo->createChannel(user.get_fd(), user, command);
 		for (unsigned long i = 0 ; i < command.params.size() ; i++)

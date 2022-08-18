@@ -48,13 +48,26 @@ char	*ft_itoa(int nb)
 	return (str);
 }
 
-bool	checkChanName(std::string chanName)
+// std::vector<std::string>	parseParam(std::string string)
+// {
+// 	std::vector<std::string> result;
+
+// 	while(std::string.good() )
+// 	{
+// 		std::string substr;
+// 		getline(string, substr, ',' );
+// 		result.push_back(substr);
+// 	}
+// 	return (result);
+// }
+
+bool						checkChanName(std::string chanName)
 {
 	if(chanName[0] == '#' && chanName.size() > 1)
 		return true;
 	return false;
 }
 
-bool	isAllowedMode(std::string str) {
+bool						isAllowedMode(std::string str) {
 	return (str == "-i" || str == "-k");
 }
