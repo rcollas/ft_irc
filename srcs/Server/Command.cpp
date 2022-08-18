@@ -131,6 +131,8 @@ bool 	modeInviteChannel(Command &command, User &user)
 	{
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->inviteModeSetTrue();
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(++modesNumber);
 		return (true);
 	}
 	return (false);
@@ -144,6 +146,8 @@ bool	modeKeyChannel(Command &command, User &user)
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->setKeyExistTrue();
 		chan->setKey(command.params[2]);
+		int modesNumber = user.getModesNumber();
+		user.set_modesNumber(++modesNumber);
 		return (true);
 	}
 	return false;
