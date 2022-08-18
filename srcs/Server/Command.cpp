@@ -144,9 +144,6 @@ bool	modeKeyChannel(Command &command, User &user)
 	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
 	 	&& command.params[1] == "+k" && command.params.size() == 3) 
 	{
-		user.set_isInvisible(true);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->setKeyExistTrue();
 		chan->setKey(command.params[2]);
@@ -260,6 +257,9 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
  * allow to join the channel
  * if only in invite mode can't join the channel **************/
 void	Command::join(Command &command, User &user) {
+	
+	std::vector<std::string> chans;
+	chans = parseStringGetline(command.params[0]);
 	if (emptyCommand == false && checkChanName(command.params[0]) == true)
 	{
 		user.servInfo->createChannel(user.get_fd(), user, command);

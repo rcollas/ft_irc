@@ -50,18 +50,18 @@ char	*ft_itoa(int nb)
 	return (str);
 }
 
-// std::vector<std::string>	parseParam(std::string string)
-// {
-// 	std::vector<std::string> result;
-
-// 	while(std::string.good() )
-// 	{
-// 		std::string substr;
-// 		getline(string, substr, ',' );
-// 		result.push_back(substr);
-// 	}
-// 	return (result);
-// }
+/***************** 
+ * I want to parse a string with a delimiter
+ * getline allow to take a string from stringstream until the end of the line
+ * string will be the string separated by the delimiter ',' **************/
+std::vector<std::string>	parseStringGetline(std::string string)
+{
+	std::stringstream input_stringstream(string);
+	std::vector<std::string> result;
+	while (std::getline(input_stringstream, string, ','))
+		result.push_back(string);
+	return (result);
+}
 
 bool						checkChanName(std::string chanName)
 {

@@ -65,6 +65,6 @@ void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
 Command 					*parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
 void						printCmd(Command &cmdList);
-std::vector<std::string>	parseParamComma(std::string string);
+std::vector<std::string>	parseStringGetline(std::string string);
 
 #endif
