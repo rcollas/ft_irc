@@ -28,7 +28,8 @@ Server::Server(std::string port, std::string passwd)
 :
 serverEndPoint(0),
 portNum(port),
-password(passwd)
+password(passwd),
+nbOfOperators(0)
 {
 	int status;
 	struct addrinfo hints;
@@ -53,6 +54,7 @@ password(passwd)
 Server::~Server() {}
 
 std::vector<std::string>	&Server::getCmdList() { return this->cmdList; }
+std::vector<std::string>	&Server::getInvisibleList() { return this->invisibleList; }
 std::string	Server::getPassword() const { return this->password; }
 
 
@@ -118,10 +120,10 @@ bool	Server::nicknameExists(std::string nickname) {
 	{
 		if (it->second.getNickName() == nickname)
 		{
-			return (false);
+			return (true);
 		}
 	}
-	return (true);
+	return (false);
 }
 
 int	Server::getTargetFd(std::string nickname) {
@@ -150,7 +152,7 @@ bool	Server::getAwayStatus(std::string nickname) {
 	return (it->second.getIsAway());
 }
 
-int	Server::getModesNumber(std::string nickname) {
+int	Server::getModes(std::string nickname) {
 	std::map<int, User>::iterator it;
 	it = this->user_list.begin();
 	for(; it != this->user_list.end(); it++)
@@ -182,10 +184,10 @@ bool	Server::usernameExists(std::string username) {
 	{
 		if (it->second.getUserName() == username)
 		{
-			return (false);
+			return (true);
 		}
 	}
-	return (true);
+	return (false);
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
@@ -259,6 +261,8 @@ bool	Server::userExist(std::string nickName)
 	}
 	return false;
 }
+void	Server::set_nbOfOperators(int nbOfOperators) { this->nbOfOperators = nbOfOperators; }
+int		Server::getNbOfOperators() const { return this->nbOfOperators; }
 
 /**
  * @brief if the registration succeed, a set of numeric replies is sent to the clien

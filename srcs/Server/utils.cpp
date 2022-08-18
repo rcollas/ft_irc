@@ -10,6 +10,8 @@ int		len(long nb)
 		nb = nb * -1;
 		len++;
 	}
+    if (nb == 0)
+        len++;
 	while (nb > 0)
 	{
 		nb = nb / 10;
@@ -68,6 +70,6 @@ bool						checkChanName(std::string chanName)
 	return false;
 }
 
-bool						isAllowedMode(std::string str) {
-	return (str == "-i" || str == "-k");
+bool	isAllowedMode(std::string str) {
+	return (str == "-i" || str == "+i" || str == "-k" || str == "+k" || str == "-o" || str == "+o");
 }
