@@ -19,7 +19,7 @@ std::string RPL_ISUPPORT();
 #define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has left " + str(channel) + "\r\n" + "\033[0m")
 #define INVITE_WELCOME_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has invited you to " + str(channel) + "\r\n" + "\033[0m")
 #define KICK__MESSAGE(nick, channel, reason) ("\e[0;34m" + str(nick) + " has kicked you from " + str(channel) + " for the reason :" + str(reason)+ "\r\n" + "\033[0m")
-
+#define PRV_MSG(nick, message) ("\033[1;32m" + str(nick) + " : " + str(message) + "\r\n" + "\033[0m") 
 /******************************************************************************/
 /*                                   0**                                      */
 /******************************************************************************/
@@ -43,6 +43,7 @@ std::string RPL_ISUPPORT();
 
 #define RPL_TOPIC(nick, channel, topic) ("\e[0;34m 331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
 #define RPL_NOTOPIC(channel) ("\e[0;34m 332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
+
 #define RPL_AWAY(nick, message) ("\033[0;31m301 " + str(nick) + " :" + str(message) + "\r\n\033[0m")
 #define RPL_UNAWAY(nick) ("\033[0;31m305 " + str(nick) + " :You are no longer marked as being away\r\n\033[0m")
 #define RPL_NOWAWAY(nick) ("\033[0;31m306 " + str(nick) + " :You have been marked as being away\r\n\033[0m")
@@ -56,7 +57,6 @@ std::string RPL_ISUPPORT();
 #define RPL_NAMREPLY(nick, channel) ("\e[0;34m 353 "+ str(channel) + " :" + str(nick) + "\r\n" + "\033[0m")
 #define RPL_ENDOFNAMES(channel) ("\e[0;34m 366 " + str(channel) + " :End of NAMES list" + "\r\n" + "\033[0m")
 #define RPL_YOUREOPER(nick)("\e[0;34m381 " + str(nick) + " ::You are now an IRC operator" + "\r\n" + "\033[0m")
-
 
 /******************************************************************************/
 /*                                   4**                                      */
@@ -73,6 +73,7 @@ std::string RPL_ISUPPORT();
 #define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
 #define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
 #define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
+#define ERR_INVITEONLYCHAN(nick, channel) ("\033[0;31m473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n\033[0m")
 
 /******************************************************************************/
 /*                                   5**                                      */

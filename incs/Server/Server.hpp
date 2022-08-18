@@ -45,6 +45,7 @@ enum cmd {
 	PRIVMSG		= 16,
 	MODE 		= 17,
 	OPER 		= 18,
+	NOTICE		= 19,
 };
 
 class User;
