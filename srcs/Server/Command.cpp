@@ -121,19 +121,26 @@ void	Command::mode(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
 		return ;
 	}
-	if (command.params[1] == "+o" && command.params[0] == user.getNickName() && user.getIsOperator() == false) {
+}
+
+void	Command::oper(Command &command, User &user) {
+	if (command.params.empty() == true || command.params.size() != 2) {
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+		return ;
+	}
+	if (command.params[0] != user.getUserName())
+		return ;
+	if (command.params[1] != user.servInfo->getPassword()) {
+		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+		return ;
+	}
+	if (user.getIsOperator() == false) {
 		user.set_isOperator(true);
 		int modesNumber = user.getModesNumber();
 		user.set_modesNumber(++modesNumber);
 		int nbOfOperators = user.servInfo->getNbOfOperators();
 		user.servInfo->set_nbOfOperators(++nbOfOperators);
-	}
-	if (command.params[1] == "-o" && command.params[0] == user.getNickName() && user.getIsOperator() == true) {
-		user.set_isOperator(false);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(--modesNumber);
-		int nbOfOperators = user.servInfo->getNbOfOperators();
-		user.servInfo->set_nbOfOperators(--nbOfOperators);
+		sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
 	}
 }
 

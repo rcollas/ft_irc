@@ -47,6 +47,7 @@ struct Command {
 	void	kick(Command &cmd, User &user);
 	void	privmsg(Command &cmd, User &user);
 	void	mode(Command &cmd, User &user);
+	void	oper(Command &cmd, User &user);
 };
 
 char	*ft_itoa(int nb);

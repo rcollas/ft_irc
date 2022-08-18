@@ -55,6 +55,7 @@ std::string RPL_ISUPPORT();
 #define RPL_INVITING(nick, channel) ("\e[0;34m 341 inviting " + str(nick) + " to " + str(channel) + "\r\n" + "\033[0m")
 #define RPL_NAMREPLY(nick, channel) ("\e[0;34m 353 "+ str(channel) + " :" + str(nick) + "\r\n" + "\033[0m")
 #define RPL_ENDOFNAMES(channel) ("\e[0;34m 366 " + str(channel) + " :End of NAMES list" + "\r\n" + "\033[0m")
+#define RPL_YOUREOPER(nick)("\e[0;34m381 " + str(nick) + " ::You are now an IRC operator" + "\r\n" + "\033[0m")
 
 
 /******************************************************************************/
@@ -62,14 +63,14 @@ std::string RPL_ISUPPORT();
 /******************************************************************************/
 
 #define ERR_NOSUCHNICK(nick, target) ("\033[0;31m401 " + str(nick) + " " + str(target) + " :No such nick/channel\r\n\033[0m")
-#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m 403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
-#define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m 442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
+#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
+#define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
 #define ERR_NONICKNAMEGIVEN() ("\033[0;31m431 :No nickname given\r\n\033[0m")
 #define ERR_ERRONEUSNICKNAME(nick) ("\033[0;31m432 " + str(nick) + " :Erroneus nickname\r\n\033[0m")
 #define ERR_NICKNAMEINUSE(nick) ("\033[0;31m433 " + str(nick) + " :Nickname is already in use\r\n\033[0m")
 #define ERR_USERONCHANNEL(nick, channel) ("\033[0;31m 443 " + str(nick) + " " + str(channel) + " :is already on channel" + "\r\n" + "\033[0m")
 #define ERR_USERNOTINCHANNEL(nick, channel) ("\033[0;31m 443 " + str(nick) + " " + str(channel) + " :isn't already on that channel" + "\r\n" + "\033[0m")
-#define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m 461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
+#define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
 #define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
 #define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
 
