@@ -23,6 +23,14 @@
 #include "Server/Channel.hpp"
 
 #define RECEIVE_DEBUG 1
+#define emptyCommand command.params.empty()
+#define checkUserInchannel chan->userInChannel(user.get_fd(), chan->getUsersList())
+#define checkWaitingList chan->userInChannel(user.get_fd(), chan->getWaitingInviteList())
+#define chanExist user.servInfo->channelExist(command.params[i])
+#define RPL_LIST_MSG RPL_LIST(chan->getChannelName(), ft_itoa(chan->getNbUsers()), chan->getTopic())
+#define ERR_NOSUCHCHANNEL_MSG ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i])
+#define RPL_TOPIC_MSG RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic())
+#define RPL_NOTOPIC_MSG RPL_NOTOPIC(chan->getChannelName())
 
 class User;
 
@@ -47,13 +55,16 @@ struct Command {
 	void	kick(Command &cmd, User &user);
 	void	privmsg(Command &cmd, User &user);
 	void	mode(Command &cmd, User &user);
+	void	notice(Command &cmd, User &user);
 };
 
-char	*ft_itoa(int nb);
-bool	isAllowedMode(std::string str);
-void	printDebug(std::string msg, bool print);
+char						*ft_itoa(int nb);
+bool						isAllowedMode(std::string str);
+bool						checkChanName(std::string chanName);
+void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
-Command *parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
-void	printCmd(Command &cmdList);
+Command 					*parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
+void						printCmd(Command &cmdList);
+std::vector<std::string>	parseParamComma(std::string string);
 
 #endif

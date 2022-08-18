@@ -14,6 +14,8 @@ Channel::Channel(std::string const &channelName, std::string const &key)
 	this->_key				= key;
 	this->_channelJoined	= true;
 	this->_topicSet			= false;
+	this->_inviteModeSet	= false;
+	this->_keyExist			= false;
 	std::cout << "Constructor is called" << std::endl;
 }
 
@@ -44,30 +46,46 @@ Channel &Channel::operator=(Channel const &obj)
 **==========================
 */
 
-std::string	Channel::getChannelName()
+std::string				Channel::getChannelName()
 {
 	return (this->_channelName);
 }
 
-std::string Channel::getKeyName()
+std::string 			Channel::getKeyName()
 {
 	return (this->_key);
 }
 
-std::string Channel::getTopic()
+std::string 			Channel::getTopic()
 {
 	return (this->_topic);
 }
 
-bool 		Channel::getChannelJoined()
+bool 					Channel::getChannelJoined()
 {
 	return (this->_channelJoined);
 }
 
-bool		Channel::TopicIsSet()
+std::map<int, User *>	Channel::getUsersList()
 {
-	return (this->_topicSet);
+	return this->_usersList;
 }
+
+bool					Channel::getInviteMode()
+{
+	return (this->_inviteModeSet);
+}
+
+bool					Channel::getKeyExist()
+{
+	return (this->_keyExist);
+}
+
+std::map<int, User *>	Channel::getWaitingInviteList()
+{
+	return this->_waitingInviteList;
+}
+
 
 /*
 **==========================
@@ -79,9 +97,9 @@ bool		Channel::TopicIsSet()
  * Here we check if the user is in the channel 
  * by using map who call the class User
  *  **************/
-bool		Channel::userInChannel(int fd)
+bool		Channel::userInChannel(int fd, std::map<int, User *> list)
 {
-	if (this->_usersList.find(fd) == this->_usersList.end())
+	if (list.find(fd) == list.end())
 		return (false);
 	return (true);
 }
@@ -98,23 +116,25 @@ void		Channel::addUserToChannel(int fd, User *user)
 	this->_usersList.insert(std::pair<int, User *>(fd, user));
 }
 
+void		Channel::addUserToWitingList(int fd, User *user)
+{
+	this->_waitingInviteList.insert(std::pair<int, User *>(fd, user));
+}
+
 /***************** Here I print all the user of the channel **************/
 void		Channel::printChannelUsers(int fd, User *user, std::string channelName)
 {
 	std::map<int, User *>::iterator it; // On donne le type à l'itérator
 	it = this->_usersList.begin(); // On le met au début
 	for(; it != this->_usersList.end(); it++)
-	{
 		sendMsg(fd, RPL_NAMREPLY(it->second->getNickName(), channelName));
-	}
 	sendMsg(fd, RPL_ENDOFNAMES(channelName));
-	(void) fd;
 	(void) user;
 }
 
 void		Channel::removeUserChannel(int fd, User *user)
 {
-	if (this->userInChannel(fd) == true)
+	if (this->userInChannel(fd, this->getUsersList()) == true)
 	{
 		this->_usersList.erase(fd);
 		sendMsg(fd, PART_LEAVE_CHANNEL_MESSAGE(user->getNickName(), this->getChannelName()));
@@ -128,3 +148,23 @@ int		Channel::getNbUsers(void)
 {
 	return (this->_usersList.size());
 }
+
+void	Channel::inviteModeSetTrue()
+{
+	this->_inviteModeSet = true;
+}
+
+void	Channel::setKeyExistTrue()
+{
+	this->_keyExist = true;
+}
+
+bool	Channel::TopicIsSet()
+{
+	return (this->_topicSet);
+}
+
+void	Channel::setKey(std::string key)
+{
+	this->_key = key;
+}	

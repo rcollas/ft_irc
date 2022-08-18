@@ -21,6 +21,7 @@ void	Server::fillAvailableCmd() {
 	this->cmdList.push_back("KICK");
 	this->cmdList.push_back("PRIVMSG");
 	this->cmdList.push_back("MODE");
+	this->cmdList.push_back("NOTICE");
 }
 
 Server::Server(std::string port, std::string passwd)
@@ -208,6 +209,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		case (KICK): cmd.kick(cmd, user); break;
 		case (PRIVMSG): cmd.privmsg(cmd, user); break;
 		case (MODE): cmd.mode(cmd, user); break;
+		case (NOTICE): cmd.notice(cmd, user); break;
 	}
 }
 
