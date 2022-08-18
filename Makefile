@@ -7,9 +7,11 @@ SRC_FILES 	=	main.cpp \
 				Server/Channel.cpp \
 				Server/ChannelServer.cpp \
 				Server/Command.cpp \
+				Server/ChannelCommand.cpp \
 				Server/utils.cpp \
 				Server/Channel.cpp \
 				User/User.cpp \
+				
 
 OBJS_DIR	=	objs
 

@@ -22,6 +22,7 @@
 #include "User/User.hpp"
 #include "Server/Channel.hpp"
 
+
 #define RECEIVE_DEBUG 1
 #define emptyCommand command.params.empty()
 #define checkUserInchannel chan->userInChannel(user.get_fd(), chan->getUsersList())
@@ -38,24 +39,27 @@ struct Command {
 	int							cmd;
 	std::vector<std::string>	params;
 
-	void	cap(Command &cmd, User &user);
-	void	pass(Command &cmd, User &user);
-	void	nick(Command &cmd, User &user);
-	void	user(Command &cmd, User &user);
-	void	join(Command &cmd, User &user);
-	void	topic(Command &cmd, User &user);
-	void	motd(Command &cmd, User &user);
-	void	away(Command &cmd, User &user);
-	void	version(Command &cmd, User &user);
-	void	lusers(Command &cmd, User &user);
-	void	part(Command &cmd, User &user);
-	void	names(Command &cmd, User &user);
-	void	list(Command &cmd, User &user);
-	void	invite(Command &cmd, User &user);
-	void	kick(Command &cmd, User &user);
-	void	privmsg(Command &cmd, User &user);
-	void	mode(Command &cmd, User &user);
-	void	notice(Command &cmd, User &user);
+	void		cap(Command &cmd, User &user);
+	void		pass(Command &cmd, User &user);
+	void		nick(Command &cmd, User &user);
+	void		user(Command &cmd, User &user);
+	void		join(Command &cmd, User &user);
+	void		topic(Command &cmd, User &user);
+	void		motd(Command &cmd, User &user);
+	void		away(Command &cmd, User &user);
+	void		version(Command &cmd, User &user);
+	void		lusers(Command &cmd, User &user);
+	void		part(Command &cmd, User &user);
+	void		names(Command &cmd, User &user);
+	void		list(Command &cmd, User &user);
+	void		invite(Command &cmd, User &user);
+	void		kick(Command &cmd, User &user);
+	void		privmsg(Command &cmd, User &user);
+	void		mode(Command &cmd, User &user);
+	void		notice(Command &cmd, User &user);
+	void		sendPrivateMessage(User &user, std::string nickName, std::string message);
+	void		sendMessageToChannel(User &user, std::string chanName, std::string message);
+
 };
 
 char						*ft_itoa(int nb);
@@ -66,5 +70,9 @@ std::vector<std::string>	split(std::string str, std::string const sep);
 Command 					*parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
 void						printCmd(Command &cmdList);
 std::vector<std::string>	parseStringGetline(std::string string);
+std::vector<std::string>	getJoinKeys(Command &command);
+std::string					concatenate_strings(std::string first, std::string second);
+
+
 
 #endif

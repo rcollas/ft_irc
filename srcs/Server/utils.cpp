@@ -63,6 +63,14 @@ std::vector<std::string>	parseStringGetline(std::string string)
 	return (result);
 }
 
+std::vector<std::string>	getJoinKeys(Command &command)
+{
+	std::vector<std::string> keys;
+	if (command.params.size() == 2)
+		keys = parseStringGetline(command.params[1]);
+	return (keys);
+}
+
 bool						checkChanName(std::string chanName)
 {
 	if(chanName[0] == '#' && chanName.size() > 1)
@@ -70,6 +78,13 @@ bool						checkChanName(std::string chanName)
 	return false;
 }
 
-bool	isAllowedMode(std::string str) {
+bool						isAllowedMode(std::string str) {
 	return (str == "-i" || str == "+i" || str == "+k" || str == "-o" || str == "+o");
+}
+
+std::string					concatenate_strings(std::string first, std::string second)
+{
+	first = first.append(" ");
+	first = first.append(second);
+	return (first);
 }
