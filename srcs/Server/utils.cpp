@@ -10,8 +10,9 @@ int		len(long nb)
 		nb = nb * -1;
 		len++;
 	}
-    if (nb == 0)
+    if (nb == 0) {
         len++;
+	}
 	while (nb > 0)
 	{
 		nb = nb / 10;
