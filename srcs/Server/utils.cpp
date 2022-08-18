@@ -72,5 +72,5 @@ bool						checkChanName(std::string chanName)
 }
 
 bool	isAllowedMode(std::string str) {
-	return (str == "-i" || str == "+i" || str == "+k" || str == "-o" || str == "+o");
+	return (str == "+i" || str == "+k");
 }

@@ -56,7 +56,7 @@ std::string RPL_ISUPPORT();
 #define RPL_INVITING(nick, channel) ("\e[0;34m 341 inviting " + str(nick) + " to " + str(channel) + "\r\n" + "\033[0m")
 #define RPL_NAMREPLY(nick, channel) ("\e[0;34m 353 "+ str(channel) + " :" + str(nick) + "\r\n" + "\033[0m")
 #define RPL_ENDOFNAMES(channel) ("\e[0;34m 366 " + str(channel) + " :End of NAMES list" + "\r\n" + "\033[0m")
-#define RPL_YOUREOPER(nick)("\e[0;34m381 " + str(nick) + " ::You are now an IRC operator" + "\r\n" + "\033[0m")
+#define RPL_YOUREOPER(nick)("\e[0;34m381 " + str(nick) + " :You are now an IRC operator" + "\r\n" + "\033[0m")
 
 /******************************************************************************/
 /*                                   4**                                      */
