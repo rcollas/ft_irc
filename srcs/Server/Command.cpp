@@ -177,8 +177,9 @@ void	Command::oper(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return ;
 	}
-	if (command.params[0] != user.getUserName())
+	if (command.params[0] != user.getUserName()) {
 		return ;
+	}
 	if (command.params[1] != user.servInfo->getPassword()) {
 		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
 		return ;

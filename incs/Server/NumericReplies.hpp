@@ -25,7 +25,10 @@ std::string RPL_ISUPPORT();
 /******************************************************************************/
 
 #define RPL_WELCOME(host, nick, user) ("001 " + str(nick) + " :Welcome to the " + str(host) + " network, " + str(nick) + "[!" + str(user) + "@" + str(host) + "]\r\n")
-
+#define RPL_YOURHOST(nick) ("002 " + str(nick) + " :Your host is 127.0.0.1, running version 1.2.3\r\n")
+#define RPL_CREATED(nick) ("003 " + str(nick) + " :This server was created 18:07:30\r\n")
+#define RPL_MYINFO(nick) ("004 " + str(nick) + " localhost irssi 1.4.1 (20220612 1401) 1 2\r\n")
+#define RPL_ISUPPORT(nick) ("005 " + str(nick) + " 12 :are supported by this server\r\n")
 
 /******************************************************************************/
 /*                                   2**                                      */
@@ -41,12 +44,11 @@ std::string RPL_ISUPPORT();
 /*                                   3**                                      */
 /******************************************************************************/
 
-#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m 331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
-#define RPL_NOTOPIC(channel) ("\e[0;34m 332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
-
 #define RPL_AWAY(nick, message) ("\033[0;31m301 " + str(nick) + " :" + str(message) + "\r\n\033[0m")
 #define RPL_UNAWAY(nick) ("\033[0;31m305 " + str(nick) + " :You are no longer marked as being away\r\n\033[0m")
 #define RPL_NOWAWAY(nick) ("\033[0;31m306 " + str(nick) + " :You have been marked as being away\r\n\033[0m")
+#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
+#define RPL_NOTOPIC(channel) ("\e[0;34m332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
 #define RPL_VERSION(nick) ("\033[0;31m351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n\033[0m")
 #define RPL_MOTD(nick, text) ("\033[0;31m372 " + str(nick) + " :- " + str(text) + " -\r\n\033[0m")
 #define RPL_MOTDSTART(nick, server) ("\033[0;31m375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n\033[0m")

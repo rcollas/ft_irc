@@ -275,10 +275,10 @@ int		Server::getNbOfOperators() const { return this->nbOfOperators; }
 void Server::welcome(User &user) {
 
 	sendMsg(user.get_fd(), RPL_WELCOME("localhost", user.getNickName(), user.getUserName()));
-	send(user.get_fd(), RPL_YOURHOST().c_str(), RPL_YOURHOST().length(), 0);
-	send(user.get_fd(), RPL_CREATED().c_str(),strlen(RPL_CREATED().c_str()), 0);
-	send(user.get_fd(), RPL_MYINFO().c_str(),strlen(RPL_MYINFO().c_str()), 0);
-	send(user.get_fd(), RPL_ISUPPORT().c_str(),strlen(RPL_ISUPPORT().c_str()), 0);
+	sendMsg(user.get_fd(), RPL_YOURHOST(user.getNickName()));
+	sendMsg(user.get_fd(), RPL_CREATED(user.getNickName()));
+	sendMsg(user.get_fd(), RPL_MYINFO(user.getNickName()));
+	sendMsg(user.get_fd(), RPL_ISUPPORT(user.getNickName()));
 }
 
 /**
