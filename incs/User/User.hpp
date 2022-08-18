@@ -34,6 +34,7 @@ class User {
 		bool						isOperator;
 		bool						admin;
 		int							modesNumber;
+		std::string					buffer;
 
 	public:
 		User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo);
@@ -50,10 +51,13 @@ class User {
 		void	set_isOperator(bool isOperator);
 		void	set_modesNumber(int isInvisible);
 		void	set_awayMessage(std::string awayMessage);
+		void	appendToBuffer(std::string str);
+		void	clearBuffer();
 		std::string	getNickName() const;
 		std::string	getUserName() const;
 		std::string	getRealName() const;
 		std::string getAwayMessage() const;
+		std::string	getBuffer() const;
 		bool	getIsAway() const;
 		bool	getIsOperator() const;
 		int		getModesNumber() const;

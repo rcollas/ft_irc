@@ -41,8 +41,8 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 			(get_in_addr((struct sockaddr *) &socket))));
 	client_ip += "\r\n";
 	std::cout << "client IP = " << client_ip << std::endl;
-	Server::registration(this);
-	Server::welcome(*this);
+	//Server::registration(this);
+	//Server::welcome(*this);
 }
 
 User::~User() {}
@@ -56,11 +56,14 @@ void	User::set_awayMessage(std::string awayMessage) { this->awayMessage = awayMe
 void	User::set_isAway(bool away) { this->isAway = away; }
 void	User::set_isOperator(bool isOperator) { this->isOperator = isOperator; }
 void	User::set_modesNumber(int modes) { this->modesNumber = modes; }
+void	User::appendToBuffer(std::string str) { this->buffer.append(str); }
+void	User::clearBuffer() { this->buffer.clear(); }
 
 std::string	User::getNickName() const { return this->nick_name; }
 std::string	User::getUserName() const { return this->user_name; }
 std::string	User::getRealName() const { return this->real_name; }
 std::string	User::getAwayMessage() const { return this->awayMessage; }
+std::string	User::getBuffer() const { return this->buffer; };
 bool		User::getIsAway() const { return this->isAway; }
 bool		User::getIsOperator() const { return this->isOperator; }
 int		User::getModesNumber() const { return this->modesNumber; }

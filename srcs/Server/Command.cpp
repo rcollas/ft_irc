@@ -26,11 +26,6 @@ void	sendMessageToChannel(User &user, std::string chanName, std::string message)
 		sendPrivateMessage(user, it->second->getNickName(), message);
 }
 
-void	Command::cap(Command &command, User &user) {
-	(void)command;
-	send(user.get_fd(), "CAP\r\n", strlen("CAP\r\n"), 0);
-}
-
 void	Command::pass(Command &command, User &user) {
 	if (command.params.size() > 1)
 		return ;
@@ -126,8 +121,8 @@ void	Command::motd(Command &command, User &user) {
 
 bool 	modeInviteChannel(Command &command, User &user)
 {
-	if (isAllowedMode(command.params[1]) == true && user.servInfo->channelExist(command.params[0]) == true 
-		&& command.params[1] == "+i" && command.params.size() == 2) 
+	if (isAllowedMode(command.params[1]) == true && user.servInfo->channelExist(command.params[0]) == true
+		&& command.params[1] == "+i" && command.params.size() == 2)
 	{
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->inviteModeSetTrue();
@@ -140,8 +135,8 @@ bool 	modeInviteChannel(Command &command, User &user)
 
 bool	modeKeyChannel(Command &command, User &user)
 {
-	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
-	 	&& command.params[1] == "+k" && command.params.size() == 3) 
+	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true
+	 	&& command.params[1] == "+k" && command.params.size() == 3)
 	{
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->setKeyExistTrue();
@@ -261,7 +256,7 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
  * allow to join the channel
  * if only in invite mode can't join the channel **************/
 void	Command::join(Command &command, User &user) {
-	
+
 	std::vector<std::string> chans;
 	chans = parseStringGetline(command.params[0]);
 	if (emptyCommand == false && checkChanName(command.params[0]) == true)

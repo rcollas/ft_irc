@@ -3,7 +3,6 @@
 char Server::buffer[Server::bufferSize];
 
 void	Server::fillAvailableCmd() {
-	this->cmdList.push_back("CAP");
 	this->cmdList.push_back("PASS");
 	this->cmdList.push_back("NICK");
 	this->cmdList.push_back("USER");
@@ -191,28 +190,44 @@ bool	Server::usernameExists(std::string username) {
 	return (false);
 }
 
+bool	registrationComplete(User &user) {
+	std::cout << "nick = " << user.getNickName() << std::endl;
+	std::cout << "user name = " << user.getUserName() << std::endl;
+	return !user.getNickName().empty() && !user.getUserName().empty();
+}
+
 void	Server::cmdDispatcher(Command &cmd, User &user) {
-	switch (cmd.cmd) {
-		case (CAP): cmd.cap(cmd, user); break;
-		case (PASS): cmd.pass(cmd, user); break;
-		case (NICK): cmd.nick(cmd, user); break;
-		case (USER): cmd.user(cmd, user); break;
-		case (JOIN): cmd.join(cmd, user); break;
-		case (TOPIC): cmd.topic(cmd, user); break;
-		case (MOTD): cmd.motd(cmd, user); break;
-		case (AWAY): cmd.away(cmd, user); break;
-		case (VERSION): cmd.version(cmd, user); break;
-		case (LUSERS): cmd.lusers(cmd, user); break;
-		case (PART): cmd.part(cmd, user); break;
-		case (NAMES): cmd.names(cmd, user); break;
-		case (LIST): cmd.list(cmd, user); break;
-		case (INVITE): cmd.invite(cmd, user); break;
-		case (KICK): cmd.kick(cmd, user); break;
-		case (PRIVMSG): cmd.privmsg(cmd, user); break;
-		case (MODE): cmd.mode(cmd, user); break;
-		case (OPER): cmd.oper(cmd, user); break;
-		case (NOTICE): cmd.notice(cmd, user); break;
+	int ret = 1;
+	if (registrationComplete(user) == false) {
+		std::cout << "in first switch" << std::endl;
+		switch (cmd.cmd) {
+			case (PASS): cmd.pass(cmd, user); break;
+			case (NICK): cmd.nick(cmd, user); break;
+			case (USER): cmd.user(cmd, user); break;
+			default: ret = 0;
+		}
+	} else {
+		switch (cmd.cmd) {
+			case (JOIN): cmd.join(cmd, user); break;
+			case (TOPIC): cmd.topic(cmd, user); break;
+			case (MOTD): cmd.motd(cmd, user); break;
+			case (AWAY): cmd.away(cmd, user); break;
+			case (VERSION): cmd.version(cmd, user); break;
+			case (LUSERS): cmd.lusers(cmd, user); break;
+			case (PART): cmd.part(cmd, user); break;
+			case (NAMES): cmd.names(cmd, user); break;
+			case (LIST): cmd.list(cmd, user); break;
+			case (INVITE): cmd.invite(cmd, user); break;
+			case (KICK): cmd.kick(cmd, user); break;
+			case (PRIVMSG): cmd.privmsg(cmd, user); break;
+			case (MODE): cmd.mode(cmd, user); break;
+			case (OPER): cmd.oper(cmd, user); break;
+			case (NOTICE): cmd.notice(cmd, user); break;
+			default: ret = 0;
+		}
 	}
+	if (ret)
+		user.clearBuffer();
 }
 
 /**
@@ -222,32 +237,34 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
  * and the parameters in a vector
  */
 
+
 void	Server::registration(User *user) {
 
 	std::cout << "Registration in progress..." << std::endl;
 	std::vector<std::string>	res;
 	Command						*ret;
-	sleep(1);
-	recv(user->get_fd(), buffer, bufferSize, MSG_DONTWAIT);
-	res = split(buffer, " :\r\n");
-	memset(buffer, 0, bufferSize);
-	for (int i = 0; i < 4; i++) {
-		ret = parse(res, user->servInfo->getCmdList());
-		user->addCmd(*ret);
-		printCmd(*ret);
-	}
-	while (user->getCmdList().empty() == false) {
-		Server::cmdDispatcher(user->getCmdList().front(), *user);
-		user->getCmdList().erase(user->getCmdList().begin());
+	while (registrationComplete(*user) == false) {
+		sleep(1);
+		recv(user->get_fd(), buffer, bufferSize, MSG_DONTWAIT);
+		res = split(buffer, " :\r\n");
+		memset(buffer, 0, bufferSize);
+		for (int i = 0; i < 4; i++) {
+			ret = parse(res, user->servInfo->getCmdList());
+			user->addCmd(*ret);
+		}
+		while (user->getCmdList().empty() == false) {
+			Server::cmdDispatcher(user->getCmdList().front(), *user);
+			user->getCmdList().erase(user->getCmdList().begin());
+		}
 	}
 	std::cout << "User fd : " << user->get_fd() << std::endl;
 	std::cout << "Registration complete!" << std::endl;
 }
 
-User &Server::nickToUserFd(std::string nickname) 
+User &Server::nickToUserFd(std::string nickname)
 {
 	std::map<int, User>::iterator it = this->user_list.begin();
-	for (; it != this->user_list.end(); it++) { 
+	for (; it != this->user_list.end(); it++) {
 		if (it->second.getNickName() == nickname)
 			return it->second;
 	}
@@ -257,7 +274,7 @@ User &Server::nickToUserFd(std::string nickname)
 bool	Server::userExist(std::string nickName)
 {
 	std::map<int, User>::iterator it = this->user_list.begin();
-	for (; it != this->user_list.end(); it++) { 
+	for (; it != this->user_list.end(); it++) {
 		if (it->second.getNickName() == nickName)
 			return true;
 	}
@@ -300,7 +317,8 @@ void	Server::sendToAll(int senderFd, std::string msg) {
 }
 
 void	Server::handleCmd(User *user) {
-	std::vector<std::string>	res = split(buffer, " :\r\n");
+	user->appendToBuffer(buffer);
+	std::vector<std::string>	res = split(user->getBuffer(), " :\r\n");
 	Command						*ret;
 	memset(buffer, 0, bufferSize);
 	while (res.empty() == false) {

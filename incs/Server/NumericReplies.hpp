@@ -4,6 +4,13 @@
 #include <iostream>
 #include "User/User.hpp"
 
+#define str(param) std::string(param)
+
+#define EOC str("\033[0m")
+#define BLUE str("\033[0;34m")
+#define GREEN str("\033[1;32m")
+#define RED str("\033[0;31m")
+
 class User;
 
 void	sendMsg(int fd, std::string msg);
@@ -13,13 +20,12 @@ std::string	RPL_MYINFO();
 std::string RPL_ISUPPORT();
 std::string RPL_ISUPPORT();
 
-#define str(param) std::string(param)
 
-#define JOIN_WELCOME_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has joined " + str(channel) + "\r\n" + "\033[0m")
-#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has left " + str(channel) + "\r\n" + "\033[0m")
-#define INVITE_WELCOME_MESSAGE(nick, channel) ("\e[0;34m" + str(nick) + " has invited you to " + str(channel) + "\r\n" + "\033[0m")
-#define KICK__MESSAGE(nick, channel, reason) ("\e[0;34m" + str(nick) + " has kicked you from " + str(channel) + " for the reason :" + str(reason)+ "\r\n" + "\033[0m")
-#define PRV_MSG(nick, message) ("\033[1;32m" + str(nick) + " : " + str(message) + "\r\n" + "\033[0m") 
+#define JOIN_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has joined " + str(channel) + "\r\n" + EOC)
+#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) (BLUE + str(nick) + " has left " + str(channel) + "\r\n" + EOC)
+#define INVITE_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has invited you to " + str(channel) + "\r\n" + EOC)
+#define KICK__MESSAGE(nick, channel, reason) (BLUE + str(nick) + " has kicked you from " + str(channel) + " for the reason :" + str(reason)+ "\r\n" + EOC)
+#define PRV_MSG(nick, message) (GREEN + str(nick) + " : " + str(message) + "\r\n" + EOC)
 /******************************************************************************/
 /*                                   0**                                      */
 /******************************************************************************/
@@ -34,54 +40,54 @@ std::string RPL_ISUPPORT();
 /*                                   2**                                      */
 /******************************************************************************/
 
-#define RPL_UMODEIS(nick, modes) ("\033[0;31m251 " + str(nick) + " " + str(modes) + "\r\n\033[0m")
-#define RPL_LUSERCLIENT(nick, users) ("\033[0;31m251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n\033[0m")
-#define RPL_LUSEROP(nick, ops) ("\033[0;31m252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n\033[0m")
-#define RPL_LUSERCHANNELS(nick, channels) ("\033[0;31m254 " + str(nick) + " " + str(channels) + " :channels formed\r\n\033[0m")
-#define RPL_LUSERME(nick, clients) ("\033[0;31m255 " + str(nick) + " :I have " + str(clients) " clients connected\r\n\033[0m")
+#define RPL_UMODEIS(nick, modes) (RED + "251 " + str(nick) + " " + str(modes) + "\r\n" + EOC)
+#define RPL_LUSERCLIENT(nick, users) (RED + "251 " + str(nick) + " :There are " + str(users) + " user(s) on localhost\r\n" + EOC)
+#define RPL_LUSEROP(nick, ops) (RED + "252 " + str(nick) + " " + str(ops) + " :operator(s) online\r\n" + EOC)
+#define RPL_LUSERCHANNELS(nick, channels) (RED + "254 " + str(nick) + " " + str(channels) + " :channels formed\r\n" + EOC)
+#define RPL_LUSERME(nick, clients) (RED + "255 " + str(nick) + " :I have " + str(clients) " clients connected\r\n\033[0m")
 
 /******************************************************************************/
 /*                                   3**                                      */
 /******************************************************************************/
 
-#define RPL_AWAY(nick, message) ("\033[0;31m301 " + str(nick) + " :" + str(message) + "\r\n\033[0m")
-#define RPL_UNAWAY(nick) ("\033[0;31m305 " + str(nick) + " :You are no longer marked as being away\r\n\033[0m")
-#define RPL_NOWAWAY(nick) ("\033[0;31m306 " + str(nick) + " :You have been marked as being away\r\n\033[0m")
-#define RPL_TOPIC(nick, channel, topic) ("\e[0;34m331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + "\033[0m")
-#define RPL_NOTOPIC(channel) ("\e[0;34m332: No topic set for " + str(channel) + "\r\n" + "\033[0m")
-#define RPL_VERSION(nick) ("\033[0;31m351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n\033[0m")
-#define RPL_MOTD(nick, text) ("\033[0;31m372 " + str(nick) + " :- " + str(text) + " -\r\n\033[0m")
-#define RPL_MOTDSTART(nick, server) ("\033[0;31m375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n\033[0m")
-#define RPL_ENDOFMOTD(nick) ("\033[0;31m376 " + str(nick) + " :End of /motd command\r\n\033[0m")
-#define RPL_LIST(channel, count, topic) ("\e[0;34m 322 " + str(channel) + " " + str(count) + " :" + str(topic) + "\r\n" + "\033[0m")
-#define RPL_LISTEND(nick)("\e[0;34m 323 " + str(nick) + " :END of LIST" + "\r\n" + "\033[0m")
-#define RPL_INVITING(nick, channel) ("\e[0;34m 341 inviting " + str(nick) + " to " + str(channel) + "\r\n" + "\033[0m")
-#define RPL_NAMREPLY(nick, channel) ("\e[0;34m 353 "+ str(channel) + " :" + str(nick) + "\r\n" + "\033[0m")
-#define RPL_ENDOFNAMES(channel) ("\e[0;34m 366 " + str(channel) + " :End of NAMES list" + "\r\n" + "\033[0m")
-#define RPL_YOUREOPER(nick)("\e[0;34m381 " + str(nick) + " :You are now an IRC operator" + "\r\n" + "\033[0m")
+#define RPL_AWAY(nick, message) (RED + "301 " + str(nick) + " :" + str(message) + "\r\n" + EOC)
+#define RPL_UNAWAY(nick) (RED + "305 " + str(nick) + " :You are no longer marked as being away\r\n" + EOC)
+#define RPL_NOWAWAY(nick) (RED + "306 " + str(nick) + " :You have been marked as being away\r\n" + EOC)
+#define RPL_TOPIC(nick, channel, topic) (BLUE + "331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + EOC)
+#define RPL_NOTOPIC(channel) (BLUE + "332: No topic set for " + str(channel) + "\r\n" + EOC)
+#define RPL_VERSION(nick) (RED + "351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n" + EOC)
+#define RPL_MOTD(nick, text) (RED + "372 " + str(nick) + " :- " + str(text) + " -\r\n" + EOC)
+#define RPL_MOTDSTART(nick, server) (RED + "375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n" + EOC)
+#define RPL_ENDOFMOTD(nick) (RED + "376 " + str(nick) + " :End of /motd command\r\n" + EOC)
+#define RPL_LIST(channel, count, topic) (BLUE + "322 " + str(channel) + " " + str(count) + " :" + str(topic) + "\r\n" + EOC)
+#define RPL_LISTEND(nick)(BLUE + "323 " + str(nick) + " :END of LIST" + "\r\n" + EOC)
+#define RPL_INVITING(nick, channel) (BLUE + "341 inviting " + str(nick) + " to " + str(channel) + "\r\n" + EOC)
+#define RPL_NAMREPLY(nick, channel) (BLUE + "353 "+ str(channel) + " :" + str(nick) + "\r\n" + EOC)
+#define RPL_ENDOFNAMES(channel) (BLUE + "366 " + str(channel) + " :End of NAMES list" + "\r\n" + EOC)
+#define RPL_YOUREOPER(nick)(BLUE + "381 " + str(nick) + " :You are now an IRC operator" + "\r\n" + EOC)
 
 /******************************************************************************/
 /*                                   4**                                      */
 /******************************************************************************/
 
-#define ERR_NOSUCHNICK(nick, target) ("\033[0;31m401 " + str(nick) + " " + str(target) + " :No such nick/channel\r\n\033[0m")
-#define ERR_NOSUCHCHANNEL(nick, channel) ("\033[0;31m403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + "\033[0m")
-#define ERR_NOTOCHANNEL(nick, channel) ("\033[0;31m442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ "\033[0m")
-#define ERR_NONICKNAMEGIVEN() ("\033[0;31m431 :No nickname given\r\n\033[0m")
-#define ERR_ERRONEUSNICKNAME(nick) ("\033[0;31m432 " + str(nick) + " :Erroneus nickname\r\n\033[0m")
-#define ERR_NICKNAMEINUSE(nick) ("\033[0;31m433 " + str(nick) + " :Nickname is already in use\r\n\033[0m")
-#define ERR_USERONCHANNEL(nick, channel) ("\033[0;31m 443 " + str(nick) + " " + str(channel) + " :is already on channel" + "\r\n" + "\033[0m")
-#define ERR_USERNOTINCHANNEL(nick, channel) ("\033[0;31m 443 " + str(nick) + " " + str(channel) + " :isn't already on that channel" + "\r\n" + "\033[0m")
-#define ERR_NEEDMOREPARAMS(nick) ("\033[0;31m461 " + str(nick) + " :Not enough parameters" +  "\r\n" + "\033[0m")
-#define ERR_ALREADYREGISTERED(nick)  ("\033[0;31m462 " + str(nick) + " :You may not reregister\r\n\033[0m")
-#define ERR_PASSWDMISMATCH(nick) ("\033[0;31m464 " + str(nick) + " :Password incorrect\r\n\033[0m")
-#define ERR_INVITEONLYCHAN(nick, channel) ("\033[0;31m473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n\033[0m")
+#define ERR_NOSUCHNICK(nick, target) (RED + "401 " + str(nick) + " " + str(target) + " :No such nick/channel\r\n" + EOC)
+#define ERR_NOSUCHCHANNEL(nick, channel) (RED + "403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + EOC)
+#define ERR_NOTOCHANNEL(nick, channel) (RED + "442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ EOC)
+#define ERR_NONICKNAMEGIVEN() (RED + "431 :No nickname given\r\n\033[0m")
+#define ERR_ERRONEUSNICKNAME(nick) (RED + "432 " + str(nick) + " :Erroneus nickname\r\n\033[0m")
+#define ERR_NICKNAMEINUSE(nick) (RED + "433 " + str(nick) + " :Nickname is already in use\r\n\033[0m")
+#define ERR_USERONCHANNEL(nick, channel) (RED + "443 " + str(nick) + " " + str(channel) + " :is already on channel" + "\r\n" + EOC)
+#define ERR_USERNOTINCHANNEL(nick, channel) (RED + "443 " + str(nick) + " " + str(channel) + " :isn't already on that channel" + "\r\n" + EOC)
+#define ERR_NEEDMOREPARAMS(nick) (RED + "461 " + str(nick) + " :Not enough parameters" +  "\r\n" + EOC)
+#define ERR_ALREADYREGISTERED(nick)  (RED + "462 " + str(nick) + " :You may not reregister\r\n\033[0m")
+#define ERR_PASSWDMISMATCH(nick) (RED + "464 " + str(nick) + " :Password incorrect\r\n\033[0m")
+#define ERR_INVITEONLYCHAN(nick, channel) (RED + "473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n" + EOC)
 
 /******************************************************************************/
 /*                                   5**                                      */
 /******************************************************************************/
 
-#define ERR_UMODEUNKNOWNFLAG(nick) ("\033[0;31m501 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
-#define ERR_USERSDONTMATCH(nick) ("\033[0;31m502 " + str(nick) + " :Cant change mode for other users\r\n\033[0m")
+#define ERR_UMODEUNKNOWNFLAG(nick) (RED + "501 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
+#define ERR_USERSDONTMATCH(nick) (RED + "502 " + str(nick) + " :Cant change mode for other users\r\n" + EOC)
 
 #endif
