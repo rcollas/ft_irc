@@ -90,7 +90,7 @@ class Server {
 		void						createChannel(User &user, std::string chanName);
 		void						getAllChan(std::string chanName);
 		void						printAllChannels();
-		int							getnumberofchan();
+		int							getNbOfChan();
 		Channel						&getChannel(std::string);
 		void						checkChannel(char *buffer, int fd);
 		void 						printWelcomeMessage(int fd, User &user, Command &command, Channel *chan);

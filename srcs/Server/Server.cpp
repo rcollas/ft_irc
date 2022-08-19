@@ -393,3 +393,8 @@ void Server::run()
 		close(pfds[i].fd);
 	}
 }
+
+int	Server::getNbOfChan()
+{
+	return (this->allChan.size());
+}
