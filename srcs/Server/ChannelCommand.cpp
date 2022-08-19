@@ -155,19 +155,18 @@ void	Command::topic(Command &command, User &user) {
 	}
 }
 
-/***************** PART allows 
- * temove a user from one+ channels 
- * first condition : I check if channel exist and i am in the channel
- * second condition : I check if channel exist and i am not in the channel
- * third condition the channel doesn't exist **************/
-
-
 /*
 **==========================
 **    CHANNEL COMMAND
 		PART FUNCTION
 **==========================
 */
+
+/***************** PART allows 
+ * temove a user from one+ channels 
+ * first condition : I check if channel exist and i am in the channel
+ * second condition : I check if channel exist and i am not in the channel
+ * third condition the channel doesn't exist **************/
 
 void	Command::part(Command &command, User &user) {
 	if (emptyCommand == false)
@@ -178,11 +177,7 @@ void	Command::part(Command &command, User &user) {
 			{
 				Channel *chan = &user.servInfo->getChannel(command.params[i]);
 				if (checkUserInchannel == true)
-				{
-					chan->printChannelUsers(user.get_fd(), &user, command.params[i]); // to remove
 					chan->removeUserChannel(user.get_fd(), &user);
-					chan->printChannelUsers(user.get_fd(), &user, command.params[i]); //to remove
-				}
 				else if (checkUserInchannel == false)
 					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
 

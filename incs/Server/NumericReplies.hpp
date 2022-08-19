@@ -81,7 +81,7 @@ std::string RPL_ISUPPORT();
 
 #define ERR_UMODEUNKNOWNFLAG(nick) ("\033[0;31m501 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
 #define ERR_USERSDONTMATCH(nick) ("\033[0;31m502 " + str(nick) + " :Cant change mode for other users\r\n\033[0m")
-#define ERR_INVALIDKEY(nick, channel) ("\033[0;31m525:" + str(nick) + " " + str(channel) + ":Key is not well-formed\r\n\033[0m")
+#define ERR_INVALIDKEY(nick, channel) ("\033[0;31m525 :" + str(nick) + " " + str(channel) + " :Key is not well-formed\r\n\033[0m")
 
 /******************************************************************************/
 /*                                   6**                                      */

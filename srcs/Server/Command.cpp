@@ -134,8 +134,10 @@ bool 	modeInviteChannel(Command &command, User &user)
 bool	modeKeyChannel(Command &command, User &user)
 {
 	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true 
-	 	&& command.params[1] == "+k" && command.params.size() == 3) 
+	 	&& command.params[1] == "+k") 
 	{
+		if (command.params.size() != 3)
+			sendMsg(user.get_fd(), ERR_INVALIDKEY(user.getNickName(), command.params[0]));
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->setKeyExistTrue();
 		chan->setKey(command.params[2]);
@@ -172,9 +174,9 @@ void	Command::mode(Command &command, User &user) {
 		return ;
 	if (modeInviteChannel(command, user) == true)
 		return;
-	if (modeKeyChannel(command, user) == true)
+	else if (modeKeyChannel(command, user) == true)
 		return;
-	if (modeErrorsCheck(command, user) == true)
+	else if (modeErrorsCheck(command, user) == true)
 		return;
 	if (command.params[1] == "+i" && command.params[0] == user.getNickName() && user.getIsInvisible() == false) {
 		user.set_isInvisible(true);
