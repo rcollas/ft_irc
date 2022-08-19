@@ -21,7 +21,6 @@
 #include "NumericReplies.hpp"
 #include "Channel.hpp"
 #include "../../incs/ft_irc.h"
-#include "NumericReplies.hpp"
 #include "../../incs/User/User.hpp"
 
 /***************** We begins the cmd enums here **************/
@@ -68,6 +67,7 @@ class Server {
 		std::vector<std::string>			invisibleList;
 		std::map<std::string, Channel *>	allChan;
 		int 								nbOfOperators;
+		std::string 						serverPassword;
 
 		void	fillAvailableCmd();
 
@@ -76,7 +76,6 @@ class Server {
 		~Server();
 		void	init();
 		void	run();
-
 
 /***************** Channel server part **************/
 		void						addChannel(Channel * chan);
@@ -118,8 +117,8 @@ class Server {
 		void						checkArgs(int ac, char **av);
 		void						setPortNum(std::string portNum);
 		std::string					getPassword() const;
-		void						set_nbOfOperators(int NbOfOperators);
-		int							getNbOfOperators() const;
+		std::string					getServerPassword();
+		int							get_isOperatorStatus();
 };
 
 #endif

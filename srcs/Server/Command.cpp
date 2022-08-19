@@ -305,7 +305,7 @@ void	Command::oper(Command &command, User &user) {
 	if (command.params[0] != user.getUserName()) {
 		return ;
 	}
-	if (command.params[1] != user.servInfo->getPassword()) {
+	if (command.params[1] != user.servInfo->getServerPassword()) {
 		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
 		return ;
 	}
@@ -313,8 +313,6 @@ void	Command::oper(Command &command, User &user) {
 		user.set_isOperator(true);
 		int modesNumber = user.getModesNumber();
 		user.set_modesNumber(++modesNumber);
-		int nbOfOperators = user.servInfo->getNbOfOperators();
-		user.servInfo->set_nbOfOperators(++nbOfOperators);
 		sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
 	}
 }
@@ -342,11 +340,13 @@ void	Command::lusers(Command &command, User &user) {
 	if (emptyCommand == true) {
 
 		char *str = ft_itoa(user.servInfo->getNbOfUsers());
-		char *arr = ft_itoa(user.servInfo->getNbOfOperators());
+		char *arr = ft_itoa(user.servInfo->get_isOperatorStatus());
+		char *strr = ft_itoa(user.servInfo->getNbOfChan());
 		sendMsg(user.get_fd(), RPL_LUSERCLIENT(user.getNickName(), str));
 		sendMsg(user.get_fd(), RPL_LUSEROP(user.getNickName(), arr));
-		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), "getNumberOfChan")); // A REMPLIR AVEC FONCTION GETNUMBEROFCHAN
+		sendMsg(user.get_fd(), RPL_LUSERCHANNELS(user.getNickName(), strr));
 		free(str);
 		free(arr);
+		free(strr);
 	}
 }

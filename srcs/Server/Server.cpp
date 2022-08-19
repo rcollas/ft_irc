@@ -29,7 +29,8 @@ Server::Server(std::string port, std::string passwd)
 serverEndPoint(0),
 portNum(port),
 password(passwd),
-nbOfOperators(0)
+nbOfOperators(0),
+serverPassword("4321")
 {
 	int status;
 	struct addrinfo hints;
@@ -125,6 +126,8 @@ bool	Server::nicknameExists(std::string nickname) {
 	}
 	return (false);
 }
+
+std::string	Server::getServerPassword() { return this->serverPassword; }
 
 int	Server::getTargetFd(std::string nickname) {
 	std::map<int, User>::iterator it;
@@ -281,8 +284,18 @@ bool	Server::userExist(std::string nickName)
 	}
 	return false;
 }
-void	Server::set_nbOfOperators(int nbOfOperators) { this->nbOfOperators = nbOfOperators; }
-int		Server::getNbOfOperators() const { return this->nbOfOperators; }
+
+int	Server::get_isOperatorStatus()
+{
+	int count = 0;
+	std::map<int, User>::iterator it = this->user_list.begin();
+	for (; it != this->user_list.end(); it++) {
+		if (it->second.getIsOperator() == true) {
+			count++;
+		}
+	}
+	return count;
+}
 
 /**
  * @brief if the registration succeed, a set of numeric replies is sent to the clien

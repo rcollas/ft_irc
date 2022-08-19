@@ -55,7 +55,7 @@ std::string RPL_ISUPPORT();
 #define RPL_NOWAWAY(nick) (RED + "306 " + str(nick) + " :You have been marked as being away\r\n" + EOC)
 #define RPL_TOPIC(nick, channel, topic) (BLUE + "331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + EOC)
 #define RPL_NOTOPIC(channel) (BLUE + "332: No topic set for " + str(channel) + "\r\n" + EOC)
-#define RPL_VERSION(nick) (RED + "351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n" + EOC)
+#define RPL_VERSION(nick) (RED + "351 " + str(nick) + " :irssi 1.4.1 (20220612 1401)\r\n" + EOC)
 #define RPL_MOTD(nick, text) (RED + "372 " + str(nick) + " :- " + str(text) + " -\r\n" + EOC)
 #define RPL_MOTDSTART(nick, server) (RED + "375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n" + EOC)
 #define RPL_ENDOFMOTD(nick) (RED + "376 " + str(nick) + " :End of /motd command\r\n" + EOC)
