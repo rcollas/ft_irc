@@ -132,12 +132,12 @@ void		Channel::printChannelUsers(int fd, User *user, std::string channelName)
 	(void) user;
 }
 
-void		Channel::removeUserChannel(int fd, User *user)
+void		Channel::removeUserChannel(int fd, User *user, std::string message)
 {
 	if (this->userInChannel(fd, this->getUsersList()) == true)
 	{
 		this->_usersList.erase(fd);
-		sendMsg(fd, PART_LEAVE_CHANNEL_MESSAGE(user->getNickName(), this->getChannelName()));
+		sendMsg(fd, PART_LEAVE_CHANNEL_MESSAGE(user->getNickName(), this->getChannelName(), message));
 	}
 	else 
 		std::cout <<  "\033[0;31m" << "I am not this channel" << "\033[0m" << std::endl;

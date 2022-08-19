@@ -22,7 +22,7 @@ std::string RPL_ISUPPORT();
 
 
 #define JOIN_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has joined " + str(channel) + "\r\n" + EOC)
-#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) (BLUE + str(nick) + " has left " + str(channel) + "\r\n" + EOC)
+#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel, message) (BLUE + str(nick) + " has left " + str(channel) + str(message) + "\r\n" + EOC)
 #define INVITE_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has invited you to " + str(channel) + "\r\n" + EOC)
 #define KICK__MESSAGE(nick, channel, reason) (BLUE + str(nick) + " has kicked you from " + str(channel) + " for the reason :" + str(reason)+ "\r\n" + EOC)
 #define PRV_MSG(nick, message) (GREEN + str(nick) + " : " + str(message) + "\r\n" + EOC)
@@ -97,7 +97,7 @@ std::string RPL_ISUPPORT();
 /*                                   6**                                      */
 /******************************************************************************/
 
-#define ERR_INVALIDMODEPARAM (nick, channel, mode, parameter, description) ("\033[0;31m696:" + str(nick) + " " + str(channel) + " " + str(mode) + " " + str(parameter) + " :" str(description) + "\r\n\033[0m")
+#define ERR_INVALIDMODEPARAM (nick, channel, mode, parameter, description) (RED + "696 :" + str(nick) + " " + str(channel) + " " + str(mode) + " " + str(parameter) + " :" str(description) + "\r\n\033[0m")
 
 
 #endif

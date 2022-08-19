@@ -35,7 +35,7 @@ public:
 	bool		userInChannel(int fd, std::map<int, User *> list);
 	void		changeTopic(std::string topic);
 	void		printChannelUsers(int fd, User *user, std::string channelName);
-	void		removeUserChannel(int fd, User *user);
+	void		removeUserChannel(int fd, User *user, std::string message);
 	int			getNbUsers();
 	void		inviteModeSetTrue();
 	void		inviteModeSetFalse();

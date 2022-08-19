@@ -8,6 +8,7 @@
 #define JOIN_ERR_KEY_WITHOUT_INVITE chan->getKeyExist() == true && chan->getInviteMode() == false
 #define JOIN_ERR_INVITE_WITHOUT_KEY chan->getKeyExist() == false && chan->getInviteMode() == true
 #define JOIN_ERR_INVITE_KEY_EXISTS chan->getKeyExist() == true && chan->getInviteMode() == true
+
 /*
 **==========================
 **    CHANNEL COMMAND
@@ -163,6 +164,28 @@ void	Command::topic(Command &command, User &user) {
 **==========================
 */
 
+void	partRemoveUser(Command &command, User &user)
+{
+	std::vector<std::string> chanNames;
+	chanNames = parseStringGetline(command.params[0]);
+	for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
+	{
+		if (user.servInfo->channelExist(chanNames[i]) == true) 
+		{
+			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
+			std::string message = "No reason given";
+			if (command.params.size() == 2)
+				message = command.params[1];
+			if (checkUserInchannel == true)
+				chan->removeUserChannel(user.get_fd(), &user, (" :" + message));
+			else if (checkUserInchannel == false)
+				sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chanNames[i]));
+		}
+		else 
+			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), chanNames[i]));
+	}
+}
+
 /***************** PART allows 
  * temove a user from one+ channels 
  * first condition : I check if channel exist and i am in the channel
@@ -172,20 +195,12 @@ void	Command::topic(Command &command, User &user) {
 void	Command::part(Command &command, User &user) {
 	if (emptyCommand == false)
 	{
-		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
+		if (command.params.size() > 2)
 		{
-			if (chanExist == true) 
-			{
-				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				if (checkUserInchannel == true)
-					chan->removeUserChannel(user.get_fd(), &user);
-				else if (checkUserInchannel == false)
-					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
-
-			}
-			else 
-				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
+			sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+			return;
 		}
+		partRemoveUser(command, user);
 	}
 	else 
 	{
@@ -205,15 +220,22 @@ void	Command::part(Command &command, User &user) {
 void	Command::names(Command &command, User &user) {
 	if (emptyCommand == false)
 	{
-		for (unsigned long i = 0 ; i < command.params.size() ; i++)
+		if (command.params.size() > 1)
 		{
-			if (chanExist== true) 
+			sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+			return;
+		}
+		std::vector<std::string> chanNames;
+		chanNames = parseStringGetline(command.params[0]);
+		for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
+		{
+			if (user.servInfo->channelExist(chanNames[i]) == true) 
 			{
-				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				chan->printChannelUsers(user.get_fd(), &user, command.params[i]);
+				Channel *chan = &user.servInfo->getChannel(chanNames[i]);
+				chan->printChannelUsers(user.get_fd(), &user, chanNames[i]);
 			}
 			else
-				sendMsg(user.get_fd(), RPL_ENDOFNAMES(command.params[i]));
+				sendMsg(user.get_fd(), RPL_ENDOFNAMES(chanNames[i]));
 		}
 	}
 	else 
@@ -263,17 +285,23 @@ void	Command::list(Command &command, User &user)
 {
 	if (emptyCommand == false)
 	{
+		
 		if (listMinUser(command, user) == false)
 			return;
-		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
+		std::vector<std::string> chanNames;
+		chanNames = parseStringGetline(command.params[0]);
+		for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
 		{
-			if (chanExist == true) 
+			if (command.params.size() >= 2)
 			{
-				Channel *chan = &user.servInfo->getChannel(command.params[i]);
+				sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+				return;
+			}
+			if (user.servInfo->channelExist(chanNames[i]) == true) 
+			{
+				Channel *chan = &user.servInfo->getChannel(chanNames[i]);
 				sendMsg(user.get_fd(), RPL_LIST_MSG);
 			}
-			else
-				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
 		}
 		sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
 	}
@@ -358,7 +386,7 @@ void	kickErrorCheck(Command &command, User &user)
 			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
 			if (chan->userInChannel(nick->get_fd(), chan->getUsersList()) == true)
 			{
-				chan->removeUserChannel(nick->get_fd(), nick);
+				chan->removeUserChannel(nick->get_fd(), nick, "");
 				if (command.params.size() == 3)
 				{
 					std::string message = command.params[2];
@@ -366,7 +394,7 @@ void	kickErrorCheck(Command &command, User &user)
 				}
 				else if (command.params.size() == 2)
 				{
-					chan->removeUserChannel(nick->get_fd(), nick);
+					chan->removeUserChannel(nick->get_fd(), nick, "");
 					sendMsg(nick->get_fd(), KICK__MESSAGE(user.getNickName(), chan->getChannelName(), "the host doesn't like you"));
 				}
 			}
