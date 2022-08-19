@@ -1,20 +1,16 @@
 #include "../../incs/Server/Server.hpp"
 
 /***************** Here I create a channel if it does not exit **************/
-void		Server::createChannel(int fd, User &user, Command &command) // a corriger
+void		Server::createChannel(User &user, std::string chanName) // a corriger
 {
-	for (unsigned long i = 0; i < command.params.size(); i++)
+	if	(user.servInfo->channelExist(chanName) == false)
 	{
-		if	(chanExist == false)
-		{
-			std::cout << "\033[0;31m" << "Création du channel " << command.params[i] << "\033[0m" << std::endl;
-			Channel *chan = new Channel(command.params[i], "");
-			this->addChannel(chan);
-		}
-		else if (chanExist == true)
-			std::cout << "\033[0;31m" << "Le channel existe déjà " << command.params[i] << "\033[0m" << std::endl;
-	(void) fd;
+		std::cout << "\033[0;31m" << "Création du channel " << chanName << "\033[0m" << std::endl;
+		Channel *chan = new Channel(chanName, "");
+		this->addChannel(chan);
 	}
+	else
+		std::cout << "\033[0;31m" << "Le channel existe déjà " << chanName << "\033[0m" << std::endl;
 }
 
 void	Server::addChannel(Channel *chan) { 

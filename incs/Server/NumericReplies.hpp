@@ -73,15 +73,17 @@ std::string RPL_ISUPPORT();
 #define ERR_NOSUCHNICK(nick, target) (RED + "401 " + str(nick) + " " + str(target) + " :No such nick/channel\r\n" + EOC)
 #define ERR_NOSUCHCHANNEL(nick, channel) (RED + "403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + EOC)
 #define ERR_NOTOCHANNEL(nick, channel) (RED + "442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ EOC)
-#define ERR_NONICKNAMEGIVEN() (RED + "431 :No nickname given\r\n\033[0m")
-#define ERR_ERRONEUSNICKNAME(nick) (RED + "432 " + str(nick) + " :Erroneus nickname\r\n\033[0m")
-#define ERR_NICKNAMEINUSE(nick) (RED + "433 " + str(nick) + " :Nickname is already in use\r\n\033[0m")
+#define ERR_NONICKNAMEGIVEN() (RED + "431 :No nickname given\r\n" + EOC)
+#define ERR_ERRONEUSNICKNAME(nick) (RED + "432 " + str(nick) + " :Erroneus nickname\r\n" + EOC)
+#define ERR_NICKNAMEINUSE(nick) (RED + "433 " + str(nick) + " :Nickname is already in use\r\n" + EOC)
 #define ERR_USERONCHANNEL(nick, channel) (RED + "443 " + str(nick) + " " + str(channel) + " :is already on channel" + "\r\n" + EOC)
 #define ERR_USERNOTINCHANNEL(nick, channel) (RED + "443 " + str(nick) + " " + str(channel) + " :isn't already on that channel" + "\r\n" + EOC)
 #define ERR_NEEDMOREPARAMS(nick) (RED + "461 " + str(nick) + " :Not enough parameters" +  "\r\n" + EOC)
 #define ERR_ALREADYREGISTERED(nick)  (RED + "462 " + str(nick) + " :You may not reregister\r\n" + EOC)
 #define ERR_PASSWDMISMATCH(nick) (RED + "464 " + str(nick) + " :Password incorrect\r\n" + EOC)
 #define ERR_INVITEONLYCHAN(nick, channel) (RED + "473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n" + EOC)
+#define ERR_BADCHANNELKEY(nick, channel)  (RED + "475 " + str(nick) + " " + str(channel) + " :cannot join the channel (+k)\r\n" + EOC)
+
 
 /******************************************************************************/
 /*                                   5**                                      */
@@ -89,5 +91,13 @@ std::string RPL_ISUPPORT();
 
 #define ERR_UMODEUNKNOWNFLAG(nick) (RED + "501 " + str(nick) + " :Unknown MODE flag\r\n" + EOC)
 #define ERR_USERSDONTMATCH(nick) (RED + "502 " + str(nick) + " :Cant change mode for other users\r\n" + EOC)
+#define ERR_INVALIDKEY(nick, channel) (RED + "525 :" + str(nick) + " " + str(channel) + " :Key is not well-formed\r\n" + EOC)
+
+/******************************************************************************/
+/*                                   6**                                      */
+/******************************************************************************/
+
+#define ERR_INVALIDMODEPARAM (nick, channel, mode, parameter, description) ("\033[0;31m696:" + str(nick) + " " + str(channel) + " " + str(mode) + " " + str(parameter) + " :" str(description) + "\r\n\033[0m")
+
 
 #endif
