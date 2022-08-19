@@ -38,8 +38,10 @@ public:
 	void		removeUserChannel(int fd, User *user);
 	int			getNbUsers();
 	void		inviteModeSetTrue();
+	void		inviteModeSetFalse();
 	void		setKey(std::string);
 	void		setKeyExistTrue();
+	void		setKeyExistFalse();
 	void		addUserToWitingList(int fd, User *user);
 
 	std::string 				_topic;

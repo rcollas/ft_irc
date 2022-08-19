@@ -154,9 +154,18 @@ void	Channel::inviteModeSetTrue()
 	this->_inviteModeSet = true;
 }
 
+void	Channel::inviteModeSetFalse()
+{
+	this->_inviteModeSet = false;
+}
 void	Channel::setKeyExistTrue()
 {
 	this->_keyExist = true;
+}
+
+void	Channel::setKeyExistFalse()
+{
+	this->_keyExist = false;
 }
 
 bool	Channel::TopicIsSet()

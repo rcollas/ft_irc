@@ -111,44 +111,135 @@ void	Command::motd(Command &command, User &user) {
 	}
 }
 
-bool 	modeInviteChannel(Command &command, User &user)
+/*
+**==========================
+**      MODE COMMAND
+		INVITE PART
+**==========================
+*/	
+
+bool	ModeErrorinvite(Command &command, User &user)
 {
-	if (isAllowedMode(command.params[1]) == true && user.servInfo->channelExist(command.params[0]) == true
-		&& command.params[1] == "+i" && command.params.size() == 2)
+	if (user.servInfo->channelExist(command.params[0]) == false)
+		return true;
+	return false;
+}
+
+bool 	modeDisableInviteChannel(Command &command, User &user)
+{
+	if (isAllowedMode(command.params[1]) == true
+		&& command.params[1] == "-i" && command.params.size() == 2)
 	{
+		if (ModeErrorinvite(command, user) == true)
+			return true;
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
-		chan->inviteModeSetTrue();
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
+		chan->inviteModeSetFalse();
+		// int modesNumber = user.getModesNumber();
+		// user.set_modesNumber(++modesNumber);
 		return (true);
 	}
 	return (false);
 }
 
-bool	modeKeyChannel(Command &command, User &user)
+bool 	modeEnableInviteChannel(Command &command, User &user)
 {
-	if (isAllowedMode(command.params[1]) && user.servInfo->channelExist(command.params[0]) == true
-	 	&& command.params[1] == "+k")
+	if (isAllowedMode(command.params[1]) == true
+		&& command.params[1] == "+i" && command.params.size() == 2)
 	{
-		if (command.params.size() != 3)
-			sendMsg(user.get_fd(), ERR_INVALIDKEY(user.getNickName(), command.params[0]));
+		if (ModeErrorinvite(command, user) == true)
+			return false;
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
-		chan->setKeyExistTrue();
-		chan->setKey(command.params[2]);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
+		chan->inviteModeSetTrue();
+		// int modesNumber = user.getModesNumber();
+		// user.set_modesNumber(++modesNumber);
+		return (true);
+	}
+	return (false);
+}
+
+/*
+**==========================
+**   	 MODE COMMAND
+		 KEY PART
+**==========================
+*/	
+
+/***************** 
+ * Here I check 2 errors for MODE
+ * 1: The channel exists
+ * 2: Size of arguments received = 3 (channel, "+k", <key>)
+ **************/
+bool	ModeErrorKeyCheck(Command &command, User &user, unsigned long i)
+{
+	if (user.servInfo->channelExist(command.params[0]) == false)
+	{
+		sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
+		return true;
+	}
+	if (command.params.size() != i)
+	{
+		sendMsg(user.get_fd(), ERR_INVALIDKEY(user.getNickName(), command.params[0]));
+		return true;
+	}
+	return (false);
+}
+
+bool	modeDisableKeyChannel(Command &command, User &user)
+{
+	if (isAllowedMode(command.params[1]) && command.params[1] == "-k")
+	{
+		if (ModeErrorKeyCheck(command, user, 2) == true)
+			return (true);
+		Channel *chan = &user.servInfo->getChannel(command.params[0]);
+		chan->setKeyExistFalse();
+		// int modesNumber = user.getModesNumber();
+		// user.set_modesNumber(++modesNumber);
 		return (true);
 	}
 	return false;
 }
 
+bool	modeEnableKeyChannel(Command &command, User &user)
+{
+	if (isAllowedMode(command.params[1]) && command.params[1] == "+k")
+	{
+		if (ModeErrorKeyCheck(command, user, 3) == true)
+			return (true);
+		Channel *chan = &user.servInfo->getChannel(command.params[0]);
+		chan->setKeyExistTrue();
+		chan->setKey(command.params[2]);
+		// int modesNumber = user.getModesNumber();
+		// user.set_modesNumber(++modesNumber);
+		return (true);
+	}
+	return false;
+}
+
+/*
+**==========================
+**         MODE COMMAND
+**==========================
+*/
+/***************** 
+ * Check errors when doing MODE
+ * 1: If a nickname exists
+ * 2 : If channel exists
+ * 3: If a user has an operator status
+ * 4: If the flag is unknown
+ *  **************/
 bool	modeErrorsCheck(Command &command, User &user)
 {
-	if (user.servInfo->nicknameExists(command.params[0]) == false) {
+	if (!isAllowedMode(command.params[1])) {
+		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
+		return true;
+	}
+	if (PARAM_IS_NOT_NICK_OR_CHANNEL) 
+	{
 		sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
 		return true;
 	}
-	if (command.params[0] != user.getNickName()) {
+	if (command.params[0] != user.getNickName()) 
+	{
 		sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
 		return true;
 	}
@@ -163,6 +254,30 @@ bool	modeErrorsCheck(Command &command, User &user)
 		return true;
 	}
 	return false;
+}
+
+/***************** MODE allows
+ *  Mode +i, you have to invite someone to go on a chan
+ * Mode +k add a key when you join a channel  
+ * Errors : If not the right number of args 
+ * invite mode
+ * Key mode **************/
+void	Command::mode(Command &command, User &user) {
+	if (MODE_BAD_SIZE_COMMAND)
+	{
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+		return;
+	}
+	if (modeEnableInviteChannel(command, user) == true)
+		return;
+	else if (modeDisableInviteChannel(command, user) == true)
+		return;
+	else if (modeEnableKeyChannel(command, user) == true)
+		return;
+	else if (modeDisableKeyChannel(command, user) == true)
+		return;
+	else if (modeErrorsCheck(command, user) == true)
+		return;
 }
 
 void	Command::oper(Command &command, User &user) {
@@ -185,17 +300,6 @@ void	Command::oper(Command &command, User &user) {
 		user.servInfo->set_nbOfOperators(++nbOfOperators);
 		sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
 	}
-}
-
-void	Command::mode(Command &command, User &user) {
-	if (command.params.size() > 4 || command.params.empty() == true)
-		return ;
-	if (modeInviteChannel(command, user) == true)
-		return;
-	else if (modeKeyChannel(command, user) == true)
-		return;
-	else if (modeErrorsCheck(command, user) == true)
-		return;
 }
 
 void	Command::away(Command &command, User &user) {

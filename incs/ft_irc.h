@@ -32,7 +32,8 @@
 #define ERR_NOSUCHCHANNEL_MSG ERR_NOSUCHCHANNEL(user.getNickName(), command.params[i])
 #define RPL_TOPIC_MSG RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic())
 #define RPL_NOTOPIC_MSG RPL_NOTOPIC(chan->getChannelName())
-
+#define MODE_BAD_SIZE_COMMAND (command.params.size() > 4 || command.params.size() < 2|| command.params.empty() == true)
+#define PARAM_IS_NOT_NICK_OR_CHANNEL (user.servInfo->nicknameExists(command.params[0]) == false && user.servInfo->channelExist(command.params[0]) == false)
 class User;
 
 struct Command {

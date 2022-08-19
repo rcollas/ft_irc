@@ -65,7 +65,6 @@ bool	checkKeyChanExist(Channel *channel, Command &command, unsigned long i)
  * if only in invite mode can't join the channel 
  * if a key is set need to put the key **************/
 void	Command::join(Command &command, User &user) {
-	
 	if (emptyCommand == false)
 	{
 		std::vector<std::string> chanNames;
@@ -99,6 +98,8 @@ void	Command::join(Command &command, User &user) {
 
 		}
 	}
+	else
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
 
 
