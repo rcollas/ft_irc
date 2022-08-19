@@ -83,7 +83,7 @@ std::string RPL_ISUPPORT();
 #define ERR_PASSWDMISMATCH(nick) (RED + "464 " + str(nick) + " :Password incorrect\r\n" + EOC)
 #define ERR_INVITEONLYCHAN(nick, channel) (RED + "473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n" + EOC)
 #define ERR_BADCHANNELKEY(nick, channel)  (RED + "475 " + str(nick) + " " + str(channel) + " :cannot join the channel (+k)\r\n" + EOC)
-
+#define ERR_NOPRIVILEGES(nick) (RED + "481 " + str(nick) + " :Permission Denied- You're not an IRC operator\r\n" + EOC)
 
 /******************************************************************************/
 /*                                   5**                                      */

@@ -275,21 +275,26 @@ bool	modeErrorsCheck(Command &command, User &user)
  * invite mode
  * Key mode **************/
 void	Command::mode(Command &command, User &user) {
-	if (MODE_BAD_SIZE_COMMAND && user.getIsOperator() == false)
+	if (MODE_BAD_SIZE_COMMAND)
 	{
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return;
 	}
-	if (modeEnableInviteChannel(command, user) == true)
+	if (user.getIsOperator() == true)
+	{
+		if (modeEnableInviteChannel(command, user) == true)
+			return;
+		else if (modeDisableInviteChannel(command, user) == true)
+			return;
+		else if (modeEnableKeyChannel(command, user) == true)
+			return;
+		else if (modeDisableKeyChannel(command, user) == true)
+			return;
+		else if (modeErrorsCheck(command, user) == true)
 		return;
-	else if (modeDisableInviteChannel(command, user) == true)
-		return;
-	else if (modeEnableKeyChannel(command, user) == true)
-		return;
-	else if (modeDisableKeyChannel(command, user) == true)
-		return;
-	else if (modeErrorsCheck(command, user) == true)
-		return;
+	}
+	else
+		sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
 }
 
 void	Command::oper(Command &command, User &user) {

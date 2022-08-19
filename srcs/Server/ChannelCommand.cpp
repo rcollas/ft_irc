@@ -23,6 +23,7 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
 		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
 	else
 		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
+	chan->printChannelUsers(user.get_fd(), &user, chan->getChannelName());
 }
 
 /***************** 
@@ -103,7 +104,6 @@ void	Command::join(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
 
-
 /*
 **==========================
 **    CHANNEL COMMAND
@@ -141,20 +141,23 @@ void	sendTopic(Command &command, User &user)
 /***************** Topic allows
  * to handle a topic for a dedicated channel **************/
 void	Command::topic(Command &command, User &user) {
-	if (emptyCommand == false && user.getIsOperator() == true)
+	if (emptyCommand == false)
 	{
-		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
+		if (user.getIsOperator() == true)
 		{
-				SetTopic(command, user);
-				sendTopic(command, user);
+			if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
+			{
+					SetTopic(command, user);
+					sendTopic(command, user);
+			}
+			else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
 		}
-		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
-			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
 	}
-	else 
-	{
+	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
-	}
 }
 
 /*
@@ -358,8 +361,13 @@ void	inviteErrorscheck(Command &command, User &user)
  *  **************/
 void	Command::invite(Command &command, User &user)
 {
-	if (command.params.size() == 2 && user.getIsOperator() == true)
-		inviteErrorscheck(command, user);
+	if (command.params.size() == 2)
+	{
+		if (user.getIsOperator() == true)
+			inviteErrorscheck(command, user);
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
+	}
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
@@ -413,9 +421,13 @@ void	kickErrorCheck(Command &command, User &user)
  * having the right to kick **************/
 void	Command::kick(Command &command, User &user)
 {
-	if (command.params.size() >= 2 && command.params.size() <= 3
-		&& user.getIsOperator() == true)
-		kickErrorCheck(command, user);
+	if (command.params.size() >= 2 && command.params.size() <= 3)
+	{
+		if (user.getIsOperator() == true)
+			kickErrorCheck(command, user);
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
+	}
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
