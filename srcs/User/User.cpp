@@ -66,11 +66,11 @@ std::string	User::getAwayMessage() const { return this->awayMessage; }
 std::string	User::getBuffer() const { return this->buffer; };
 bool		User::getIsAway() const { return this->isAway; }
 bool		User::getIsOperator() const { return this->isOperator; }
-int		User::getModesNumber() const { return this->modesNumber; }
+int			User::getModesNumber() const { return this->modesNumber; }
 bool		User::isAdmin() const { return this->admin; }
 
-void	User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
-void	User::addChan(Channel *chan) { this->activeChan.push_back(chan); }
+void		User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
+void		User::addChan(Channel *chan) { this->activeChan.push_back(chan); }
 std::vector<Command>	&User::getCmdList() { return this->cmds; }
 
 std::ostream &operator<<(std::ostream &out, User &user) {

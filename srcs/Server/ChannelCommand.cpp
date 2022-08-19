@@ -141,7 +141,7 @@ void	sendTopic(Command &command, User &user)
 /***************** Topic allows
  * to handle a topic for a dedicated channel **************/
 void	Command::topic(Command &command, User &user) {
-	if (emptyCommand == false)
+	if (emptyCommand == false && user.getIsOperator() == true)
 	{
 		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
 		{
@@ -241,7 +241,6 @@ void	Command::names(Command &command, User &user) {
 	else 
 		user.servInfo->printAllChannelsUsers(user);
 }
-
 
 /*
 **==========================
@@ -359,7 +358,7 @@ void	inviteErrorscheck(Command &command, User &user)
  *  **************/
 void	Command::invite(Command &command, User &user)
 {
-	if (command.params.size() == 2)
+	if (command.params.size() == 2 && user.getIsOperator() == true)
 		inviteErrorscheck(command, user);
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
@@ -414,7 +413,8 @@ void	kickErrorCheck(Command &command, User &user)
  * having the right to kick **************/
 void	Command::kick(Command &command, User &user)
 {
-	if (command.params.size() >= 2 && command.params.size() <= 3)
+	if (command.params.size() >= 2 && command.params.size() <= 3
+		&& user.getIsOperator() == true)
 		kickErrorCheck(command, user);
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));

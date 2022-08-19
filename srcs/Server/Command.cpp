@@ -134,8 +134,11 @@ bool 	modeDisableInviteChannel(Command &command, User &user)
 			return true;
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->inviteModeSetFalse();
-		// int modesNumber = user.getModesNumber();
-		// user.set_modesNumber(++modesNumber);
+		if (chan->getInviteMode() == true)
+		{
+			int modesNumber = user.getModesNumber();
+			user.set_modesNumber(--modesNumber);
+		}
 		return (true);
 	}
 	return (false);
@@ -150,8 +153,11 @@ bool 	modeEnableInviteChannel(Command &command, User &user)
 			return false;
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->inviteModeSetTrue();
-		// int modesNumber = user.getModesNumber();
-		// user.set_modesNumber(++modesNumber);
+		if (chan->getInviteMode() == false)
+		{
+			int modesNumber = user.getModesNumber();
+			user.set_modesNumber(++modesNumber);
+		}
 		return (true);
 	}
 	return (false);
@@ -192,8 +198,11 @@ bool	modeDisableKeyChannel(Command &command, User &user)
 			return (true);
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->setKeyExistFalse();
-		// int modesNumber = user.getModesNumber();
-		// user.set_modesNumber(++modesNumber);
+		if (chan->getKeyExist() == true)
+		{
+			int modesNumber = user.getModesNumber();
+			user.set_modesNumber(--modesNumber);
+		}
 		return (true);
 	}
 	return false;
@@ -208,8 +217,11 @@ bool	modeEnableKeyChannel(Command &command, User &user)
 		Channel *chan = &user.servInfo->getChannel(command.params[0]);
 		chan->setKeyExistTrue();
 		chan->setKey(command.params[2]);
-		// int modesNumber = user.getModesNumber();
-		// user.set_modesNumber(++modesNumber);
+		if (chan->getKeyExist() == false)
+		{
+			int modesNumber = user.getModesNumber();
+			user.set_modesNumber(++modesNumber);
+		}
 		return (true);
 	}
 	return false;
@@ -263,7 +275,7 @@ bool	modeErrorsCheck(Command &command, User &user)
  * invite mode
  * Key mode **************/
 void	Command::mode(Command &command, User &user) {
-	if (MODE_BAD_SIZE_COMMAND)
+	if (MODE_BAD_SIZE_COMMAND && user.getIsOperator() == false)
 	{
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return;
