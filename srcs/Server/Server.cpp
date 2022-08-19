@@ -191,8 +191,6 @@ bool	Server::usernameExists(std::string username) {
 }
 
 bool	registrationComplete(User &user) {
-	std::cout << "nick = " << user.getNickName() << std::endl;
-	std::cout << "user name = " << user.getUserName() << std::endl;
 	return !user.getNickName().empty() && !user.getUserName().empty();
 }
 
@@ -203,7 +201,6 @@ bool	cmdIsComplete(std::string cmd) {
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	int ret = 1;
 	if (registrationComplete(user) == false) {
-		std::cout << "in first switch" << std::endl;
 		switch (cmd.cmd) {
 			case (PASS): cmd.pass(cmd, user); break;
 			case (NICK): cmd.nick(cmd, user); break;
