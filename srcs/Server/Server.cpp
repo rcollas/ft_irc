@@ -196,6 +196,10 @@ bool	registrationComplete(User &user) {
 	return !user.getNickName().empty() && !user.getUserName().empty();
 }
 
+bool	cmdIsComplete(std::string cmd) {
+	return cmd.find('\n') != cmd.npos;
+}
+
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	int ret = 1;
 	if (registrationComplete(user) == false) {
@@ -226,7 +230,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 			default: ret = 0;
 		}
 	}
-	if (ret)
+	if (ret || cmdIsComplete(user.getBuffer()))
 		user.clearBuffer();
 }
 

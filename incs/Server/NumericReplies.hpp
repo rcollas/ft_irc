@@ -79,15 +79,15 @@ std::string RPL_ISUPPORT();
 #define ERR_USERONCHANNEL(nick, channel) (RED + "443 " + str(nick) + " " + str(channel) + " :is already on channel" + "\r\n" + EOC)
 #define ERR_USERNOTINCHANNEL(nick, channel) (RED + "443 " + str(nick) + " " + str(channel) + " :isn't already on that channel" + "\r\n" + EOC)
 #define ERR_NEEDMOREPARAMS(nick) (RED + "461 " + str(nick) + " :Not enough parameters" +  "\r\n" + EOC)
-#define ERR_ALREADYREGISTERED(nick)  (RED + "462 " + str(nick) + " :You may not reregister\r\n\033[0m")
-#define ERR_PASSWDMISMATCH(nick) (RED + "464 " + str(nick) + " :Password incorrect\r\n\033[0m")
+#define ERR_ALREADYREGISTERED(nick)  (RED + "462 " + str(nick) + " :You may not reregister\r\n" + EOC)
+#define ERR_PASSWDMISMATCH(nick) (RED + "464 " + str(nick) + " :Password incorrect\r\n" + EOC)
 #define ERR_INVITEONLYCHAN(nick, channel) (RED + "473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n" + EOC)
 
 /******************************************************************************/
 /*                                   5**                                      */
 /******************************************************************************/
 
-#define ERR_UMODEUNKNOWNFLAG(nick) (RED + "501 " + str(nick) + " :Unknown MODE flag\r\n\033[0m")
+#define ERR_UMODEUNKNOWNFLAG(nick) (RED + "501 " + str(nick) + " :Unknown MODE flag\r\n" + EOC)
 #define ERR_USERSDONTMATCH(nick) (RED + "502 " + str(nick) + " :Cant change mode for other users\r\n" + EOC)
 
 #endif
