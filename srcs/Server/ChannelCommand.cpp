@@ -236,13 +236,20 @@ bool	listMinUser(Command &command, User &user)
 	if (command.params[0][0] == '>' && command.params.size() == 1)
 	{
 		if (command.params[0].size() == 1) // Means we only have ">"
+		{
+			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
 			return (false);
+		}
 		for (int i = 1; command.params[0][i] ; i++) // I check here if I only have digits
 		{
 			if (isdigit(command.params[0][i]) == false)
+			{
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
 				return false;
+			}
 		}
 		user.servInfo->displayListMinUser(user, atoi(command.params[0].substr(1).c_str()) );
+		return (false);
 	}
 	return (true);
 }
@@ -255,7 +262,7 @@ void	Command::list(Command &command, User &user)
 {
 	if (emptyCommand == false)
 	{
-		if (listMinUser(command, user) == true)
+		if (listMinUser(command, user) == false)
 			return;
 		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
 		{
@@ -348,7 +355,7 @@ void	kickErrorCheck(Command &command, User &user)
 		if (user.servInfo->userExist(command.params[1]) == true)
 		{
 			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
-			if (checkUserInchannel == true)
+			if (chan->userInChannel(nick->get_fd(), chan->getUsersList()) == true)
 			{
 				chan->removeUserChannel(nick->get_fd(), nick);
 				if (command.params.size() == 3)
@@ -400,11 +407,11 @@ void	Command::notice(Command &command, User &user)
 	{
 		std::string nickNameOrChannel = command.params[0];
 		std::string message;
-		for (unsigned long i = 1; i <= command.params.size(); i++)
+		for (unsigned long i = 1; i < command.params.size(); i++)
 			message = concatenate_strings(message, command.params[i]);
 		if (user.servInfo->channelExist(command.params[0]) == true)
 			sendMessageToChannel(user, nickNameOrChannel, message);
-		if(user.servInfo->nicknameExists(command.params[0]) == false)
+		else if(user.servInfo->nicknameExists(command.params[0]) == true)
 			sendPrivateMessage(user, nickNameOrChannel, message);
 	}
 	else
