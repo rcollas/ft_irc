@@ -25,7 +25,7 @@ std::string RPL_ISUPPORT();
 #define PART_LEAVE_CHANNEL_MESSAGE(nick, channel, message) (BLUE + str(nick) + " has left " + str(channel) + str(message) + "\r\n" + EOC)
 #define INVITE_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has invited you to " + str(channel) + "\r\n" + EOC)
 #define KICK__MESSAGE(nick, channel, reason) (BLUE + str(nick) + " has kicked you from " + str(channel) + " for the reason :" + str(reason)+ "\r\n" + EOC)
-#define PRV_MSG(nick, message) (GREEN + str(nick) + " : " + str(message) + "\r\n" + EOC)
+#define PRV_MSG(nick, message) (GREEN + str(nick) + " :" + str(message) + "\r\n" + EOC)
 /******************************************************************************/
 /*                                   0**                                      */
 /******************************************************************************/
