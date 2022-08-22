@@ -25,6 +25,19 @@ void	Command::pass(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
 }
 
+void	Command::quit(Command &command, User &user) {
+	if (command.params.size() > 1)
+		return ;
+	else {
+		if (command.params.empty() == true)
+			user.set_quitMessage("");
+		else
+			user.set_quitMessage(command.params[0]);
+		user.servInfo->sendToAll(user.get_fd(), "\033[0;31m" + user.getNickName() + "!@localhost QUIT: " + user.getQuitMessage() + "\r\n\033[0m");
+		//close(user.get_fd());
+	}
+}
+
 void	Command::nick(Command &command, User &user) {
 	if (command.params.size() > 1)
 		return ;
