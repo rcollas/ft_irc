@@ -298,22 +298,25 @@ void	Command::mode(Command &command, User &user) {
 }
 
 void	Command::oper(Command &command, User &user) {
-	if (command.params.empty() == true || command.params.size() != 2) {
+	if (command.params.empty() == true) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return ;
 	}
-	if (command.params[0] != user.getUserName()) {
-		return ;
-	}
-	if (command.params[1] != user.servInfo->getServerPassword()) {
-		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
-		return ;
-	}
-	if (user.getIsOperator() == false) {
-		user.set_isOperator(true);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
-		sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
+	if (command.params.size() == 2) {
+		if (command.params[0] != user.getUserName()) {
+			sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
+			return ;
+		}
+		if (command.params[1] != user.servInfo->getServerPassword()) {
+			sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+			return ;
+		}
+		if (user.getIsOperator() == false) {
+			user.set_isOperator(true);
+			int modesNumber = user.getModesNumber();
+			user.set_modesNumber(++modesNumber);
+			sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
+		}
 	}
 }
 
