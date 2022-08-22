@@ -19,6 +19,7 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 	this->isOperator = false;
 	this->modesNumber = 0;
 	this->servInfo = serverInfo;
+	this->validPasswd = false;
 	socklen_t	sin_size = sizeof(socket);
 
 	fd = accept(serverEndpoint,
@@ -42,7 +43,6 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 	client_ip += "\r\n";
 	std::cout << "client IP = " << client_ip << std::endl;
 	//Server::registration(this);
-	//Server::welcome(*this);
 }
 
 User::~User() {}
@@ -56,6 +56,7 @@ void	User::set_awayMessage(std::string awayMessage) { this->awayMessage = awayMe
 void	User::set_isAway(bool away) { this->isAway = away; }
 void	User::set_isOperator(bool isOperator) { this->isOperator = isOperator; }
 void	User::set_modesNumber(int modes) { this->modesNumber = modes; }
+void	User::setPasswdStatus(bool status) { this->validPasswd = status; };
 void	User::appendToBuffer(std::string str) { this->buffer.append(str); }
 void	User::clearBuffer() { this->buffer.clear(); }
 
@@ -68,6 +69,7 @@ bool		User::getIsAway() const { return this->isAway; }
 bool		User::getIsOperator() const { return this->isOperator; }
 int		User::getModesNumber() const { return this->modesNumber; }
 bool		User::isAdmin() const { return this->admin; }
+bool	User::bringValidPasswd() const { return this->validPasswd; };
 
 void	User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
 void	User::addChan(Channel *chan) { this->activeChan.push_back(chan); }

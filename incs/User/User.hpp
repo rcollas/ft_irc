@@ -33,6 +33,7 @@ class User {
 		bool						isAway;
 		bool						isOperator;
 		bool						admin;
+		bool						validPasswd;
 		int							modesNumber;
 		std::string					buffer;
 
@@ -51,6 +52,7 @@ class User {
 		void	set_isOperator(bool isOperator);
 		void	set_modesNumber(int isInvisible);
 		void	set_awayMessage(std::string awayMessage);
+		void	setPasswdStatus(bool status);
 		void	appendToBuffer(std::string str);
 		void	clearBuffer();
 		std::string	getNickName() const;
@@ -62,6 +64,7 @@ class User {
 		bool	getIsOperator() const;
 		int		getModesNumber() const;
 		bool	isAdmin() const;
+		bool	bringValidPasswd() const;
 
 		void	addCmd(Command &cmd);
 		void	addChan(Channel *chan);

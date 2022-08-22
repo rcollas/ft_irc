@@ -18,11 +18,24 @@ void	Command::sendMessageToChannel(User &user, std::string chanName, std::string
 		sendPrivateMessage(user, it->second->getNickName(), message);
 }
 
+void	Command::error(std::string msg, User &user) {
+	sendMsg(user.get_fd(), msg);
+	close(user.get_fd());
+}
+
 void	Command::pass(Command &command, User &user) {
-	if (command.params.size() > 1)
-		return ;
-	if (command.params.size() == 1 && command.params[0] != user.servInfo->getPassword())
-		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+	if (command.params.size() == 1) {
+		if (command.params.size() == 1 &&
+			command.params[0] != user.servInfo->getPassword())
+		{
+			sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+			error(RED + "Fatal error: invalid connection password" + EOC, user);
+		} else {
+			user.setPasswdStatus(true);
+		}
+	} else if (command.params.size() < 1) {
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+	}
 }
 
 void	Command::nick(Command &command, User &user) {
@@ -79,6 +92,7 @@ void	Command::user(Command &command, User &user) {
 		std::cout << "Username is set at : " << command.params[0] << std::endl;
 		user.set_realname(command.params[3]);
 		std::cout << "Realname is set at : " << command.params[3] << std::endl;
+		Server::welcome(user);
 	}
 }
 

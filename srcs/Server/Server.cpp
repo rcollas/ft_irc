@@ -200,33 +200,41 @@ bool	cmdIsComplete(std::string cmd) {
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	int ret = 1;
-	if (registrationComplete(user) == false) {
+	switch (cmd.cmd) {
+		case (PASS): cmd.pass(cmd, user); break;
+		default: ret = 0;
+	}
+	if (user.bringValidPasswd() == false) {
+		cmd.error("Fatal error: no password provided", user);
+	} else {
 		switch (cmd.cmd) {
-			case (PASS): cmd.pass(cmd, user); break;
 			case (NICK): cmd.nick(cmd, user); break;
 			case (USER): cmd.user(cmd, user); break;
 			default: ret = 0;
 		}
-	} else {
-		switch (cmd.cmd) {
-			case (JOIN): cmd.join(cmd, user); break;
-			case (TOPIC): cmd.topic(cmd, user); break;
-			case (MOTD): cmd.motd(cmd, user); break;
-			case (AWAY): cmd.away(cmd, user); break;
-			case (VERSION): cmd.version(cmd, user); break;
-			case (LUSERS): cmd.lusers(cmd, user); break;
-			case (PART): cmd.part(cmd, user); break;
-			case (NAMES): cmd.names(cmd, user); break;
-			case (LIST): cmd.list(cmd, user); break;
-			case (INVITE): cmd.invite(cmd, user); break;
-			case (KICK): cmd.kick(cmd, user); break;
-			case (PRIVMSG): cmd.privmsg(cmd, user); break;
-			case (MODE): cmd.mode(cmd, user); break;
-			case (OPER): cmd.oper(cmd, user); break;
-			case (NOTICE): cmd.notice(cmd, user); break;
-			default: ret = 0;
+		if (registrationComplete(user) == true) {
+			switch (cmd.cmd) {
+				case (JOIN): cmd.join(cmd, user); break;
+				case (TOPIC): cmd.topic(cmd, user); break;
+				case (MOTD): cmd.motd(cmd, user); break;
+				case (AWAY): cmd.away(cmd, user); break;
+				case (VERSION): cmd.version(cmd, user); break;
+				case (LUSERS): cmd.lusers(cmd, user); break;
+				case (PART): cmd.part(cmd, user); break;
+				case (NAMES): cmd.names(cmd, user); break;
+				case (LIST): cmd.list(cmd, user); break;
+				case (INVITE): cmd.invite(cmd, user); break;
+				case (KICK): cmd.kick(cmd, user); break;
+				case (PRIVMSG): cmd.privmsg(cmd, user); break;
+				case (MODE): cmd.mode(cmd, user); break;
+				case (OPER): cmd.oper(cmd, user); break;
+				case (NOTICE): cmd.notice(cmd, user); break;
+				default: ret = 0;
+			}
 		}
 	}
+
+
 	if (ret || cmdIsComplete(user.getBuffer()))
 		user.clearBuffer();
 }
