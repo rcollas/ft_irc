@@ -71,11 +71,12 @@ bool		User::getIsAway() const { return this->isAway; }
 bool		User::getIsOperator() const { return this->isOperator; }
 int			User::getModesNumber() const { return this->modesNumber; }
 bool		User::isAdmin() const { return this->admin; }
-bool	User::bringValidPasswd() const { return this->validPasswd; };
+bool		User::bringValidPasswd() const { return this->validPasswd; };
 
 void		User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
 void		User::addChan(Channel *chan) { this->activeChan.push_back(chan); }
 std::vector<Command>	&User::getCmdList() { return this->cmds; }
+std::vector<Channel *>  User::getActiveChan() { return this->activeChan; }
 
 std::ostream &operator<<(std::ostream &out, User &user) {
 	out << "User information: " << std::endl;
@@ -83,4 +84,28 @@ std::ostream &operator<<(std::ostream &out, User &user) {
 	out << "User: " << user.getUserName();
 	out << "Real name: " << user.getRealName();
 	return out;
+}
+
+void User::deleteAllChannelUsers(User &user)
+{
+	std::vector<Channel *>::iterator it;
+	std::vector<Channel *> chan = user.getActiveChan();
+	it = chan.begin();
+	for (; it != chan.end(); it++)
+	{
+		(*it)->removeUserChannel(user.get_fd(), &user, "");
+		
+	}
+}
+
+void User::deleteQuitChannelUsers(User &user, Command *command)
+{
+	std::vector<Channel *>::iterator it;
+	std::vector<Channel *> chan = user.getActiveChan();
+	it = chan.begin();
+	for (; it != chan.end(); it++)
+	{
+		(*it)->removeUserChannel(user.get_fd(), &user, "");
+		command->sendMessageToChannel(user, (*it)->getChannelName(), "\033[0;31m" + user.getNickName() + "!@localhost QUIT: " + user.getQuitMessage() + "\r\n\033[0m");
+	}	
 }

@@ -67,10 +67,14 @@ class User {
 		bool	getIsOperator() const;
 		int		getModesNumber() const;
 		bool	isAdmin() const;
+		std::vector<Channel *> getActiveChan();
 		bool	bringValidPasswd() const;
 
 		void	addCmd(Command &cmd);
 		void	addChan(Channel *chan);
+		void 	deleteAllChannelUsers(User &user);
+		void 	deleteQuitChannelUsers(User &user, Command *command);
+
 		std::vector<Command>	&getCmdList();
 };
 

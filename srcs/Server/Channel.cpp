@@ -111,6 +111,8 @@ void		Channel::changeTopic(std::string topic)
 void		Channel::addUserToChannel(int fd, User *user)
 {
 	this->_usersList.insert(std::pair<int, User *>(fd, user));
+	Channel *chan = &user->servInfo->getChannel(this->getChannelName());
+	user->addChan(chan);
 }
 
 void		Channel::addUserToWitingList(int fd, User *user)

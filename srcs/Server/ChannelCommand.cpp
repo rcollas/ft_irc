@@ -61,6 +61,18 @@ bool	checkKeyChanExist(Channel *channel, Command &command, unsigned long i)
 		return false;
 }
 
+bool JoinPartAllChannels(Command &command, User &user)
+{
+	(void) command;
+	(void) user;
+	if (command.params[0] == "0" && command.params.size() == 1)
+	{
+		user.deleteAllChannelUsers(user);
+		return true;
+	}
+	return false;
+}
+
 /***************** JOIN allows
  * To create a channel if not created
  * allow to join the channel
@@ -68,9 +80,12 @@ bool	checkKeyChanExist(Channel *channel, Command &command, unsigned long i)
  * if a key is set need to put the key **************/
 
 void	Command::join(Command &command, User &user) {
-	if (emptyCommand == false)
+std::cout << "prout" << std::endl;
+if (emptyCommand == false)
 	{
 		std::vector<std::string> chanNames;
+		if (JoinPartAllChannels(command, user) == true)
+			return;
 		chanNames = CreateChan(command, user);
 		for (unsigned long i = 0 ; i < chanNames.size() ; i++)
 		{
@@ -101,7 +116,7 @@ void	Command::join(Command &command, User &user) {
 			}
 
 		}
-	}
+}
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
