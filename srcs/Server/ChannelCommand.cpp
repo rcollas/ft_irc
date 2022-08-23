@@ -68,6 +68,7 @@ bool JoinPartAllChannels(Command &command, User &user)
 	if (command.params[0] == "0" && command.params.size() == 1)
 	{
 		user.deleteAllChannelUsers(user);
+		return true;
 	}
 	return false;
 }
@@ -77,14 +78,15 @@ bool JoinPartAllChannels(Command &command, User &user)
  * allow to join the channel
  * if only in invite mode can't join the channel 
  * if a key is set need to put the key **************/
+
 void	Command::join(Command &command, User &user) {
 std::cout << "prout" << std::endl;
 if (emptyCommand == false)
 	{
 		std::vector<std::string> chanNames;
+		if (JoinPartAllChannels(command, user) == true)
+			return;
 		chanNames = CreateChan(command, user);
-		// if (JoinPartAllChannels(command, user) == true)
-		// 	return;
 		for (unsigned long i = 0 ; i < chanNames.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
@@ -132,7 +134,8 @@ if (emptyCommand == false)
 void	SetTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() >= 2 && checkUserInchannel == true)
+	if (command.params.size() >= 2 
+		&& checkUserInchannel == true)
 	{
 		std::string topic;
 		for (unsigned long i = 1; i <= command.params.size(); i++)

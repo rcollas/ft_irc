@@ -18,6 +18,7 @@
 #include <cerrno>
 #include <vector>
 #include <map>
+#include <signal.h>
 #include "Server/Server.hpp"
 #include "User/User.hpp"
 #include "Server/Channel.hpp"
@@ -34,6 +35,9 @@
 #define RPL_NOTOPIC_MSG RPL_NOTOPIC(chan->getChannelName())
 #define MODE_BAD_SIZE_COMMAND (command.params.size() > 4 || command.params.size() < 2|| command.params.empty() == true)
 #define PARAM_IS_NOT_NICK_OR_CHANNEL (user.servInfo->nicknameExists(command.params[0]) == false && user.servInfo->channelExist(command.params[0]) == false)
+
+extern bool serverIsRunning;
+
 class User;
 
 struct Command {
@@ -70,7 +74,7 @@ bool						isAllowedMode(std::string str);
 bool						checkChanName(std::string chanName);
 void						printDebug(std::string msg, bool print);
 std::vector<std::string>	split(std::string str, std::string const sep);
-Command 					*parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
+Command 					parse(std::vector<std::string> &input, std::vector<std::string> cmdList);
 void						printCmd(Command &cmdList);
 std::vector<std::string>	parseStringGetline(std::string string);
 std::vector<std::string>	getJoinKeys(Command &command);

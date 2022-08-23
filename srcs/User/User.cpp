@@ -94,5 +94,18 @@ void User::deleteAllChannelUsers(User &user)
 	for (; it != chan.end(); it++)
 	{
 		(*it)->removeUserChannel(user.get_fd(), &user, "");
+		
 	}
+}
+
+void User::deleteQuitChannelUsers(User &user, Command *command)
+{
+	std::vector<Channel *>::iterator it;
+	std::vector<Channel *> chan = user.getActiveChan();
+	it = chan.begin();
+	for (; it != chan.end(); it++)
+	{
+		(*it)->removeUserChannel(user.get_fd(), &user, "");
+		command->sendMessageToChannel(user, (*it)->getChannelName(), "\033[0;31m" + user.getNickName() + "!@localhost QUIT: " + user.getQuitMessage() + "\r\n\033[0m");
+	}	
 }

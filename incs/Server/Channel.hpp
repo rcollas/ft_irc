@@ -43,6 +43,7 @@ public:
 	void		setKeyExistTrue();
 	void		setKeyExistFalse();
 	void		addUserToWitingList(int fd, User *user);
+	void		setOpUser(User *user);
 
 	std::string 				_topic;
 
@@ -55,5 +56,6 @@ private :
 	bool						_inviteModeSet;
 	bool 						_channelJoined;
 	bool						_topicSet;
+	User						*_opUser;
 };
 #endif

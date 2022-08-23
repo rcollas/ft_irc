@@ -23,6 +23,8 @@
 #include "../../incs/ft_irc.h"
 #include "../../incs/User/User.hpp"
 
+extern bool serverIsRunning;
+
 /***************** We begins the cmd enums here **************/
 enum cmd {
 	PASS,

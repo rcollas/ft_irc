@@ -1,4 +1,12 @@
-#include "../incs/Server/Server.hpp"
+#include "../incs/ft_irc.h"
+
+bool serverIsRunning = true;
+
+void    killServer(int i)
+{
+    (void)i;
+	serverIsRunning = false;
+}
 
  void	printDebug(std::string msg, bool print) {
 	if (print)
@@ -24,6 +32,7 @@ void	checkArgs(int ac, char **av) {
 
 int	main(int ac, char **av) {
 	checkArgs(ac, av);
+	signal(SIGINT, killServer);
 	Server server(av[1], av[2]);
 	server.init();
 	server.run();

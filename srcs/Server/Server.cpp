@@ -50,7 +50,6 @@ serverPassword("4321")
 	serverAddress = (struct sockaddr_in *)serverinfo->ai_addr;
 	std::cout << "Server IP = " << inet_ntoa(serverAddress->sin_addr) << std::endl; //inet_ntoa convert from network byte order to IPv4 number and dots
 	this->fillAvailableCmd();
-
 }
 
 Server::~Server() {}
@@ -91,6 +90,7 @@ void	Server::init()
 	pfds.push_back(pollfd());
 	pfds[0].fd = serverEndPoint;
 	pfds[0].events = POLLIN;
+	freeaddrinfo(serverinfo);
 
 }
 
@@ -255,37 +255,6 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 		user.clearBuffer();
 }
 
-/**
- * @brief register a new user after a connection query
- * @param user User object used to store information (nickname, username...)
- * parse return a struct Command containing the command stored as an int
- * and the parameters in a vector
- */
-
-
-void	Server::registration(User *user) {
-
-	std::cout << "Registration in progress..." << std::endl;
-	std::vector<std::string>	res;
-	Command						*ret;
-	while (registrationComplete(*user) == false) {
-		sleep(1);
-		recv(user->get_fd(), buffer, bufferSize, MSG_DONTWAIT);
-		res = split(buffer, " :\r\n");
-		memset(buffer, 0, bufferSize);
-		for (int i = 0; i < 4; i++) {
-			ret = parse(res, user->servInfo->getCmdList());
-			user->addCmd(*ret);
-		}
-		while (user->getCmdList().empty() == false) {
-			Server::cmdDispatcher(user->getCmdList().front(), *user);
-			user->getCmdList().erase(user->getCmdList().begin());
-		}
-	}
-	std::cout << "User fd : " << user->get_fd() << std::endl;
-	std::cout << "Registration complete!" << std::endl;
-}
-
 User &Server::nickToUserFd(std::string nickname)
 {
 	std::map<int, User>::iterator it = this->user_list.begin();
@@ -319,7 +288,7 @@ int	Server::get_isOperatorStatus()
 }
 
 /**
- * @brief if the registration succeed, a set of numeric replies is sent to the clien
+ * @brief if the registration succeed, a set of numeric replies is sent to the client
  * @param user used to retrieve user's information
  * @details numeric replies can be found in incs/Server/NumericReplies.hpp
  */
@@ -354,12 +323,11 @@ void	Server::sendToAll(int senderFd, std::string msg) {
 void	Server::handleCmd(User *user) {
 	user->appendToBuffer(buffer);
 	std::vector<std::string>	res = split(user->getBuffer(), " :\r\n");
-	Command						*ret;
+	Command						ret;
 	memset(buffer, 0, bufferSize);
 	while (res.empty() == false) {
 		ret = parse(res, user->servInfo->getCmdList());
-		user->addCmd(*ret);
-		printCmd(*ret);
+		user->addCmd(ret);
 	}
 	while (user->getCmdList().empty() == false) {
 		Server::cmdDispatcher(user->getCmdList().front(), *user);
@@ -375,15 +343,12 @@ void	Server::handleCmd(User *user) {
 
 void	Server::handleClientRequest(int i) {
 
-	printDebug("client wants to communicate", RECEIVE_DEBUG);
 	int nbytes = recv(pfds[i].fd, buffer, bufferSize, MSG_DONTWAIT);
 	int senderFd = pfds[i].fd;
-	printDebug("Receiving: ", RECEIVE_DEBUG);
-	printDebug(buffer, RECEIVE_DEBUG);
 
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
-			std::cout << "pollserver: socket %d hung up " << senderFd << std::endl;
+			std::cout << "pollserver: socket " << senderFd << " hung up" << std::endl;
 			//printDebug(, RECEIVE_DEBUG);
 			user_list.erase(user_list.find(pfds[i].fd));
 			pfds.erase(pfds.begin() + i);
@@ -406,9 +371,8 @@ void	Server::handleClientRequest(int i) {
 
 void Server::run()
 {
-	while (true) {
+	while (serverIsRunning) {
 		poll(pfds.data(), pfds.size(), -1);
-
 		for (int i = 0; i < (int)pfds.size(); i++)
 		{
 			if (pfds[i].revents & POLLIN) // a socket is ready to listen
@@ -422,10 +386,16 @@ void Server::run()
 			}
 		}
 	}
-
-	for (int i = 0; (int)pfds.size(); i++) {
-		close(pfds[i].fd);
+	for (size_t i = 1; i < pfds.size(); i++) {
+		sendMsg(pfds[i].fd, "Server closed the connection");
+		this->killConnection(*getUser(pfds[i].fd));
 	}
+	for (std::map<std::string, Channel *>::iterator it = allChan.begin(); it != allChan.end(); it++) {
+		delete it->second;
+	}
+	close(serverEndPoint);
+	std::cout << std::endl;
+	std::cout << "Server killed" << std::endl;
 }
 
 int	Server::getNbOfChan()
