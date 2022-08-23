@@ -80,7 +80,6 @@ bool JoinPartAllChannels(Command &command, User &user)
  * if a key is set need to put the key **************/
 
 void	Command::join(Command &command, User &user) {
-std::cout << "prout" << std::endl;
 if (emptyCommand == false)
 	{
 		std::vector<std::string> chanNames;
@@ -90,35 +89,37 @@ if (emptyCommand == false)
 		for (unsigned long i = 0 ; i < chanNames.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
-			if (JOIN_INVITE_WITHOUT_KEY || JOIN_INVITE_WITH_KEY)
+			if (chan->userInChannel(user.get_fd(), chan->getUsersList()) == false)
 			{
-				chan->addUserToChannel(user.get_fd(), &user);
-				WelcomeTopicJoinMessage(chan, command, user);
+				if (JOIN_INVITE_WITHOUT_KEY || JOIN_INVITE_WITH_KEY)
+				{
+					chan->addUserToChannel(user.get_fd(), &user);
+					WelcomeTopicJoinMessage(chan, command, user);
+				}
+				else if (JOIN_WITHOUT_INVIT_KEY)
+				{
+					chan->addUserToChannel(user.get_fd(), &user);
+					WelcomeTopicJoinMessage(chan, command, user);
+				}
+				else if (JOIN_WITH_KEY_WITHOUT_INVITE)
+				{
+					chan->addUserToChannel(user.get_fd(), &user);
+					WelcomeTopicJoinMessage(chan, command, user);
+				}
+				else if (JOIN_ERR_INVITE_WITHOUT_KEY)
+					sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
+				else if (JOIN_ERR_KEY_WITHOUT_INVITE)
+					sendMsg(user.get_fd(), ERR_BADCHANNELKEY(user.getNickName(), chan->getChannelName()));
+				else if (JOIN_ERR_INVITE_KEY_EXISTS)
+				{
+					sendMsg(user.get_fd(), ERR_BADCHANNELKEY(user.getNickName(), chan->getChannelName()));
+					sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
+				}
 			}
-			else if (JOIN_WITHOUT_INVIT_KEY)
-			{
-				chan->addUserToChannel(user.get_fd(), &user);
-				WelcomeTopicJoinMessage(chan, command, user);
-			}
-			else if (JOIN_WITH_KEY_WITHOUT_INVITE)
-			{
-				chan->addUserToChannel(user.get_fd(), &user);
-				WelcomeTopicJoinMessage(chan, command, user);
-			}
-			else if (JOIN_ERR_INVITE_WITHOUT_KEY)
-				sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
-			else if (JOIN_ERR_KEY_WITHOUT_INVITE)
-				sendMsg(user.get_fd(), ERR_BADCHANNELKEY(user.getNickName(), chan->getChannelName()));
-			else if (JOIN_ERR_INVITE_KEY_EXISTS)
-			{
-				sendMsg(user.get_fd(), ERR_BADCHANNELKEY(user.getNickName(), chan->getChannelName()));
-				sendMsg(user.get_fd(), ERR_INVITEONLYCHAN(user.getNickName(), chan->getChannelName()));
-			}
-
 		}
 }
-	else
-		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+else
+	sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
 
 /*
