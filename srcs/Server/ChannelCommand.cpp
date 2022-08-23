@@ -26,7 +26,7 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
 	chan->printChannelUsers(user.get_fd(), &user, chan->getChannelName());
 }
 
-/***************** 
+/*****************
  * here I :
  * - Parse the channel with the comma delimiter
  * - I create the channel if they begin by "#"
@@ -76,7 +76,7 @@ bool JoinPartAllChannels(Command &command, User &user)
 /***************** JOIN allows
  * To create a channel if not created
  * allow to join the channel
- * if only in invite mode can't join the channel 
+ * if only in invite mode can't join the channel
  * if a key is set need to put the key **************/
 
 void	Command::join(Command &command, User &user) {
@@ -95,7 +95,7 @@ if (emptyCommand == false)
 				chan->addUserToChannel(user.get_fd(), &user);
 				WelcomeTopicJoinMessage(chan, command, user);
 			}
-			else if (JOIN_WITHOUT_INVIT_KEY) 
+			else if (JOIN_WITHOUT_INVIT_KEY)
 			{
 				chan->addUserToChannel(user.get_fd(), &user);
 				WelcomeTopicJoinMessage(chan, command, user);
@@ -129,17 +129,15 @@ if (emptyCommand == false)
 */
 
 /***************** I set up the topic of the channel
- *  I set the topic here to send to the client 
+ *  I set the topic here to send to the client
  * I need to have at least 3 param TOPIC <channel> <message> **************/
 void	SetTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() >= 2 
+	if (command.params.size() >= 2
 		&& checkUserInchannel == true)
 	{
-		std::string topic;
-		for (unsigned long i = 1; i <= command.params.size(); i++)
-			topic = concatenate_strings(topic, command.params[i]);
+		std::string topic = command.params[1];
 		chan->changeTopic(topic);
 		sendMsg(user.get_fd(), RPL_TOPIC_MSG);
 	}
@@ -149,7 +147,7 @@ void	SetTopic(Command &command, User &user)
 void	sendTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() == 1 
+	if (command.params.size() == 1
 		&& checkUserInchannel == true && chan->TopicIsSet() == true)
 		sendMsg(user.get_fd(), RPL_TOPIC_MSG);
 	else if (command.params.size() == 1 && checkUserInchannel == true && chan->TopicIsSet() == false)
@@ -159,7 +157,7 @@ void	sendTopic(Command &command, User &user)
 /***************** Topic allows
  * to handle a topic for a dedicated channel **************/
 void	Command::topic(Command &command, User &user) {
-	if (emptyCommand == false)
+	if (emptyCommand == false && command.params.size() <= 2)
 	{
 		if (user.getIsOperator() == true)
 		{
@@ -191,7 +189,7 @@ void	partRemoveUser(Command &command, User &user)
 	chanNames = parseStringGetline(command.params[0]);
 	for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
 	{
-		if (user.servInfo->channelExist(chanNames[i]) == true) 
+		if (user.servInfo->channelExist(chanNames[i]) == true)
 		{
 			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
 			std::string message = "No reason given";
@@ -202,13 +200,13 @@ void	partRemoveUser(Command &command, User &user)
 			else if (checkUserInchannel == false)
 				sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chanNames[i]));
 		}
-		else 
+		else
 			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), chanNames[i]));
 	}
 }
 
-/***************** PART allows 
- * temove a user from one+ channels 
+/***************** PART allows
+ * temove a user from one+ channels
  * first condition : I check if channel exist and i am in the channel
  * second condition : I check if channel exist and i am not in the channel
  * third condition the channel doesn't exist **************/
@@ -223,7 +221,7 @@ void	Command::part(Command &command, User &user) {
 		}
 		partRemoveUser(command, user);
 	}
-	else 
+	else
 	{
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 	}
@@ -250,7 +248,7 @@ void	Command::names(Command &command, User &user) {
 		chanNames = parseStringGetline(command.params[0]);
 		for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
 		{
-			if (user.servInfo->channelExist(chanNames[i]) == true) 
+			if (user.servInfo->channelExist(chanNames[i]) == true)
 			{
 				Channel *chan = &user.servInfo->getChannel(chanNames[i]);
 				chan->printChannelUsers(user.get_fd(), &user, chanNames[i]);
@@ -259,7 +257,7 @@ void	Command::names(Command &command, User &user) {
 				sendMsg(user.get_fd(), RPL_ENDOFNAMES(chanNames[i]));
 		}
 	}
-	else 
+	else
 		user.servInfo->printAllChannelsUsers(user);
 }
 
@@ -270,7 +268,7 @@ void	Command::names(Command &command, User &user) {
 **==========================
 */
 
-/***************** ListMinUser 
+/***************** ListMinUser
  * check if I enter "LIST >3" for example,
  *  I display the channels with at least 3 members **************/
 bool	listMinUser(Command &command, User &user)
@@ -297,7 +295,7 @@ bool	listMinUser(Command &command, User &user)
 	return (true);
 }
 
-/***************** LIST allows 
+/***************** LIST allows
  * to show the channels
  * The numbers of users connected to the channel ont it
  * the TOPIC is displayed **************/
@@ -305,7 +303,7 @@ void	Command::list(Command &command, User &user)
 {
 	if (emptyCommand == false)
 	{
-		
+
 		if (listMinUser(command, user) == false)
 			return;
 		std::vector<std::string> chanNames;
@@ -317,7 +315,7 @@ void	Command::list(Command &command, User &user)
 				sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 				return;
 			}
-			if (user.servInfo->channelExist(chanNames[i]) == true) 
+			if (user.servInfo->channelExist(chanNames[i]) == true)
 			{
 				Channel *chan = &user.servInfo->getChannel(chanNames[i]);
 				sendMsg(user.get_fd(), RPL_LIST_MSG);
@@ -337,7 +335,7 @@ void	Command::list(Command &command, User &user)
 */
 
 /***************** errors check
- *  * Conditions are the following ones: 
+ *  * Conditions are the following ones:
  * channel must exists
  * User invited must exists
  * The one who invites has to be on channel
@@ -374,7 +372,7 @@ void	inviteErrorscheck(Command &command, User &user)
 
 /***************** INVITE allows
  * To invite someone else to a channel you are already in
- * Conditions are the following ones: 
+ * Conditions are the following ones:
  * at lease 2 parameters : nickname and channel
  *  **************/
 void	Command::invite(Command &command, User &user)
@@ -445,7 +443,7 @@ void	Command::kick(Command &command, User &user)
 		if (user.servInfo->channelExist(command.params[0]) == false) {
 
 			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
-			
+
 		} else if (user.servInfo->userExist(command.params[1]) == false) {
 
 			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME(command.params[1]));
@@ -453,15 +451,15 @@ void	Command::kick(Command &command, User &user)
 		} else {
 			chan = &user.servInfo->getChannel(command.params[0]);
 
-		
+
 			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
-	
+
 			if (chan->userInChannel(nick->get_fd(), chan->getUsersList()) == false) {
 
 				sendMsg(user.get_fd(), ERR_USERNOTINCHANNEL(nick->getNickName(), chan->getChannelName()));
 
 			} else {
-			
+
 				chan->removeUserChannel(nick->get_fd(), nick, "");
 				if (command.params.size() == 3) {
 
@@ -492,12 +490,10 @@ void	Command::kick(Command &command, User &user)
  * RPL specifies to not send error message if the command fails **************/
 void	Command::notice(Command &command, User &user)
 {
-	if (command.params.size() >= 2)
+	if (command.params.size() == 2)
 	{
 		std::string nickNameOrChannel = command.params[0];
-		std::string message;
-		for (unsigned long i = 1; i < command.params.size(); i++)
-			message = concatenate_strings(message, command.params[i]);
+		std::string message = command.params[1];
 		if (user.servInfo->channelExist(command.params[0]) == true)
 			sendMessageToChannel(user, nickNameOrChannel, message);
 		else if(user.servInfo->nicknameExists(command.params[0]) == true)
