@@ -190,6 +190,17 @@ bool	Server::usernameExists(std::string username) {
 	return (false);
 }
 
+void	Server::killConnection(User &user) {
+	close(user.get_fd());
+	for (size_t i = 0; i < pfds.size(); i++) {
+		if (pfds[i].fd == user.get_fd()) {
+			pfds.erase(pfds.begin() + i);
+			break;
+		}
+	}
+	//user_list.erase(user_list.find(user.get_fd()));
+}
+
 bool	registrationComplete(User &user) {
 	return !user.getNickName().empty() && !user.getUserName().empty();
 }

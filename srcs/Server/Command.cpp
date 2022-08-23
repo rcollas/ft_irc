@@ -20,7 +20,7 @@ void	Command::sendMessageToChannel(User &user, std::string chanName, std::string
 
 void	Command::error(std::string msg, User &user) {
 	sendMsg(user.get_fd(), msg);
-	close(user.get_fd());
+	user.servInfo->killConnection(user);
 }
 
 void	Command::pass(Command &command, User &user) {
@@ -34,7 +34,7 @@ void	Command::pass(Command &command, User &user) {
 			user.setPasswdStatus(true);
 		}
 	} else if (command.params.size() < 1) {
-		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+		error(ERR_NEEDMOREPARAMS(user.getNickName()), user);
 	}
 }
 
