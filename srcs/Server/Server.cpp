@@ -244,6 +244,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 				case (MODE): cmd.mode(cmd, user); break;
 				case (OPER): cmd.oper(cmd, user); break;
 				case (NOTICE): cmd.notice(cmd, user); break;
+				case (QUIT): cmd.quit(cmd, user); break;
 				default: ret = 0;
 			}
 		}

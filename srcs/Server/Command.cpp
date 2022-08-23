@@ -47,7 +47,7 @@ void	Command::quit(Command &command, User &user) {
 		else
 			user.set_quitMessage(command.params[0]);
 		user.servInfo->sendToAll(user.get_fd(), "\033[0;31m" + user.getNickName() + "!@localhost QUIT: " + user.getQuitMessage() + "\r\n\033[0m");
-		//close(user.get_fd());
+		user.servInfo->killConnection(user);
 	}
 }
 
