@@ -44,7 +44,7 @@ std::vector<std::string>	CreateChan(Command &command, User &user)
 			goodChanNames.push_back(chans[i]);
 		}
 		else
-			sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), chans[i]));
 	}
 	return (goodChanNames);
 }
