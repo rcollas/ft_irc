@@ -53,7 +53,6 @@ private :
 	std::map<int, User *> 		_usersList;
 	std::map<int, User *> 		_waitingInviteList;
 	bool						_inviteModeSet;
-	//std::string 				_topic;
 	bool 						_channelJoined;
 	bool						_topicSet;
 };

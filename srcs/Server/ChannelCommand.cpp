@@ -78,12 +78,13 @@ bool JoinPartAllChannels(Command &command, User &user)
  * if only in invite mode can't join the channel 
  * if a key is set need to put the key **************/
 void	Command::join(Command &command, User &user) {
-	if (emptyCommand == false)
+std::cout << "prout" << std::endl;
+if (emptyCommand == false)
 	{
 		std::vector<std::string> chanNames;
 		chanNames = CreateChan(command, user);
-		if (JoinPartAllChannels(command, user) == true)
-			return;
+		// if (JoinPartAllChannels(command, user) == true)
+		// 	return;
 		for (unsigned long i = 0 ; i < chanNames.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
@@ -113,7 +114,7 @@ void	Command::join(Command &command, User &user) {
 			}
 
 		}
-	}
+}
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
