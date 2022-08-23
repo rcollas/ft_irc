@@ -96,6 +96,8 @@ class Server {
 		void 						printAllChannelsUsers(User &user);
 		void 						printListChannels(User &user);
 		void 						displayListMinUser(User &user, int i);
+		void						deleteAllChannelUsers(User &user);
+
 
 /***************** Other parts **************/
 		void						handleClientRequest(int i);

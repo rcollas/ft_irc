@@ -66,6 +66,19 @@ void Server::printAllChannelsUsers(User &user)
 	}
 }
 
+void Server::deleteAllChannelUsers(User &user)
+{
+	std::vector<Channel *>::iterator it;
+	std::vector<Channel *> chan = user.getActiveChan();
+	it = chan.begin();
+	for (; it != chan.end(); it++)
+	{
+		
+		it->first->getChannelName();
+		
+	}
+}
+
 void Server::printListChannels(User &user)
 {
 	std::map<std::string, Channel *>::iterator it;

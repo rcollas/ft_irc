@@ -35,6 +35,7 @@ class User {
 		bool						admin;
 		int							modesNumber;
 		std::string					buffer;
+		
 
 	public:
 		User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo);
@@ -62,6 +63,8 @@ class User {
 		bool	getIsOperator() const;
 		int		getModesNumber() const;
 		bool	isAdmin() const;
+		void	addUserActiveChan();
+		std::vector<Channel *> getActiveChan();
 
 		void	addCmd(Command &cmd);
 		void	addChan(Channel *chan);

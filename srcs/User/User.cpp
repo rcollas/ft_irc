@@ -72,6 +72,7 @@ bool		User::isAdmin() const { return this->admin; }
 void		User::addCmd(Command &cmd) { this->cmds.push_back(cmd); }
 void		User::addChan(Channel *chan) { this->activeChan.push_back(chan); }
 std::vector<Command>	&User::getCmdList() { return this->cmds; }
+std::vector<Channel *>  User::getActiveChan() { return this->activeChan; }
 
 std::ostream &operator<<(std::ostream &out, User &user) {
 	out << "User information: " << std::endl;
