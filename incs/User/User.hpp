@@ -65,7 +65,6 @@ class User {
 		bool	getIsOperator() const;
 		int		getModesNumber() const;
 		bool	isAdmin() const;
-
 		void	addCmd(Command &cmd);
 		void	addChan(Channel *chan);
 		std::vector<Command>	&getCmdList();

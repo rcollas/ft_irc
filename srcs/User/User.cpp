@@ -13,7 +13,6 @@ std::string toString(char *str) {
 	return s;
 }
 
-
 User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 	this->isAway = false;
 	this->isOperator = false;

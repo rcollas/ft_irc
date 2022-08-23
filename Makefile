@@ -31,7 +31,7 @@ INCLUDE		=	$(addprefix $(INC_DIR)/, $(INC_FILES))
 
 CC			=	clang++
 
-CFLAGS		=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
+CFLAGS		=	-Wall -Wextra -Werror -g -std=c++98 #-fsanitize=address
 
 RM			=	rm -rf
 
