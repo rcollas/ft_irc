@@ -7,8 +7,8 @@ void		Server::createChannel(User &user, std::string chanName) // a corriger
 	{
 		std::cout << "\033[0;31m" << "Création du channel " << chanName << "\033[0m" << std::endl;
 		Channel *chan = new Channel(chanName, "");
-		this->addChannel(chan);
 		chan->setOpUser(&user);
+		this->addChannel(chan);
 	}
 	else
 		std::cout << "\033[0;31m" << "Le channel existe déjà " << chanName << "\033[0m" << std::endl;

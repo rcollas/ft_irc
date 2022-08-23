@@ -81,6 +81,8 @@ std::map<int, User *>	Channel::getWaitingInviteList()
 	return this->_waitingInviteList;
 }
 
+User	*Channel::getOperator() { return this->_opUser; }
+
 
 /*
 **==========================

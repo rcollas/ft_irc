@@ -26,6 +26,7 @@ public:
 	bool					getInviteMode();	
 	bool					getKeyExist();
 	std::map<int, User *>	getWaitingInviteList();
+	User					*getOperator();
 
 /***************** members functions **************/
 	bool		TopicIsSet();
