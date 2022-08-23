@@ -63,11 +63,13 @@ bool	checkKeyChanExist(Channel *channel, Command &command, unsigned long i)
 
 bool JoinPartAllChannels(Command &command, User &user)
 {
+	(void) command;
+	(void) user;
 	if (command.params[0] == "0" && command.params.size() == 1)
 	{
-		
-		//je check les channels du user et je part
+		user.deleteAllChannelUsers(user);
 	}
+	return false;
 }
 
 /***************** JOIN allows
@@ -81,7 +83,7 @@ void	Command::join(Command &command, User &user) {
 		std::vector<std::string> chanNames;
 		chanNames = CreateChan(command, user);
 		if (JoinPartAllChannels(command, user) == true)
-			return (0);
+			return;
 		for (unsigned long i = 0 ; i < chanNames.size() ; i++)
 		{
 			Channel *chan = &user.servInfo->getChannel(chanNames[i]);

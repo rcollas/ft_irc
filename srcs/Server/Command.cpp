@@ -18,11 +18,37 @@ void	Command::sendMessageToChannel(User &user, std::string chanName, std::string
 		sendPrivateMessage(user, it->second->getNickName(), message);
 }
 
+void	Command::error(std::string msg, User &user) {
+	sendMsg(user.get_fd(), msg);
+	user.servInfo->killConnection(user);
+}
+
 void	Command::pass(Command &command, User &user) {
+	if (command.params.size() == 1) {
+		if (command.params.size() == 1 &&
+			command.params[0] != user.servInfo->getPassword())
+		{
+			sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+			error(RED + "Fatal error: invalid connection password" + EOC, user);
+		} else {
+			user.setPasswdStatus(true);
+		}
+	} else if (command.params.size() < 1) {
+		error(ERR_NEEDMOREPARAMS(user.getNickName()), user);
+	}
+}
+
+void	Command::quit(Command &command, User &user) {
 	if (command.params.size() > 1)
 		return ;
-	if (command.params.size() == 1 && command.params[0] != user.servInfo->getPassword())
-		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+	else {
+		if (command.params.empty() == true)
+			user.set_quitMessage("");
+		else
+			user.set_quitMessage(command.params[0]);
+		user.servInfo->sendToAll(user.get_fd(), "\033[0;31m" + user.getNickName() + "!@localhost QUIT: " + user.getQuitMessage() + "\r\n\033[0m");
+		user.servInfo->killConnection(user);
+	}
 }
 
 void	Command::nick(Command &command, User &user) {
@@ -79,6 +105,7 @@ void	Command::user(Command &command, User &user) {
 		std::cout << "Username is set at : " << command.params[0] << std::endl;
 		user.set_realname(command.params[3]);
 		std::cout << "Realname is set at : " << command.params[3] << std::endl;
+		Server::welcome(user);
 	}
 }
 
@@ -298,22 +325,25 @@ void	Command::mode(Command &command, User &user) {
 }
 
 void	Command::oper(Command &command, User &user) {
-	if (command.params.empty() == true || command.params.size() != 2) {
+	if (command.params.empty() == true) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return ;
 	}
-	if (command.params[0] != user.getUserName()) {
-		return ;
-	}
-	if (command.params[1] != user.servInfo->getServerPassword()) {
-		sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
-		return ;
-	}
-	if (user.getIsOperator() == false) {
-		user.set_isOperator(true);
-		int modesNumber = user.getModesNumber();
-		user.set_modesNumber(++modesNumber);
-		sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
+	if (command.params.size() == 2) {
+		if (command.params[0] != user.getUserName()) {
+			sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
+			return ;
+		}
+		if (command.params[1] != user.servInfo->getServerPassword()) {
+			sendMsg(user.get_fd(), ERR_PASSWDMISMATCH(user.getNickName()));
+			return ;
+		}
+		if (user.getIsOperator() == false) {
+			user.set_isOperator(true);
+			int modesNumber = user.getModesNumber();
+			user.set_modesNumber(++modesNumber);
+			sendMsg(user.get_fd(), RPL_YOUREOPER(user.getNickName()));
+		}
 	}
 }
 

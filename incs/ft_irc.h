@@ -58,6 +58,8 @@ struct Command {
 	void		mode(Command &cmd, User &user);
 	void		notice(Command &cmd, User &user);
 	void		oper(Command &command, User &user);
+	void		error(std::string str, User &user);
+	void 		quit(Command &cmd, User &user);
 	void		sendPrivateMessage(User &user, std::string nickName, std::string message);
 	void		sendMessageToChannel(User &user, std::string chanName, std::string message);
 

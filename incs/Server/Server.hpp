@@ -109,7 +109,8 @@ class Server {
 		User						*getUser(int userFd);
 		std::vector<std::string>	&getCmdList();
 		std::vector<std::string>	&getInvisibleList();
-		User 						&nickToUserFd(std::string nickname);
+		User						&nickToUserFd(std::string nickname);
+		void						killConnection(User &user);
 
 
 

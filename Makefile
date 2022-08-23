@@ -11,7 +11,7 @@ SRC_FILES 	=	main.cpp \
 				Server/utils.cpp \
 				Server/Channel.cpp \
 				User/User.cpp \
-				
+
 
 OBJS_DIR	=	objs
 
@@ -31,7 +31,7 @@ INCLUDE		=	$(addprefix $(INC_DIR)/, $(INC_FILES))
 
 CC			=	clang++
 
-CFLAGS		=	-Wall -Wextra -Werror -g -std=c++98 -fsanitize=address
+CFLAGS		=	-Wall -Wextra -Werror -g -std=c++98
 
 RM			=	rm -rf
 
