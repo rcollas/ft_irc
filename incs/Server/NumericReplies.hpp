@@ -22,7 +22,7 @@ std::string RPL_ISUPPORT();
 
 
 #define JOIN_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has joined " + str(channel) + "\r\n" + EOC)
-#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel) (BLUE + str(nick) + " has left " + str(channel) + "\r\n" + EOC)
+#define PART_LEAVE_CHANNEL_MESSAGE(nick, channel, message) (BLUE + str(nick) + " has left " + str(channel) + str(message) + "\r\n" + EOC)
 #define INVITE_WELCOME_MESSAGE(nick, channel) (BLUE + str(nick) + " has invited you to " + str(channel) + "\r\n" + EOC)
 #define KICK__MESSAGE(nick, channel, reason) (BLUE + str(nick) + " has kicked you from " + str(channel) + " for the reason :" + str(reason)+ "\r\n" + EOC)
 #define PRV_MSG(nick, message) (GREEN + str(nick) + " : " + str(message) + "\r\n" + EOC)
@@ -55,7 +55,7 @@ std::string RPL_ISUPPORT();
 #define RPL_NOWAWAY(nick) (RED + "306 " + str(nick) + " :You have been marked as being away\r\n" + EOC)
 #define RPL_TOPIC(nick, channel, topic) (BLUE + "331 " + str(nick) + " " + str(channel) + " :" + str(topic) + "\r\n" + EOC)
 #define RPL_NOTOPIC(channel) (BLUE + "332: No topic set for " + str(channel) + "\r\n" + EOC)
-#define RPL_VERSION(nick) (RED + "351 " + str(nick) = ": irssi 1.4.1 (20220612 1401)\r\n" + EOC)
+#define RPL_VERSION(nick) (RED + "351 " + str(nick) + " :irssi 1.4.1 (20220612 1401)\r\n" + EOC)
 #define RPL_MOTD(nick, text) (RED + "372 " + str(nick) + " :- " + str(text) + " -\r\n" + EOC)
 #define RPL_MOTDSTART(nick, server) (RED + "375 " + str(nick) + " :- " + str(server) + " Message of the day -\r\n" + EOC)
 #define RPL_ENDOFMOTD(nick) (RED + "376 " + str(nick) + " :End of /motd command\r\n" + EOC)
@@ -83,7 +83,7 @@ std::string RPL_ISUPPORT();
 #define ERR_PASSWDMISMATCH(nick) (RED + "464 " + str(nick) + " :Password incorrect\r\n" + EOC)
 #define ERR_INVITEONLYCHAN(nick, channel) (RED + "473 " + str(nick) + " " + str(channel) + " :cannot join the channel (+i)\r\n" + EOC)
 #define ERR_BADCHANNELKEY(nick, channel)  (RED + "475 " + str(nick) + " " + str(channel) + " :cannot join the channel (+k)\r\n" + EOC)
-
+#define ERR_NOPRIVILEGES(nick) (RED + "481 " + str(nick) + " :Permission Denied- You're not an IRC operator\r\n" + EOC)
 
 /******************************************************************************/
 /*                                   5**                                      */
@@ -97,7 +97,7 @@ std::string RPL_ISUPPORT();
 /*                                   6**                                      */
 /******************************************************************************/
 
-#define ERR_INVALIDMODEPARAM (nick, channel, mode, parameter, description) ("\033[0;31m696:" + str(nick) + " " + str(channel) + " " + str(mode) + " " + str(parameter) + " :" str(description) + "\r\n\033[0m")
+#define ERR_INVALIDMODEPARAM (nick, channel, mode, parameter, description) (RED + "696 :" + str(nick) + " " + str(channel) + " " + str(mode) + " " + str(parameter) + " :" str(description) + "\r\n\033[0m")
 
 
 #endif

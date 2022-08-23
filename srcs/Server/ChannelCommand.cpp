@@ -8,6 +8,7 @@
 #define JOIN_ERR_KEY_WITHOUT_INVITE chan->getKeyExist() == true && chan->getInviteMode() == false
 #define JOIN_ERR_INVITE_WITHOUT_KEY chan->getKeyExist() == false && chan->getInviteMode() == true
 #define JOIN_ERR_INVITE_KEY_EXISTS chan->getKeyExist() == true && chan->getInviteMode() == true
+
 /*
 **==========================
 **    CHANNEL COMMAND
@@ -22,6 +23,7 @@ void	WelcomeTopicJoinMessage(Channel *chan, Command &command, User &user)
 		sendMsg(user.get_fd(), RPL_TOPIC(user.getNickName(), chan->getChannelName(), chan->getTopic()));
 	else
 		sendMsg(user.get_fd(), RPL_NOTOPIC(chan->getChannelName()));
+	chan->printChannelUsers(user.get_fd(), &user, chan->getChannelName());
 }
 
 /***************** 
@@ -65,7 +67,6 @@ bool	checkKeyChanExist(Channel *channel, Command &command, unsigned long i)
  * if only in invite mode can't join the channel 
  * if a key is set need to put the key **************/
 void	Command::join(Command &command, User &user) {
-	
 	if (emptyCommand == false)
 	{
 		std::vector<std::string> chanNames;
@@ -99,8 +100,9 @@ void	Command::join(Command &command, User &user) {
 
 		}
 	}
+	else
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
-
 
 /*
 **==========================
@@ -141,18 +143,21 @@ void	sendTopic(Command &command, User &user)
 void	Command::topic(Command &command, User &user) {
 	if (emptyCommand == false)
 	{
-		if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
+		if (user.getIsOperator() == true)
 		{
-				SetTopic(command, user);
-				sendTopic(command, user);
+			if (user.servInfo->channelExist(command.params[0]) == true) //I verify if param[1](chanName exist)
+			{
+					SetTopic(command, user);
+					sendTopic(command, user);
+			}
+			else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
+				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
 		}
-		else if (user.servInfo->channelExist(command.params[0]) == false) // if the channel doesn't exist = error
-			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
 	}
-	else 
-	{
+	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
-	}
 }
 
 /*
@@ -161,6 +166,28 @@ void	Command::topic(Command &command, User &user) {
 		PART FUNCTION
 **==========================
 */
+
+void	partRemoveUser(Command &command, User &user)
+{
+	std::vector<std::string> chanNames;
+	chanNames = parseStringGetline(command.params[0]);
+	for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
+	{
+		if (user.servInfo->channelExist(chanNames[i]) == true) 
+		{
+			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
+			std::string message = "No reason given";
+			if (command.params.size() == 2)
+				message = command.params[1];
+			if (checkUserInchannel == true)
+				chan->removeUserChannel(user.get_fd(), &user, (" :" + message));
+			else if (checkUserInchannel == false)
+				sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chanNames[i]));
+		}
+		else 
+			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), chanNames[i]));
+	}
+}
 
 /***************** PART allows 
  * temove a user from one+ channels 
@@ -171,20 +198,12 @@ void	Command::topic(Command &command, User &user) {
 void	Command::part(Command &command, User &user) {
 	if (emptyCommand == false)
 	{
-		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
+		if (command.params.size() > 2)
 		{
-			if (chanExist == true) 
-			{
-				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				if (checkUserInchannel == true)
-					chan->removeUserChannel(user.get_fd(), &user);
-				else if (checkUserInchannel == false)
-					sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chan->getChannelName()));
-
-			}
-			else 
-				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
+			sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+			return;
 		}
+		partRemoveUser(command, user);
 	}
 	else 
 	{
@@ -204,21 +223,27 @@ void	Command::part(Command &command, User &user) {
 void	Command::names(Command &command, User &user) {
 	if (emptyCommand == false)
 	{
-		for (unsigned long i = 0 ; i < command.params.size() ; i++)
+		if (command.params.size() > 1)
 		{
-			if (chanExist== true) 
+			sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+			return;
+		}
+		std::vector<std::string> chanNames;
+		chanNames = parseStringGetline(command.params[0]);
+		for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
+		{
+			if (user.servInfo->channelExist(chanNames[i]) == true) 
 			{
-				Channel *chan = &user.servInfo->getChannel(command.params[i]);
-				chan->printChannelUsers(user.get_fd(), &user, command.params[i]);
+				Channel *chan = &user.servInfo->getChannel(chanNames[i]);
+				chan->printChannelUsers(user.get_fd(), &user, chanNames[i]);
 			}
 			else
-				sendMsg(user.get_fd(), RPL_ENDOFNAMES(command.params[i]));
+				sendMsg(user.get_fd(), RPL_ENDOFNAMES(chanNames[i]));
 		}
 	}
 	else 
 		user.servInfo->printAllChannelsUsers(user);
 }
-
 
 /*
 **==========================
@@ -262,17 +287,23 @@ void	Command::list(Command &command, User &user)
 {
 	if (emptyCommand == false)
 	{
+		
 		if (listMinUser(command, user) == false)
 			return;
-		for (unsigned long i = 0 ; i < command.params.size()  ; i++)
+		std::vector<std::string> chanNames;
+		chanNames = parseStringGetline(command.params[0]);
+		for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
 		{
-			if (chanExist == true) 
+			if (command.params.size() >= 2)
 			{
-				Channel *chan = &user.servInfo->getChannel(command.params[i]);
+				sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
+				return;
+			}
+			if (user.servInfo->channelExist(chanNames[i]) == true) 
+			{
+				Channel *chan = &user.servInfo->getChannel(chanNames[i]);
 				sendMsg(user.get_fd(), RPL_LIST_MSG);
 			}
-			else
-				sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL_MSG);
 		}
 		sendMsg(user.get_fd(), RPL_LISTEND(user.getNickName()));
 	}
@@ -331,7 +362,12 @@ void	inviteErrorscheck(Command &command, User &user)
 void	Command::invite(Command &command, User &user)
 {
 	if (command.params.size() == 2)
-		inviteErrorscheck(command, user);
+	{
+		if (user.getIsOperator() == true)
+			inviteErrorscheck(command, user);
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
+	}
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }
@@ -357,7 +393,7 @@ void	kickErrorCheck(Command &command, User &user)
 			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
 			if (chan->userInChannel(nick->get_fd(), chan->getUsersList()) == true)
 			{
-				chan->removeUserChannel(nick->get_fd(), nick);
+				chan->removeUserChannel(nick->get_fd(), nick, "");
 				if (command.params.size() == 3)
 				{
 					std::string message = command.params[2];
@@ -365,7 +401,7 @@ void	kickErrorCheck(Command &command, User &user)
 				}
 				else if (command.params.size() == 2)
 				{
-					chan->removeUserChannel(nick->get_fd(), nick);
+					chan->removeUserChannel(nick->get_fd(), nick, "");
 					sendMsg(nick->get_fd(), KICK__MESSAGE(user.getNickName(), chan->getChannelName(), "the host doesn't like you"));
 				}
 			}
@@ -386,7 +422,12 @@ void	kickErrorCheck(Command &command, User &user)
 void	Command::kick(Command &command, User &user)
 {
 	if (command.params.size() >= 2 && command.params.size() <= 3)
-		kickErrorCheck(command, user);
+	{
+		if (user.getIsOperator() == true)
+			kickErrorCheck(command, user);
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
+	}
 	else
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 }

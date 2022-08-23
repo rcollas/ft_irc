@@ -36,6 +36,7 @@ class User {
 		bool						validPasswd;
 		int							modesNumber;
 		std::string					buffer;
+		std::string 				quitMessage;
 
 	public:
 		User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo);
@@ -48,6 +49,7 @@ class User {
 		void	set_username(std::string username);
 		void	set_nickname(std::string nickname);
 		void	set_realname(std::string realname);
+		void	set_quitMessage(std::string quitMessage);
 		void	set_isAway(bool away);
 		void	set_isOperator(bool isOperator);
 		void	set_modesNumber(int isInvisible);
@@ -60,6 +62,7 @@ class User {
 		std::string	getRealName() const;
 		std::string getAwayMessage() const;
 		std::string	getBuffer() const;
+		std::string getQuitMessage() const;
 		bool	getIsAway() const;
 		bool	getIsOperator() const;
 		int		getModesNumber() const;
