@@ -76,6 +76,7 @@ void	Command::join(Command &command, User &user) {
 			Channel *chan = &user.servInfo->getChannel(chanNames[i]);
 			if (JOIN_INVITE_WITHOUT_KEY || JOIN_INVITE_WITH_KEY)
 			{
+				chan->addUserToChannel(user.get_fd(), &user);
 				WelcomeTopicJoinMessage(chan, command, user);
 			}
 			else if (JOIN_WITHOUT_INVIT_KEY) 
