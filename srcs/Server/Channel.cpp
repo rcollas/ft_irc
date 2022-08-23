@@ -16,19 +16,15 @@ Channel::Channel(std::string const &channelName, std::string const &key)
 	this->_topicSet			= false;
 	this->_inviteModeSet	= false;
 	this->_keyExist			= false;
-	std::cout << "Constructor is called" << std::endl;
 }
 
 Channel::Channel(Channel const &src)
 {
-	std::cout << "Constructor with grade is called" << std::endl;
 	*this = src; // copy all the element of src in the current instance
 }
 
 Channel::~Channel()
-{
-	std::cout << "Destructor is called" << std::endl;
-}
+{}
 
 Channel &Channel::operator=(Channel const &obj)
 {
@@ -36,7 +32,6 @@ Channel &Channel::operator=(Channel const &obj)
 	this->_key = obj._key;
 	this->_topic = obj._topic;
 	this->_usersList = obj._usersList;
-	std::cout << "Copy assignment operator called" << std::endl;
 	return *this;
 }
 
@@ -176,4 +171,6 @@ bool	Channel::TopicIsSet()
 void	Channel::setKey(std::string key)
 {
 	this->_key = key;
-}	
+}
+
+void	Channel::setOpUser(User *user) { this->_opUser = user; }

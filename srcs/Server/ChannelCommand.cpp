@@ -66,6 +66,7 @@ bool	checkKeyChanExist(Channel *channel, Command &command, unsigned long i)
  * allow to join the channel
  * if only in invite mode can't join the channel 
  * if a key is set need to put the key **************/
+
 void	Command::join(Command &command, User &user) {
 	if (emptyCommand == false)
 	{
@@ -118,7 +119,8 @@ void	Command::join(Command &command, User &user) {
 void	SetTopic(Command &command, User &user)
 {
 	Channel *chan = &user.servInfo->getChannel(command.params[0]);
-	if (command.params.size() >= 2 && checkUserInchannel == true)
+	if (command.params.size() >= 2 
+		&& checkUserInchannel == true)
 	{
 		std::string topic;
 		for (unsigned long i = 1; i <= command.params.size(); i++)
