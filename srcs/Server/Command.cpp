@@ -353,6 +353,8 @@ void	Command::oper(Command &command, User &user) {
 }
 
 void	Command::away(Command &command, User &user) {
+	if (command.params.size() > 1)
+		return ;
 	if (emptyCommand == true && user.getIsAway() == true) {
 		user.set_isAway(false);
 		sendMsg(user.get_fd(), RPL_UNAWAY(user.getNickName()));

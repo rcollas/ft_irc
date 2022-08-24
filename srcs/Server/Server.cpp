@@ -213,7 +213,7 @@ bool	cmdIsComplete(std::string cmd) {
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
-	//int ret = 1;	
+	//int ret = 1;
 	if (cmdIsComplete(user.getBuffer())) {
 		std::cout << "dispatch" << std::endl;
 		switch (cmd.cmd) {
@@ -334,7 +334,7 @@ void	Server::handleCmd(User *user) {
 		Server::cmdDispatcher(user->getCmdList().front(), *user);
 		if (user->getCmdList().front().cmd == QUIT) {
 			user_list.erase(user_list.find(user->get_fd()));
-			break;
+			return ;
 		}
 		user->getCmdList().erase(user->getCmdList().begin());
 	}
