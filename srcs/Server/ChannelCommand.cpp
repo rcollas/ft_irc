@@ -432,50 +432,17 @@ void	kickErrorCheck(Command &command, User &user)
  * Need at least 2 params, the channel and the nickname
  * An optional message otherwise a default is set
  * having the right to kick **************/
-void	Command::kick(Command &command, User &user)
+	void	Command::kick(Command &command, User &user)
 {
-
-	Channel *chan = 0;
-
-	if (command.params.size() < 2 || command.params.size() > 3) {
-		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
-	} else {
-
-		if (user.servInfo->channelExist(command.params[0]) == false) {
-
-			sendMsg(user.get_fd(), ERR_NOSUCHCHANNEL(user.getNickName(), command.params[0]));
-
-		} else if (user.servInfo->userExist(command.params[1]) == false) {
-
-			sendMsg(user.get_fd(), ERR_ERRONEUSNICKNAME(command.params[1]));
-
-		} else {
-			chan = &user.servInfo->getChannel(command.params[0]);
-
-
-			User *nick = &user.servInfo->nickToUserFd(command.params[1]);
-
-			if (chan->userInChannel(nick->get_fd(), chan->getUsersList()) == false) {
-
-				sendMsg(user.get_fd(), ERR_USERNOTINCHANNEL(nick->getNickName(), chan->getChannelName()));
-
-			} else {
-
-				chan->removeUserChannel(nick->get_fd(), nick, "");
-				if (command.params.size() == 3) {
-
-					std::string message = command.params[2];
-					sendMsg(nick->get_fd(), KICK__MESSAGE(user.getNickName(), chan->getChannelName(), message));
-
-				} else if (command.params.size() == 2) {
-
-					chan->removeUserChannel(nick->get_fd(), nick, "");
-					sendMsg(nick->get_fd(), KICK__MESSAGE(user.getNickName(), chan->getChannelName(), "the host doesn't like you"));
-				}
-
-			}
-		}
+	if (command.params.size() >= 2 && command.params.size() <= 3)
+	{
+		if (user.getIsOperator() == true)
+			kickErrorCheck(command, user);
+		else
+			sendMsg(user.get_fd(), ERR_NOPRIVILEGES(user.getNickName()));
 	}
+	else
+		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 
 }
 
