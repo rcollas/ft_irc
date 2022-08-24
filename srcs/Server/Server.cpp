@@ -213,8 +213,9 @@ bool	cmdIsComplete(std::string cmd) {
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
-	//int ret = 1;
+	//int ret = 1;	
 	if (cmdIsComplete(user.getBuffer())) {
+		std::cout << "dispatch" << std::endl;
 		switch (cmd.cmd) {
 			case (PASS): cmd.pass(cmd, user); break;
 		}
@@ -245,11 +246,11 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 					case (QUIT): cmd.quit(cmd, user); break;
 					//default: ret = 0;
 				}
-			} else if (cmd.cmd != PASS && cmd.cmd != USER && cmd.cmd != NICK) {
+			} else if (cmd.cmd != CAP && cmd.cmd != PASS && cmd.cmd != USER && cmd.cmd != NICK) {
 				sendMsg(user.get_fd(), ERR_NOTREGISTERED(user.getNickName()));
 			}
 		}
-		user.clearBuffer();
+		//user.clearBuffer();
 	}
 
 }
@@ -337,6 +338,8 @@ void	Server::handleCmd(User *user) {
 		}
 		user->getCmdList().erase(user->getCmdList().begin());
 	}
+	if (cmdIsComplete(user->getBuffer()))
+		user->clearBuffer();
 }
 
 /**

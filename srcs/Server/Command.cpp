@@ -54,6 +54,7 @@ void	Command::quit(Command &command, User &user) {
 }
 
 void	Command::nick(Command &command, User &user) {
+	std::cout << "in nick" << std::endl;
 	if (command.params.size() > 1)
 		return ;
 	else if (emptyCommand == true)
@@ -79,6 +80,7 @@ void	Command::nick(Command &command, User &user) {
 }
 
 void	Command::user(Command &command, User &user) {
+	std::cout << "IN user" << std::endl;
 	if (command.params.size() > 4)
 		return ;
 	if (command.params.size() < 4) {
