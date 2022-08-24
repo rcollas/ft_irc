@@ -87,7 +87,6 @@ void	Server::init()
 
 	std::cout << "Looking for clients..." << std::endl;
 	listen(serverEndPoint, 4);
-	fcntl(serverEndPoint, O_NONBLOCK);
 	pfds.push_back(pollfd());
 	pfds[0].fd = serverEndPoint;
 	pfds[0].events = POLLIN;
@@ -214,10 +213,8 @@ bool	cmdIsComplete(std::string cmd) {
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
-	int ret = 1;
-	std::cout << "user buffer = " << user.getBuffer() << std::endl;
+	//int ret = 1;
 	if (cmdIsComplete(user.getBuffer())) {
-		std::cout << "in cmd" << std::endl;
 		switch (cmd.cmd) {
 			case (PASS): cmd.pass(cmd, user); break;
 		}
@@ -246,7 +243,7 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 					case (OPER): cmd.oper(cmd, user); break;
 					case (NOTICE): cmd.notice(cmd, user); break;
 					case (QUIT): cmd.quit(cmd, user); break;
-					default: ret = 0;
+					//default: ret = 0;
 				}
 			}
 		}
@@ -322,6 +319,7 @@ void	Server::sendToAll(int senderFd, std::string msg) {
 
 void	Server::handleCmd(User *user) {
 	user->appendToBuffer(buffer);
+	std::cout << "user buffer = " << user->getBuffer() << std::endl;
 	std::vector<std::string>	res = split(user->getBuffer(), " :\r\n");
 	Command						ret;
 	memset(buffer, 0, bufferSize);
@@ -396,8 +394,9 @@ void Server::run()
 		delete it->second;
 	}
 	close(serverEndPoint);
-	std::cout << std::endl;
-	std::cout << "Server killed" << std::endl;
+	cmdList.clear();
+	pfds.clear();
+	std::cout << "\nServer killed\n";
 }
 
 int	Server::getNbOfChan()
