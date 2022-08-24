@@ -26,8 +26,6 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 					(struct sockaddr *) &socket,
 					&sin_size);
 
-	fcntl(fd, O_NONBLOCK);
-
 	if (fd == -1) {
 		perror("accept");
 	}
@@ -38,11 +36,7 @@ User::User(std::vector<pollfd> &pfds, int serverEndpoint, Server *serverInfo) {
 	pfds.push_back(pollfd());
 	pfds.back().fd = fd;
 	pfds.back().events = POLLIN;
-	std::string client_ip = toString(inet_ntoa(
-			(get_in_addr((struct sockaddr *) &socket))));
-	client_ip += "\r\n";
-	std::cout << "client IP = " << client_ip << std::endl;
-	//Server::registration(this);
+	std::cout << "New client connection. Fd: " << pfds.back().fd << std::endl;
 }
 
 User::~User() {}

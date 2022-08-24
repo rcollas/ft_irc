@@ -213,9 +213,7 @@ bool	cmdIsComplete(std::string cmd) {
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
-	//int ret = 1;
 	if (cmdIsComplete(user.getBuffer())) {
-		std::cout << "dispatch" << std::endl;
 		switch (cmd.cmd) {
 			case (PASS): cmd.pass(cmd, user); break;
 		}
@@ -244,13 +242,11 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 					case (OPER): cmd.oper(cmd, user); break;
 					case (NOTICE): cmd.notice(cmd, user); break;
 					case (QUIT): cmd.quit(cmd, user); break;
-					//default: ret = 0;
 				}
 			} else if (cmd.cmd != CAP && cmd.cmd != PASS && cmd.cmd != USER && cmd.cmd != NICK) {
 				sendMsg(user.get_fd(), ERR_NOTREGISTERED(user.getNickName()));
 			}
 		}
-		//user.clearBuffer();
 	}
 
 }
@@ -322,7 +318,6 @@ void	Server::sendToAll(int senderFd, std::string msg) {
 
 void	Server::handleCmd(User *user) {
 	user->appendToBuffer(buffer);
-	std::cout << "user buffer = " << user->getBuffer() << std::endl;
 	std::vector<std::string>	res = split(user->getBuffer(), " :\r\n");
 	Command						ret;
 	memset(buffer, 0, bufferSize);
@@ -391,10 +386,17 @@ void Server::run()
 			}
 		}
 	}
-	for (size_t i = 1; i < pfds.size(); i++) {
-		sendMsg(pfds[i].fd, "Server closed the connection");
-		this->killConnection(*getUser(pfds[i].fd));
+	size_t pfdsSize = pfds.size();
+	//size_t i = 1;
+	while (--pfdsSize) {
+		sendMsg(pfds[pfdsSize].fd, "Server closed the connection");
+		this->killConnection(*getUser(pfds[pfdsSize].fd));
+		//i++;
 	}
+//	while (pfds.size() > 1) {
+//		sendMsg(pfds.front().fd, "Server closed the connection");
+//		this->killConnection(*getUser(pfds.front().fd));
+//	}
 	for (std::map<std::string, Channel *>::iterator it = allChan.begin(); it != allChan.end(); it++) {
 		delete it->second;
 	}
