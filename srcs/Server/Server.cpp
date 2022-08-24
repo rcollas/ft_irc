@@ -245,6 +245,8 @@ void	Server::cmdDispatcher(Command &cmd, User &user) {
 					case (QUIT): cmd.quit(cmd, user); break;
 					//default: ret = 0;
 				}
+			} else if (cmd.cmd != PASS && cmd.cmd != USER && cmd.cmd != NICK) {
+				sendMsg(user.get_fd(), ERR_NOTREGISTERED(user.getNickName()));
 			}
 		}
 		user.clearBuffer();

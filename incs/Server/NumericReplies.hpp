@@ -70,6 +70,7 @@ std::string RPL_ISUPPORT();
 /*                                   4**                                      */
 /******************************************************************************/
 
+#define ERR_NOTREGISTERED(nick) (RED + "451 " + str(nick) + " :You have not registered\r\n" + EOC)
 #define ERR_NOSUCHNICK(nick, target) (RED + "401 " + str(nick) + " " + str(target) + " :No such nick/channel\r\n" + EOC)
 #define ERR_NOSUCHCHANNEL(nick, channel) (RED + "403 " + str(nick) + " :" + str(channel) + " no such channel" + "\r\n" + EOC)
 #define ERR_NOTOCHANNEL(nick, channel) (RED + "442 " + str(nick) + " :" + str(channel) + ": You're not on that channel" + "\r\n"+ EOC)
