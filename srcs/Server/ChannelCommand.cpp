@@ -494,11 +494,10 @@ void	Command::notice(Command &command, User &user)
 	if (command.params.size() == 2)
 	{
 		std::string nickNameOrChannel = command.params[0];
-		std::string message = command.params[1];
 		if (user.servInfo->channelExist(command.params[0]) == true)
-			sendMessageToChannel(user, nickNameOrChannel, message);
+			sendMessageToChannel(user, nickNameOrChannel, command.params[1]);
 		else if(user.servInfo->nicknameExists(command.params[0]) == true)
-			sendPrivateMessage(user, nickNameOrChannel, message);
+			sendPrivateMessage(user, nickNameOrChannel, command.params[1]);
 	}
 	else
 		return;

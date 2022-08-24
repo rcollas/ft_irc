@@ -123,14 +123,12 @@ void	Command::privmsg(Command &command, User &user) {
 		if (user.servInfo->getAwayStatus(command.params[0]) == true) {
 			sendMsg(user.get_fd(), "\033[0;31m301 " + command.params[0] + " :" + user.servInfo->getAwayString(command.params[0]) + "\r\n\033[0m");
 		}
-		sendMsg(user.servInfo->getTargetFd(command.params[0]), "\033[1;32m" + command.params[1] + "\r\n\033[0m");
+		sendMsg(user.servInfo->getTargetFd(command.params[0]), "\033[1;32m" + user.getNickName() + " :" + command.params[1] + "\r\n\033[0m");
 	}
 	if (user.servInfo->channelExist(command.params[0]) == true)
 	{
 		std::string ChanName = command.params[0];
-		std::string message;
-			message = command.params[1];
-		sendMessageToChannel(user, ChanName, message);
+		sendMessageToChannel(user, ChanName, command.params[1]);
 	}
 }
 
