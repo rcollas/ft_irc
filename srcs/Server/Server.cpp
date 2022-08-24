@@ -213,7 +213,7 @@ bool	cmdIsComplete(std::string cmd) {
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
-	//int ret = 1;	
+	//int ret = 1;
 	if (cmdIsComplete(user.getBuffer())) {
 		std::cout << "dispatch" << std::endl;
 		switch (cmd.cmd) {
@@ -334,7 +334,7 @@ void	Server::handleCmd(User *user) {
 		Server::cmdDispatcher(user->getCmdList().front(), *user);
 		if (user->getCmdList().front().cmd == QUIT) {
 			user_list.erase(user_list.find(user->get_fd()));
-			break;
+			return ;
 		}
 		user->getCmdList().erase(user->getCmdList().begin());
 	}
@@ -391,10 +391,17 @@ void Server::run()
 			}
 		}
 	}
-	for (size_t i = 1; i < pfds.size(); i++) {
-		sendMsg(pfds[i].fd, "Server closed the connection");
-		this->killConnection(*getUser(pfds[i].fd));
+	size_t pfdsSize = pfds.size();
+	//size_t i = 1;
+	while (--pfdsSize) {
+		sendMsg(pfds[pfdsSize].fd, "Server closed the connection");
+		this->killConnection(*getUser(pfds[pfdsSize].fd));
+		//i++;
 	}
+//	while (pfds.size() > 1) {
+//		sendMsg(pfds.front().fd, "Server closed the connection");
+//		this->killConnection(*getUser(pfds.front().fd));
+//	}
 	for (std::map<std::string, Channel *>::iterator it = allChan.begin(); it != allChan.end(); it++) {
 		delete it->second;
 	}
