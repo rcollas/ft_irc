@@ -197,7 +197,10 @@ void	partRemoveUser(Command &command, User &user)
 			if (command.params.size() == 2)
 				message = command.params[1];
 			if (checkUserInchannel == true)
+			{
 				chan->removeUserChannel(user.get_fd(), &user, (" :" + message));
+				command.sendMessageToChannel(user, chanNames[i], ("has left the channel " + chanNames[i]));
+			}
 			else if (checkUserInchannel == false)
 				sendMsg(user.get_fd(), ERR_NOTOCHANNEL(user.getNickName(), chanNames[i]));
 		}
