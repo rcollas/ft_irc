@@ -72,7 +72,7 @@ class User {
 
 		void	addCmd(Command &cmd);
 		void	addChan(Channel *chan);
-		void 	deleteAllChannelUsers(User &user);
+		void 	deleteAllChannelUsers(User &user, Command &command);
 		void 	deleteQuitChannelUsers(User &user, Command *command);
 
 		std::vector<Command>	&getCmdList();

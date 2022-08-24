@@ -67,7 +67,7 @@ bool JoinPartAllChannels(Command &command, User &user)
 	(void) user;
 	if (command.params[0] == "0" && command.params.size() == 1)
 	{
-		user.deleteAllChannelUsers(user);
+		user.deleteAllChannelUsers(user, command);
 		return true;
 	}
 	return false;
