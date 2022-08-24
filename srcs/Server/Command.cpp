@@ -54,7 +54,6 @@ void	Command::quit(Command &command, User &user) {
 }
 
 void	Command::nick(Command &command, User &user) {
-	std::cout << "in nick" << std::endl;
 	if (command.params.size() > 1)
 		return ;
 	else if (emptyCommand == true)
@@ -80,7 +79,6 @@ void	Command::nick(Command &command, User &user) {
 }
 
 void	Command::user(Command &command, User &user) {
-	std::cout << "IN user" << std::endl;
 	if (command.params.size() > 4)
 		return ;
 	if (command.params.size() < 4) {
@@ -119,16 +117,21 @@ void	Command::privmsg(Command &command, User &user) {
 	}
 	if (user.getNickName() == command.params[0])
 		return ;
-	if (user.servInfo->usernameExists(command.params[0]) == true || user.servInfo->nicknameExists(command.params[0]) == true) {
-		if (user.servInfo->getAwayStatus(command.params[0]) == true) {
-			sendMsg(user.get_fd(), "\033[0;31m301 " + command.params[0] + " :" + user.servInfo->getAwayString(command.params[0]) + "\r\n\033[0m");
-		}
-		sendMsg(user.servInfo->getTargetFd(command.params[0]), "\033[1;32m" + user.getNickName() + " :" + command.params[1] + "\r\n\033[0m");
-	}
-	if (user.servInfo->channelExist(command.params[0]) == true)
+	std::vector<std::string> chanNames;
+	chanNames = parseStringGetline(command.params[0]);
+	for (unsigned long i = 0 ; i < chanNames.size()  ; i++)
 	{
-		std::string ChanName = command.params[0];
-		sendMessageToChannel(user, ChanName, command.params[1]);
+		if (user.servInfo->usernameExists(chanNames[i]) == true || user.servInfo->nicknameExists(chanNames[i]) == true) {
+			if (user.servInfo->getAwayStatus(chanNames[i]) == true) {
+				sendMsg(user.get_fd(), "\033[0;31m301 " + chanNames[i] + " :" + user.servInfo->getAwayString(chanNames[i]) + "\r\n\033[0m");
+			}
+			sendMsg(user.servInfo->getTargetFd(chanNames[i]), "\033[1;32m" + user.getNickName() + " :" + command.params[1] + "\r\n\033[0m");
+		}
+		if (user.servInfo->channelExist(chanNames[i]) == true)
+		{
+			std::string ChanName = chanNames[i];
+			sendMessageToChannel(user, ChanName, command.params[1]);
+		}
 	}
 }
 
