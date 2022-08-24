@@ -3,6 +3,7 @@
 char Server::buffer[Server::bufferSize];
 
 void	Server::fillAvailableCmd() {
+	this->cmdList.push_back("CAP");
 	this->cmdList.push_back("PASS");
 	this->cmdList.push_back("NICK");
 	this->cmdList.push_back("USER");
@@ -202,7 +203,6 @@ void	Server::killConnection(User &user) {
 			break;
 		}
 	}
-	//user_list.erase(user_list.find(user.get_fd()));
 }
 
 bool	registrationComplete(User &user) {
@@ -210,49 +210,49 @@ bool	registrationComplete(User &user) {
 }
 
 bool	cmdIsComplete(std::string cmd) {
-	return cmd.find('\n') != cmd.npos;
+	return cmd.find("\r\n") != cmd.npos;
 }
 
 void	Server::cmdDispatcher(Command &cmd, User &user) {
 	int ret = 1;
-	switch (cmd.cmd) {
-		case (PASS): cmd.pass(cmd, user); break;
-		default: ret = 0;
-	}
-	if (user.bringValidPasswd() == false) {
-		cmd.error("Fatal error: no password provided", user);
-	} else {
+	std::cout << "user buffer = " << user.getBuffer() << std::endl;
+	if (cmdIsComplete(user.getBuffer())) {
+		std::cout << "in cmd" << std::endl;
 		switch (cmd.cmd) {
-			case (NICK): cmd.nick(cmd, user); break;
-			case (USER): cmd.user(cmd, user); break;
-			default: ret = 0;
+			case (PASS): cmd.pass(cmd, user); break;
 		}
-		if (registrationComplete(user) == true) {
+		if (user.bringValidPasswd() == false && cmd.cmd != CAP) {
+			cmd.error("Fatal error: no password provided", user);
+		} else {
 			switch (cmd.cmd) {
-				case (JOIN): cmd.join(cmd, user); break;
-				case (TOPIC): cmd.topic(cmd, user); break;
-				case (MOTD): cmd.motd(cmd, user); break;
-				case (AWAY): cmd.away(cmd, user); break;
-				case (VERSION): cmd.version(cmd, user); break;
-				case (LUSERS): cmd.lusers(cmd, user); break;
-				case (PART): cmd.part(cmd, user); break;
-				case (NAMES): cmd.names(cmd, user); break;
-				case (LIST): cmd.list(cmd, user); break;
-				case (INVITE): cmd.invite(cmd, user); break;
-				case (KICK): cmd.kick(cmd, user); break;
-				case (PRIVMSG): cmd.privmsg(cmd, user); break;
-				case (MODE): cmd.mode(cmd, user); break;
-				case (OPER): cmd.oper(cmd, user); break;
-				case (NOTICE): cmd.notice(cmd, user); break;
-				case (QUIT): cmd.quit(cmd, user); break;
-				default: ret = 0;
+				case (NICK): cmd.nick(cmd, user); break;
+				case (USER): cmd.user(cmd, user); break;
+			}
+			if (registrationComplete(user) == true) {
+				switch (cmd.cmd) {
+					case (JOIN): cmd.join(cmd, user); break;
+					case (TOPIC): cmd.topic(cmd, user); break;
+					case (MOTD): cmd.motd(cmd, user); break;
+					case (AWAY): cmd.away(cmd, user); break;
+					case (VERSION): cmd.version(cmd, user); break;
+					case (LUSERS): cmd.lusers(cmd, user); break;
+					case (PART): cmd.part(cmd, user); break;
+					case (NAMES): cmd.names(cmd, user); break;
+					case (LIST): cmd.list(cmd, user); break;
+					case (INVITE): cmd.invite(cmd, user); break;
+					case (KICK): cmd.kick(cmd, user); break;
+					case (PRIVMSG): cmd.privmsg(cmd, user); break;
+					case (MODE): cmd.mode(cmd, user); break;
+					case (OPER): cmd.oper(cmd, user); break;
+					case (NOTICE): cmd.notice(cmd, user); break;
+					case (QUIT): cmd.quit(cmd, user); break;
+					default: ret = 0;
+				}
 			}
 		}
+		user.clearBuffer();
 	}
 
-
-	if (ret || cmdIsComplete(user.getBuffer()))
-		user.clearBuffer();
 }
 
 User &Server::nickToUserFd(std::string nickname)
@@ -331,6 +331,10 @@ void	Server::handleCmd(User *user) {
 	}
 	while (user->getCmdList().empty() == false) {
 		Server::cmdDispatcher(user->getCmdList().front(), *user);
+		if (user->getCmdList().front().cmd == QUIT) {
+			user_list.erase(user_list.find(user->get_fd()));
+			break;
+		}
 		user->getCmdList().erase(user->getCmdList().begin());
 	}
 }
@@ -349,15 +353,13 @@ void	Server::handleClientRequest(int i) {
 	if (nbytes <= 0) {
 		if (nbytes == 0) {
 			std::cout << "pollserver: socket " << senderFd << " hung up" << std::endl;
-			//printDebug(, RECEIVE_DEBUG);
+			killConnection(*getUser(pfds[i].fd));
 			user_list.erase(user_list.find(pfds[i].fd));
-			pfds.erase(pfds.begin() + i);
 		} else {
 			perror("recv");
 		}
 	} else {
 		this->handleCmd(getUser(senderFd));
-		//this->sendToAll(senderFd, nbytes);
 	}
 	memset(buffer, 0, bufferSize);
 }

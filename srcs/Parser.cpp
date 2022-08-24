@@ -25,7 +25,7 @@ std::vector<std::string>	split(std::string str, std::string const sep) {
 
 	while ((pos = str.find_first_of(sep)) < str.npos) {
 		if (str[pos] == ':') {
-			pos = str.find_first_of("\r\n");
+			pos = str.find("\r\n");
 			token = str.substr(1, pos - 1);
 			res.push_back(token);
 			str.erase(0, pos + 2);
@@ -40,7 +40,10 @@ std::vector<std::string>	split(std::string str, std::string const sep) {
 			}
 		}
 	}
-		return res;
+	//for (int i = 0; i < (int)res.size(); i++) {
+	//	std::cout << "res " << i << " = " << res[i] << std::endl;
+	//}
+	return res;
 }
 
 /**

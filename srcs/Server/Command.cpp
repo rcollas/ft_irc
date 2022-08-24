@@ -32,6 +32,7 @@ void	Command::pass(Command &command, User &user) {
 			error(RED + "Fatal error: invalid connection password" + EOC, user);
 		} else {
 			user.setPasswdStatus(true);
+			std::cout << "Connection status: password is valid" << std::endl;
 		}
 	} else if (command.params.size() < 1) {
 		error(ERR_NEEDMOREPARAMS(user.getNickName()), user);
@@ -144,7 +145,7 @@ void	Command::motd(Command &command, User &user) {
 **      MODE COMMAND
 		INVITE PART
 **==========================
-*/	
+*/
 
 bool	ModeErrorinvite(Command &command, User &user)
 {
@@ -196,9 +197,9 @@ bool 	modeEnableInviteChannel(Command &command, User &user)
 **   	 MODE COMMAND
 		 KEY PART
 **==========================
-*/	
+*/
 
-/***************** 
+/*****************
  * Here I check 2 errors for MODE
  * 1: The channel exists
  * 2: Size of arguments received = 3 (channel, "+k", <key>)
@@ -260,7 +261,7 @@ bool	modeEnableKeyChannel(Command &command, User &user)
 **         MODE COMMAND
 **==========================
 */
-/***************** 
+/*****************
  * Check errors when doing MODE
  * 1: If a nickname exists
  * 2 : If channel exists
@@ -273,12 +274,12 @@ bool	modeErrorsCheck(Command &command, User &user)
 		sendMsg(user.get_fd(), ERR_UMODEUNKNOWNFLAG(user.getNickName()));
 		return true;
 	}
-	if (PARAM_IS_NOT_NICK_OR_CHANNEL) 
+	if (PARAM_IS_NOT_NICK_OR_CHANNEL)
 	{
 		sendMsg(user.get_fd(), ERR_NOSUCHNICK(user.getNickName(), command.params[0]));
 		return true;
 	}
-	if (command.params[0] != user.getNickName()) 
+	if (command.params[0] != user.getNickName())
 	{
 		sendMsg(user.get_fd(), ERR_USERSDONTMATCH(user.getNickName()));
 		return true;
@@ -298,8 +299,8 @@ bool	modeErrorsCheck(Command &command, User &user)
 
 /***************** MODE allows
  *  Mode +i, you have to invite someone to go on a chan
- * Mode +k add a key when you join a channel  
- * Errors : If not the right number of args 
+ * Mode +k add a key when you join a channel
+ * Errors : If not the right number of args
  * invite mode
  * Key mode **************/
 void	Command::mode(Command &command, User &user) {

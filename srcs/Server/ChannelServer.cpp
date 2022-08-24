@@ -1,7 +1,7 @@
 #include "../../incs/Server/Server.hpp"
 
 /***************** Here I create a channel if it does not exit **************/
-void		Server::createChannel(User &user, std::string chanName) // a corriger
+void		Server::createChannel(User &user, std::string chanName)
 {
 	if	(user.servInfo->channelExist(chanName) == false)
 	{
@@ -14,8 +14,8 @@ void		Server::createChannel(User &user, std::string chanName) // a corriger
 		std::cout << "\033[0;31m" << "Le channel existe déjà " << chanName << "\033[0m" << std::endl;
 }
 
-void	Server::addChannel(Channel *chan) { 
-	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan)); 
+void	Server::addChannel(Channel *chan) {
+	this->allChan.insert(std::pair<std::string, Channel *>(chan->getChannelName(), chan));
 }
 
 bool	Server::channelExist(std::string chanName) {
@@ -53,7 +53,7 @@ Channel	&Server::getChannel(std::string chanName)
 void Server::printWelcomeMessage(int fd, User &user, Command &command, Channel *chan)
 {
 	(void) command;
-	
+
 		sendMsg(fd, JOIN_WELCOME_MESSAGE(user.getNickName(), chan->getChannelName()));
 }
 

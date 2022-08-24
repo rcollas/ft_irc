@@ -27,6 +27,7 @@ extern bool serverIsRunning;
 
 /***************** We begins the cmd enums here **************/
 enum cmd {
+	CAP,
 	PASS,
 	NICK,
 	USER,
