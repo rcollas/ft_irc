@@ -85,10 +85,10 @@ void	Command::user(Command &command, User &user) {
 		sendMsg(user.get_fd(), ERR_NEEDMOREPARAMS(user.getNickName()));
 		return ;
 	}
-	if (!(command.params[1] == "0" && command.params[2] == "*")) {
+	/*if (!(command.params[1] == "0" && command.params[2] == "*")) {
 		std::cout << "Usage: /USER <username> 0 * <realname>\n";
 		return ;
-	}
+	}*/
 	if (command.params[0].length() < 1 || command.params[0].find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != std::string::npos) {
 		std::cout << "Username contains invalid characters\n";
 	}
